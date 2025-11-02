@@ -1,0 +1,27 @@
+{
+  "name": "interactive-katex",
+  "version": "1.0.0",
+  "description": "Interactive KaTeX demo for Schrödinger equation with color-coded terms",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "lint": "eslint ."
+  },
+  "keywords": ["katex", "schrodinger", "interactive", "physics"],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.19.0",
+  "devDependencies": {
+    "@types/node": "^24.9.2",
+    "@typescript-eslint/eslint-plugin": "^8.46.2",
+    "@typescript-eslint/parser": "^8.46.2",
+    "eslint": "^9.39.0",
+    "typescript": "^5.9.3",
+    "vite": "^7.1.12"
+  },
+  "dependencies": {
+    "katex": "^0.16.25"
+  }
+}

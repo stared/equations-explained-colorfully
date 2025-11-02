@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Interactive Schrödinger Equation</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex.min.css" />
+  </head>
+  <body>
+    <div id="app">
+      <h1>Interactive Schrödinger Equation</h1>
+      <p class="subtitle">Hover over terms to see their physical meaning</p>
+
+      <div id="equation-container"></div>
+
+      <div id="explanation" class="explanation">
+        <p>The 1D time-dependent Schrödinger equation describes how a quantum wavefunction evolves over time.</p>
+      </div>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
