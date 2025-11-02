@@ -56,53 +56,61 @@ const colorSchemes: Record<string, ColorScheme> = {
 
 interface TermInfo {
   name: string;
+  formula: string;
   description: string;
   class: string;
-  shortText: string; // For the static description
+  plainText: string; // Plain text description for static description
 }
 
 const termInfoMap: Record<string, TermInfo> = {
   'imaginary-unit': {
-    name: 'Imaginary unit i',
+    name: 'Imaginary unit',
+    formula: 'i',
     description: 'Indicates the quantum nature of the equation and ensures unitary time evolution',
     class: 'term-imaginary',
-    shortText: 'i',
+    plainText: 'quantum nature',
   },
   'hbar-time': {
-    name: 'Reduced Planck constant ℏ',
+    name: 'Reduced Planck constant',
+    formula: 'ℏ',
     description: 'Fundamental constant connecting energy and frequency (ℏ ≈ 1.055 × 10⁻³⁴ J·s)',
     class: 'term-hbar',
-    shortText: 'ℏ',
+    plainText: 'a fundamental constant',
   },
   'time-derivative': {
-    name: 'Time derivative ∂ψ/∂t',
+    name: 'Time derivative',
+    formula: '∂ψ/∂t',
     description: 'Rate of change of the wavefunction with respect to time',
     class: 'term-time-deriv',
-    shortText: '∂ψ/∂t',
+    plainText: 'how the wave changes over time',
   },
   'kinetic-coeff': {
-    name: 'Kinetic energy coefficient -ℏ²/2m',
+    name: 'Kinetic energy coefficient',
+    formula: '-ℏ²/2m',
     description: 'Kinetic energy operator coefficient, where m is the particle mass',
     class: 'term-kinetic-coeff',
-    shortText: '-ℏ²/2m',
+    plainText: 'energy from motion',
   },
   'spatial-derivative': {
-    name: 'Spatial derivative ∂²ψ/∂x²',
+    name: 'Spatial derivative',
+    formula: '∂²ψ/∂x²',
     description: 'Second derivative describing spatial curvature of the wavefunction (Laplacian)',
     class: 'term-spatial-deriv',
-    shortText: '∂²ψ/∂x²',
+    plainText: 'how curved the wave is',
   },
   'potential': {
-    name: 'Potential energy V(x)',
+    name: 'Potential energy',
+    formula: 'V(x)',
     description: 'External potential energy as a function of position',
     class: 'term-potential',
-    shortText: 'V(x)',
+    plainText: 'energy from position',
   },
   'wavefunction-rhs': {
-    name: 'Wavefunction ψ',
+    name: 'Wavefunction',
+    formula: 'ψ',
     description: 'Complex-valued quantum state describing the particle',
     class: 'term-wavefunction',
-    shortText: 'ψ',
+    plainText: 'the quantum wave',
   },
 };
 
@@ -147,8 +155,6 @@ function renderSchrodingerEquation() {
     trust: true, // Enable \htmlClass
     throwOnError: false,
   });
-
-  setupHoverEffects();
 }
 
 function renderStaticDescription() {
@@ -157,12 +163,13 @@ function renderStaticDescription() {
 
   staticDescDiv.innerHTML = `
     <p>
-      The 1D time-dependent Schrödinger equation describes how a quantum wavefunction evolves over time:
-      <span class="term-imaginary">${termInfoMap['imaginary-unit'].shortText}</span><span class="term-hbar">${termInfoMap['hbar-time'].shortText}</span>
-      <span class="term-time-deriv">${termInfoMap['time-derivative'].shortText}</span> equals
-      <span class="term-kinetic-coeff">${termInfoMap['kinetic-coeff'].shortText}</span>
-      <span class="term-spatial-deriv">${termInfoMap['spatial-derivative'].shortText}</span> plus
-      <span class="term-potential">${termInfoMap['potential'].shortText}</span><span class="term-wavefunction">${termInfoMap['wavefunction-rhs'].shortText}</span>.
+      To understand how a quantum system evolves, multiply the <span class="term-imaginary">${termInfoMap['imaginary-unit'].plainText}</span>
+      by <span class="term-hbar">${termInfoMap['hbar-time'].plainText}</span>
+      by <span class="term-time-deriv">${termInfoMap['time-derivative'].plainText}</span>.
+      This equals the <span class="term-kinetic-coeff">${termInfoMap['kinetic-coeff'].plainText}</span>
+      of <span class="term-spatial-deriv">${termInfoMap['spatial-derivative'].plainText}</span>,
+      plus the <span class="term-potential">${termInfoMap['potential'].plainText}</span>
+      acting on <span class="term-wavefunction">${termInfoMap['wavefunction-rhs'].plainText}</span>.
     </p>
   `;
 }
@@ -195,9 +202,9 @@ function setupHoverEffects() {
         el.classList.add('term-active');
       });
 
-      // Show additional explanation
+      // Show additional explanation with colored formula
       hoverExplanationDiv.innerHTML = `
-        <strong>${termInfo.name}:</strong> ${termInfo.description}
+        <strong>${termInfo.name} <span class="${termInfo.class}">${termInfo.formula}</span>:</strong> ${termInfo.description}
       `;
       hoverExplanationDiv.classList.add('visible');
     });
@@ -232,9 +239,11 @@ function createColorSchemeSwitcher() {
         btn.classList.remove('active');
       });
       button.classList.add('active');
-      // Re-render description with new colors
-      renderStaticDescription();
+      // Re-render with new colors
       renderSchrodingerEquation();
+      renderStaticDescription();
+      // Re-setup hover effects after re-rendering
+      setupHoverEffects();
     });
     switcherDiv.appendChild(button);
   });
@@ -246,4 +255,6 @@ document.addEventListener('DOMContentLoaded', () => {
   createColorSchemeSwitcher();
   renderSchrodingerEquation();
   renderStaticDescription();
+  // Setup hover effects after both renders
+  setupHoverEffects();
 });
