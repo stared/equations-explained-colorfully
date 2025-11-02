@@ -19,37 +19,49 @@ const colorSchemes: Record<string, ColorScheme> = {
   vibrant: {
     name: 'Vibrant',
     colors: {
-      imaginary: '#9333ea',      // purple
+      imaginary: '#8b5cf6',      // violet (more distinct from magenta)
       hbar: '#10b981',           // green
-      timeDerivative: '#c026d3',  // magenta
+      timeDerivative: '#ec4899',  // pink
       kineticCoeff: '#3b82f6',   // blue
       spatialDerivative: '#06b6d4', // cyan
       potential: '#f59e0b',       // orange
       wavefunction: '#ef4444',    // red
     },
   },
-  pastel: {
-    name: 'Pastel',
+  accessible: {
+    name: 'Accessible',
     colors: {
-      imaginary: '#a78bfa',      // light purple
-      hbar: '#6ee7b7',           // light green
-      timeDerivative: '#e879f9', // light magenta
-      kineticCoeff: '#60a5fa',   // light blue
-      spatialDerivative: '#22d3ee', // light cyan
-      potential: '#fbbf24',      // light orange
-      wavefunction: '#f87171',   // light red
+      imaginary: '#0072B2',      // blue (Wong palette)
+      hbar: '#E69F00',           // orange
+      timeDerivative: '#009E73',  // bluish green
+      kineticCoeff: '#56B4E9',   // sky blue
+      spatialDerivative: '#CC79A7', // reddish purple
+      potential: '#F0E442',      // yellow
+      wavefunction: '#D55E00',   // vermillion
     },
   },
-  dark: {
-    name: 'Dark',
+  contrast: {
+    name: 'High Contrast',
     colors: {
-      imaginary: '#7c3aed',      // dark purple
-      hbar: '#059669',           // dark green
-      timeDerivative: '#a21caf', // dark magenta
-      kineticCoeff: '#2563eb',   // dark blue
-      spatialDerivative: '#0891b2', // dark cyan
-      potential: '#d97706',      // dark orange
-      wavefunction: '#dc2626',   // dark red
+      imaginary: '#0066CC',      // strong blue
+      hbar: '#FF6600',           // strong orange
+      timeDerivative: '#9933CC', // purple
+      kineticCoeff: '#00AA88',   // teal
+      spatialDerivative: '#CC0066', // magenta
+      potential: '#CCAA00',      // gold
+      wavefunction: '#CC3300',   // dark red
+    },
+  },
+  nocolor: {
+    name: 'No color',
+    colors: {
+      imaginary: '#000000',
+      hbar: '#000000',
+      timeDerivative: '#000000',
+      kineticCoeff: '#000000',
+      spatialDerivative: '#000000',
+      potential: '#000000',
+      wavefunction: '#000000',
     },
   },
 };
