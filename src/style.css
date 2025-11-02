@@ -1,17 +1,16 @@
 :root {
-  /* Color palette inspired by the Fourier transform image */
-  --color-imaginary: #9333ea; /* purple */
-  --color-hbar: #10b981; /* green */
-  --color-time-deriv: #c026d3; /* magenta/fuchsia */
-  --color-kinetic-coeff: #3b82f6; /* blue */
-  --color-spatial-deriv: #06b6d4; /* cyan */
-  --color-potential: #f59e0b; /* orange */
-  --color-wavefunction: #ef4444; /* red */
+  /* Color palette */
+  --color-imaginary: #9333ea;
+  --color-hbar: #10b981;
+  --color-time-deriv: #c026d3;
+  --color-kinetic-coeff: #3b82f6;
+  --color-spatial-deriv: #06b6d4;
+  --color-potential: #f59e0b;
+  --color-wavefunction: #ef4444;
 
   --bg-color: #ffffff;
   --text-color: #1f2937;
-  --explanation-bg: #f3f4f6;
-  --explanation-border: #e5e7eb;
+  --border-color: #d1d5db;
 }
 
 * {
@@ -21,9 +20,7 @@
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: 'ETBembo', Palatino, 'Palatino Linotype', 'Book Antiqua', Georgia, serif;
   background-color: var(--bg-color);
   color: var(--text-color);
   line-height: 1.6;
@@ -31,29 +28,25 @@ body {
 }
 
 #app {
-  max-width: 900px;
+  max-width: 800px;
   margin: 0 auto;
 }
 
 h1 {
-  font-size: 2.5rem;
-  font-weight: 700;
+  font-size: 2rem;
+  font-weight: 400;
   margin-bottom: 0.5rem;
-  color: #111827;
+  color: var(--text-color);
 }
 
 .subtitle {
-  font-size: 1.125rem;
+  font-size: 1rem;
   color: #6b7280;
-  margin-bottom: 1.5rem;
-  font-style: italic;
+  margin-bottom: 2rem;
 }
 
 #equation-container {
-  background: linear-gradient(to bottom, #f9fafb, #ffffff);
-  padding: 3rem 2rem;
-  border-radius: 12px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  padding: 2rem 0;
   margin-bottom: 2rem;
   display: flex;
   justify-content: center;
@@ -61,101 +54,80 @@ h1 {
 }
 
 #equation-container .katex {
-  font-size: 1.8rem;
+  font-size: 1.6rem;
 }
 
 /* Color-coded terms */
 .term-imaginary {
   color: var(--color-imaginary) !important;
-  transition: all 0.2s ease;
 }
 
 .term-hbar {
   color: var(--color-hbar) !important;
-  transition: all 0.2s ease;
 }
 
 .term-time-deriv {
   color: var(--color-time-deriv) !important;
-  transition: all 0.2s ease;
 }
 
 .term-kinetic-coeff {
   color: var(--color-kinetic-coeff) !important;
-  transition: all 0.2s ease;
 }
 
 .term-spatial-deriv {
   color: var(--color-spatial-deriv) !important;
-  transition: all 0.2s ease;
 }
 
 .term-potential {
   color: var(--color-potential) !important;
-  transition: all 0.2s ease;
 }
 
 .term-wavefunction {
   color: var(--color-wavefunction) !important;
-  transition: all 0.2s ease;
 }
 
-/* Hover effects - simple opacity change only */
+/* Hover effects */
 .term-imaginary:hover,
 .term-hbar:hover,
 .term-time-deriv:hover,
 .term-kinetic-coeff:hover,
 .term-spatial-deriv:hover,
 .term-potential:hover,
-.term-wavefunction:hover {
-  opacity: 0.7;
-}
-
-/* Active state - only opacity, no layout changes */
+.term-wavefunction:hover,
 .term-active {
-  opacity: 0.7 !important;
+  opacity: 0.6;
 }
 
 /* Color scheme switcher */
 .color-scheme-switcher {
   display: flex;
-  gap: 0.5rem;
+  gap: 1rem;
   margin-bottom: 2rem;
-  justify-content: center;
+  justify-content: flex-start;
 }
 
 .color-scheme-switcher button {
-  padding: 0.5rem 1rem;
-  border: 2px solid #e5e7eb;
-  border-radius: 6px;
-  background-color: #ffffff;
-  color: #4b5563;
-  font-size: 0.9rem;
-  font-weight: 500;
+  padding: 0.25rem 0.75rem;
+  border: 1px solid var(--border-color);
+  background-color: transparent;
+  color: var(--text-color);
+  font-size: 0.875rem;
   cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.color-scheme-switcher button:hover {
-  border-color: #3b82f6;
-  background-color: #eff6ff;
+  font-family: inherit;
 }
 
 .color-scheme-switcher button.active {
-  border-color: #3b82f6;
-  background-color: #3b82f6;
-  color: #ffffff;
+  background-color: var(--text-color);
+  color: var(--bg-color);
 }
 
 /* Static description with colored terms */
 .static-description {
-  background-color: var(--explanation-bg);
-  border: 2px solid var(--explanation-border);
-  border-radius: 8px;
-  padding: 1.5rem;
+  border-top: 1px solid var(--border-color);
+  padding-top: 1.5rem;
   margin-bottom: 1rem;
-  font-size: 1.05rem;
-  line-height: 1.8;
+  font-size: 1rem;
+  line-height: 1.6;
 }
 
 .static-description p {
@@ -165,33 +137,21 @@ h1 {
 
 .static-description span {
   font-weight: 600;
-  padding: 0 0.15rem;
 }
 
 /* Hover explanation */
 .hover-explanation {
-  background-color: #fef3c7;
-  border: 2px solid #fbbf24;
-  border-radius: 8px;
-  padding: 1rem 1.5rem;
-  min-height: 60px;
+  border-top: 1px solid var(--border-color);
+  padding-top: 1rem;
+  min-height: 3rem;
   opacity: 0;
-  transform: translateY(-10px);
-  transition: all 0.3s ease;
   pointer-events: none;
+  font-size: 0.9rem;
+  color: #6b7280;
 }
 
 .hover-explanation.visible {
   opacity: 1;
-  transform: translateY(0);
-}
-
-.hover-explanation strong {
-  color: #92400e;
-}
-
-.hover-explanation {
-  color: #78350f;
 }
 
 /* Responsive design */
@@ -201,14 +161,10 @@ h1 {
   }
 
   h1 {
-    font-size: 2rem;
+    font-size: 1.5rem;
   }
 
   #equation-container .katex {
-    font-size: 1.3rem;
-  }
-
-  #equation-container {
-    padding: 2rem 1rem;
+    font-size: 1.2rem;
   }
 }
