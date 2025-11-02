@@ -9,7 +9,12 @@
     "preview": "vite preview",
     "lint": "eslint ."
   },
-  "keywords": ["katex", "schrodinger", "interactive", "physics"],
+  "keywords": [
+    "katex",
+    "schrodinger",
+    "interactive",
+    "physics"
+  ],
   "author": "",
   "license": "ISC",
   "packageManager": "pnpm@10.19.0",
@@ -22,6 +27,7 @@
     "vite": "^7.1.12"
   },
   "dependencies": {
-    "katex": "^0.16.25"
+    "katex": "^0.16.25",
+    "marked": "^16.4.1"
   }
 }

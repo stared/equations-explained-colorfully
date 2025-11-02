@@ -57,45 +57,25 @@ h1 {
   font-size: 1.6rem;
 }
 
-/* Color-coded terms */
-.term-imaginary {
-  color: var(--color-imaginary) !important;
+/* Color-coded terms - generic for any class name */
+[class*="term-"] {
+  transition: opacity 0.2s ease;
 }
 
-.term-hbar {
-  color: var(--color-hbar) !important;
-}
+/* Dynamically set colors via CSS variables */
+.term-imaginary { color: var(--color-imaginary, #000) !important; }
+.term-planck { color: var(--color-planck, #000) !important; }
+.term-timederiv { color: var(--color-timederiv, #000) !important; }
+.term-kinetic { color: var(--color-kinetic, #000) !important; }
+.term-spatial { color: var(--color-spatial, #000) !important; }
+.term-potential { color: var(--color-potential, #000) !important; }
+.term-wavefunction { color: var(--color-wavefunction, #000) !important; }
 
-.term-time-deriv {
-  color: var(--color-time-deriv) !important;
-}
-
-.term-kinetic-coeff {
-  color: var(--color-kinetic-coeff) !important;
-}
-
-.term-spatial-deriv {
-  color: var(--color-spatial-deriv) !important;
-}
-
-.term-potential {
-  color: var(--color-potential) !important;
-}
-
-.term-wavefunction {
-  color: var(--color-wavefunction) !important;
-}
-
-/* Hover effects */
-.term-imaginary:hover,
-.term-hbar:hover,
-.term-time-deriv:hover,
-.term-kinetic-coeff:hover,
-.term-spatial-deriv:hover,
-.term-potential:hover,
-.term-wavefunction:hover,
+/* Hover effects - generic for all term classes */
+[class*="term-"]:hover,
 .term-active {
   opacity: 0.6;
+  cursor: pointer;
 }
 
 /* Color scheme switcher */
