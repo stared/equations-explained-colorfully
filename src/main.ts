@@ -2,6 +2,17 @@ import katex from 'katex';
 import './style.css';
 import { loadContent, type ParsedContent } from './parser';
 
+// Render LaTeX in text (handles $...$ inline math)
+function renderLatexInText(text: string): string {
+  return text.replace(/\$([^\$]+)\$/g, (_match, latex) => {
+    try {
+      return katex.renderToString(latex, { displayMode: false, throwOnError: false, strict: false });
+    } catch (e) {
+      return `$${latex}$`;
+    }
+  });
+}
+
 // Color schemes - arrays indexed by order of appearance
 interface ColorScheme {
   name: string;
@@ -76,7 +87,7 @@ function setupHoverEffects() {
   };
 
   const showDefinition = (definition: string) => {
-    hoverDiv.innerHTML = definition;
+    hoverDiv.innerHTML = renderLatexInText(definition);
     hoverDiv.classList.add('visible');
   };
 
