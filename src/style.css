@@ -134,6 +134,31 @@ h1 {
   opacity: 1;
 }
 
+/* Footer */
+.footer {
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--border-color);
+  font-size: 0.875rem;
+  color: #6b7280;
+  text-align: center;
+}
+
+.footer p {
+  margin: 0.5rem 0;
+}
+
+.footer a {
+  color: #6b7280;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.2s ease;
+}
+
+.footer a:hover {
+  border-bottom-color: #6b7280;
+}
+
 /* Responsive design */
 @media (max-width: 768px) {
   body {

@@ -2,6 +2,10 @@
 
 A minimal framework for creating interactive mathematical explanations with colored, annotated equations.
 
+**Demo:** [https://p.migdal.pl/equations-explained-colorfully/](https://p.migdal.pl/equations-explained-colorfully/)
+
+Inspired by the concept of [explorable explanations](https://p.migdal.pl/blog/2024/05/science-games-explorable-explanations/), this framework makes mathematical equations more accessible through color-coding and interactive hover effects.
+
 ## Features
 
 - Simple markdown-based content format
@@ -124,6 +128,12 @@ pnpm build
 └── README.md              # This file
 ```
 
+## Author
+
+Created by [Piotr Migdał](https://p.migdal.pl).
+
+For more on interactive explanations and science communication, see: [Science, games, and explorable explanations](https://p.migdal.pl/blog/2024/05/science-games-explorable-explanations/).
+
 ## License
 
-ISC
+MIT
