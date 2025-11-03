@@ -138,8 +138,8 @@ function createColorSchemeSwitcher() {
 // Initialize - load content and render
 document.addEventListener('DOMContentLoaded', async () => {
   try {
-    // Load content from markdown file
-    parsedContent = await loadContent('/content.md');
+    // Load content from markdown file (use relative path for GitHub Pages base URL)
+    parsedContent = await loadContent('./content.md');
 
     // Apply initial color scheme
     applyColorScheme(currentScheme);
