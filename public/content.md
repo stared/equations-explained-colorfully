@@ -8,7 +8,7 @@ $$
 
 ## Description
 
-To understand how a quantum system evolves, multiply the [imaginary unit]{.imaginary} by [Planck constant]{.planck} by [how the wave changes]{.timederiv}. This equals the [energy from motion]{.kinetic} of [how curved the wave is]{.spatial}, plus the [energy from position]{.potential} acting on [the quantum wave]{.wavefunction}.
+Time evolution equals energy: [imaginary unit]{.imaginary}[Planck constant]{.planck}[how the wave changes]{.timederiv} equals ([energy from position]{.potential} + [energy from motion]{.kinetic} from [spatial curvature]{.spatial}) acting on [the quantum wave]{.wavefunction}.
 
 ## .imaginary
 
