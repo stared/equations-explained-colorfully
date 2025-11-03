@@ -69,6 +69,10 @@ function setupHoverEffects() {
   const hoverExplanationDiv = document.getElementById('hover-explanation');
   if (!hoverExplanationDiv || !parsedContent) return;
 
+  // Track currently clicked term
+  let clickedTermClass: string | null = null;
+  let clickedDefinition: string | null = null;
+
   // Get all elements with term classes (both in equation and description)
   const termElements = document.querySelectorAll('[class*="term-"]');
 
@@ -84,6 +88,39 @@ function setupHoverEffects() {
 
     if (!definition) return;
 
+    // Click handler - persist selection
+    element.addEventListener('click', () => {
+      // If clicking the same term, deselect it
+      if (clickedTermClass === termClass) {
+        document.querySelectorAll(`.${termClass}`).forEach((el) => {
+          el.classList.remove('term-clicked');
+        });
+        clickedTermClass = null;
+        clickedDefinition = null;
+        hoverExplanationDiv.classList.remove('visible');
+      } else {
+        // Remove clicked state from previous term
+        if (clickedTermClass) {
+          document.querySelectorAll(`.${clickedTermClass}`).forEach((el) => {
+            el.classList.remove('term-clicked');
+          });
+        }
+
+        // Add clicked state to new term
+        document.querySelectorAll(`.${termClass}`).forEach((el) => {
+          el.classList.add('term-clicked');
+        });
+
+        clickedTermClass = termClass;
+        clickedDefinition = definition;
+
+        // Show definition
+        hoverExplanationDiv.innerHTML = definition;
+        hoverExplanationDiv.classList.add('visible');
+      }
+    });
+
+    // Hover handlers
     element.addEventListener('mouseenter', () => {
       // Add active class to all elements with the same term class
       document.querySelectorAll(`.${termClass}`).forEach((el) => {
@@ -101,8 +138,14 @@ function setupHoverEffects() {
         el.classList.remove('term-active');
       });
 
-      // Hide explanation
-      hoverExplanationDiv.classList.remove('visible');
+      // If a term is clicked, restore its definition
+      if (clickedTermClass && clickedDefinition) {
+        hoverExplanationDiv.innerHTML = clickedDefinition;
+        hoverExplanationDiv.classList.add('visible');
+      } else {
+        // Otherwise hide explanation
+        hoverExplanationDiv.classList.remove('visible');
+      }
     });
 
     // Add hover cursor

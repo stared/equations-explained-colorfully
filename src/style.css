@@ -126,12 +126,20 @@ h1 {
   min-height: 3rem;
   opacity: 0;
   pointer-events: none;
-  font-size: 0.9rem;
-  color: #6b7280;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--text-color);
 }
 
 .hover-explanation.visible {
   opacity: 1;
+}
+
+/* Clicked/selected term indication */
+.term-clicked {
+  opacity: 0.6;
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
 }
 
 /* Footer */
