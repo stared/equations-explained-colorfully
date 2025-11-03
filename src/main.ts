@@ -66,90 +66,51 @@ function renderDescription() {
 }
 
 function setupHoverEffects() {
-  const hoverExplanationDiv = document.getElementById('hover-explanation');
-  if (!hoverExplanationDiv || !parsedContent) return;
+  const hoverDiv = document.getElementById('hover-explanation');
+  if (!hoverDiv || !parsedContent) return;
 
-  // Track currently clicked term
-  let clickedTermClass: string | null = null;
-  let clickedDefinition: string | null = null;
+  let clicked: { termClass: string; definition: string } | null = null;
 
-  // Get all elements with term classes (both in equation and description)
-  const termElements = document.querySelectorAll('[class*="term-"]');
+  const updateTerms = (termClass: string, classList: string, action: 'add' | 'remove') => {
+    document.querySelectorAll(`.${termClass}`).forEach((el) => el.classList[action](classList));
+  };
 
-  termElements.forEach((element) => {
-    const classes = Array.from(element.classList);
-    const termClass = classes.find((c) => c.startsWith('term-'));
+  const showDefinition = (definition: string) => {
+    hoverDiv.innerHTML = definition;
+    hoverDiv.classList.add('visible');
+  };
 
+  document.querySelectorAll('[class*="term-"]').forEach((element) => {
+    const termClass = Array.from(element.classList).find((c) => c.startsWith('term-'));
     if (!termClass) return;
 
-    // Extract class name (e.g., "term-imaginary" -> "imaginary")
-    const className = termClass.replace('term-', '');
-    const definition = parsedContent?.definitions.get(className);
-
+    const definition = parsedContent?.definitions.get(termClass.replace('term-', ''));
     if (!definition) return;
 
-    // Click handler - persist selection
+    (element as HTMLElement).style.cursor = 'pointer';
+
     element.addEventListener('click', () => {
-      // If clicking the same term, deselect it
-      if (clickedTermClass === termClass) {
-        document.querySelectorAll(`.${termClass}`).forEach((el) => {
-          el.classList.remove('term-clicked');
-        });
-        clickedTermClass = null;
-        clickedDefinition = null;
-        hoverExplanationDiv.classList.remove('visible');
+      if (clicked?.termClass === termClass) {
+        updateTerms(termClass, 'term-clicked', 'remove');
+        clicked = null;
+        hoverDiv.classList.remove('visible');
       } else {
-        // Remove clicked state from previous term
-        if (clickedTermClass) {
-          document.querySelectorAll(`.${clickedTermClass}`).forEach((el) => {
-            el.classList.remove('term-clicked');
-          });
-        }
-
-        // Add clicked state to new term
-        document.querySelectorAll(`.${termClass}`).forEach((el) => {
-          el.classList.add('term-clicked');
-        });
-
-        clickedTermClass = termClass;
-        clickedDefinition = definition;
-
-        // Show definition
-        hoverExplanationDiv.innerHTML = definition;
-        hoverExplanationDiv.classList.add('visible');
+        if (clicked) updateTerms(clicked.termClass, 'term-clicked', 'remove');
+        updateTerms(termClass, 'term-clicked', 'add');
+        clicked = { termClass, definition };
+        showDefinition(definition);
       }
     });
 
-    // Hover handlers
     element.addEventListener('mouseenter', () => {
-      // Add active class to all elements with the same term class
-      document.querySelectorAll(`.${termClass}`).forEach((el) => {
-        el.classList.add('term-active');
-      });
-
-      // Show definition in hover explanation
-      hoverExplanationDiv.innerHTML = definition;
-      hoverExplanationDiv.classList.add('visible');
+      updateTerms(termClass, 'term-active', 'add');
+      showDefinition(definition);
     });
 
     element.addEventListener('mouseleave', () => {
-      // Remove active class
-      document.querySelectorAll(`.${termClass}`).forEach((el) => {
-        el.classList.remove('term-active');
-      });
-
-      // If a term is clicked, restore its definition
-      if (clickedTermClass && clickedDefinition) {
-        hoverExplanationDiv.innerHTML = clickedDefinition;
-        hoverExplanationDiv.classList.add('visible');
-      } else {
-        // Otherwise hide explanation
-        hoverExplanationDiv.classList.remove('visible');
-      }
+      updateTerms(termClass, 'term-active', 'remove');
+      clicked ? showDefinition(clicked.definition) : hoverDiv.classList.remove('visible');
     });
-
-    // Add hover cursor
-    (element as HTMLElement).style.cursor = 'pointer';
   });
 }
 
