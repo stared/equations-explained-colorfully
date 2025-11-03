@@ -45,7 +45,7 @@ export function parseContent(markdown: string): ParsedContent {
     // Parse equation content
     if (inEquation) {
       // Convert \mark[class]{latex} to \htmlClass{term-class}{latex}
-      const converted = line.replace(/\\mark\[([^\]]+)\]\{/g, (match, className) => {
+      const converted = line.replace(/\\mark\[([^\]]+)\]\{/g, (_match, className) => {
         const termClass = `term-${className}`;
         if (!seenTerms.has(className)) {
           termOrder.push(className);
@@ -79,7 +79,7 @@ export function parseContent(markdown: string): ParsedContent {
     // Parse description content
     if (inDescription && line.trim() && !line.startsWith('#')) {
       // Convert [text]{.class} to <span class="term-class">text</span>
-      const converted = line.replace(/\[([^\]]+)\]\{\.([^\}]+)\}/g, (match, text, className) => {
+      const converted = line.replace(/\[([^\]]+)\]\{\.([^\}]+)\}/g, (_match, text, className) => {
         const termClass = `term-${className}`;
         if (!seenTerms.has(className)) {
           termOrder.push(className);

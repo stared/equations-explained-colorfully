@@ -80,7 +80,7 @@ function setupHoverEffects() {
 
     // Extract class name (e.g., "term-imaginary" -> "imaginary")
     const className = termClass.replace('term-', '');
-    const definition = parsedContent.definitions.get(className);
+    const definition = parsedContent?.definitions.get(className);
 
     if (!definition) return;
 

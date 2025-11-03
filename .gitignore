@@ -4,6 +4,7 @@ pnpm-lock.yaml
 
 # Build outputs
 dist/
+.astro/
 *.local
 
 # Editor directories and files
