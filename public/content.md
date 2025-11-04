@@ -8,7 +8,7 @@ $$
 
 ## Description
 
-Time evolution equals energy: [imaginary unit]{.imaginary}[Planck constant]{.planck}[how the wave changes]{.timederiv} equals ([energy from position]{.potential} + [energy from motion]{.kinetic} from [spatial curvature]{.spatial}) acting on [the quantum wave]{.wavefunction}.
+[How the wave changes]{.timederiv}, scaled by the [imaginary unit]{.imaginary} and the [Planck constant]{.planck}, equals ([energy from motion]{.kinetic} from [spatial curvature]{.spatial} + [energy from position]{.potential}) acting on [the quantum wave]{.wavefunction}.
 
 ## .imaginary
 
