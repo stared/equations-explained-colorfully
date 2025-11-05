@@ -90,6 +90,18 @@ function renderEquation() {
     trust: true, // Enable \htmlClass
     throwOnError: false,
   });
+
+  // Set pointer-events: none on KaTeX structural elements so they don't block term hover
+  // But keep term elements interactive
+  equationContainer.querySelectorAll('.katex *').forEach((el) => {
+    const classList = (el as HTMLElement).classList;
+    const hasTermClass = Array.from(classList).some(c => c.startsWith('term-'));
+    if (hasTermClass) {
+      (el as HTMLElement).style.pointerEvents = 'auto';
+    } else {
+      (el as HTMLElement).style.pointerEvents = 'none';
+    }
+  });
 }
 
 function renderDescription() {
@@ -103,7 +115,7 @@ function setupHoverEffects() {
   const hoverDiv = document.getElementById('hover-explanation');
   if (!hoverDiv || !parsedContent) return;
 
-  let clicked: { termClass: string; definition: string } | null = null;
+  let clicked: { element: HTMLElement; termClass: string; definition: string } | null = null;
 
   const updateTerms = (termClass: string, classList: string, action: 'add' | 'remove') => {
     document.querySelectorAll(`.${termClass}`).forEach((el) => el.classList[action](classList));
@@ -124,14 +136,14 @@ function setupHoverEffects() {
     (element as HTMLElement).style.cursor = 'pointer';
 
     element.addEventListener('click', () => {
-      if (clicked?.termClass === termClass) {
+      if (clicked?.element === element) {
         updateTerms(termClass, 'term-clicked', 'remove');
         clicked = null;
         hoverDiv.classList.remove('visible');
       } else {
         if (clicked) updateTerms(clicked.termClass, 'term-clicked', 'remove');
         updateTerms(termClass, 'term-clicked', 'add');
-        clicked = { termClass, definition };
+        clicked = { element: element as HTMLElement, termClass, definition };
         showDefinition(definition);
       }
     });

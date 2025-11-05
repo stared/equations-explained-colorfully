@@ -43,6 +43,8 @@ h1 {
   display: flex;
   justify-content: center;
   align-items: center;
+  position: relative;
+  z-index: 10;
 }
 
 #equation-container .katex {
@@ -52,6 +54,11 @@ h1 {
 /* Color-coded terms - generic for any class name */
 [class*="term-"] {
   transition: opacity 0.2s ease;
+}
+
+/* Ensure child elements don't block hover events */
+[class*="term-"] * {
+  pointer-events: none !important;
 }
 
 /* Hover effects - generic for all term classes */
@@ -120,6 +127,8 @@ h1 {
   margin-bottom: 1rem;
   font-size: 1rem;
   line-height: 1.6;
+  position: relative;
+  z-index: 1;
 }
 
 .static-description p {
