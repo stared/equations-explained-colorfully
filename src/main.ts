@@ -46,13 +46,13 @@ function applyColorScheme(schemeName: string) {
   const scheme = colorSchemes[schemeName];
   if (!scheme || !parsedContent) return;
 
-  const root = document.documentElement;
-
-  // Apply colors based on term order from parsed content
+  // Apply colors directly to all term elements via TypeScript
   parsedContent.termOrder.forEach((className, index) => {
-    const cssVarName = `--color-${className}`;
     const color = scheme.colors[index] || '#000000';
-    root.style.setProperty(cssVarName, color);
+    const elements = document.querySelectorAll(`.term-${className}`);
+    elements.forEach((el) => {
+      (el as HTMLElement).style.color = color;
+    });
   });
 
   currentScheme = schemeName;
@@ -134,15 +134,16 @@ function createColorSchemeSwitcher() {
     button.textContent = colorSchemes[schemeKey].name;
     button.className = schemeKey === currentScheme ? 'active' : '';
     button.addEventListener('click', () => {
-      applyColorScheme(schemeKey);
       // Update active button
       switcherDiv.querySelectorAll('button').forEach((btn) => {
         btn.classList.remove('active');
       });
       button.classList.add('active');
-      // Re-render with new colors
+      // Re-render
       renderEquation();
       renderDescription();
+      // Apply colors AFTER rendering
+      applyColorScheme(schemeKey);
       // Re-setup hover effects after re-rendering
       setupHoverEffects();
     });
@@ -156,15 +157,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Load content from markdown file (use relative path for GitHub Pages base URL)
     parsedContent = await loadContent('./content.md');
 
-    // Apply initial color scheme
-    applyColorScheme(currentScheme);
-
     // Create color scheme switcher
     createColorSchemeSwitcher();
 
     // Render content
     renderEquation();
     renderDescription();
+
+    // Apply colors AFTER rendering (elements must exist first)
+    applyColorScheme(currentScheme);
 
     // Setup hover effects after both renders
     setupHoverEffects();
