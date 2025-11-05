@@ -1,6 +1,6 @@
 {
   "name": "interactive-katex",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "Interactive KaTeX demo for Schrödinger equation with color-coded terms",
   "type": "module",
   "scripts": {
@@ -15,7 +15,7 @@
     "interactive",
     "physics"
   ],
-  "author": "",
+  "author": "Piotr Migdał",
   "license": "MIT",
   "packageManager": "pnpm@10.19.0",
   "devDependencies": {
