@@ -1,13 +1,5 @@
 :root {
-  /* Color palette */
-  --color-imaginary: #9333ea;
-  --color-hbar: #10b981;
-  --color-time-deriv: #c026d3;
-  --color-kinetic-coeff: #3b82f6;
-  --color-spatial-deriv: #06b6d4;
-  --color-potential: #f59e0b;
-  --color-wavefunction: #ef4444;
-
+  /* Layout and theme colors */
   --bg-color: #ffffff;
   --text-color: #1f2937;
   --border-color: #d1d5db;
@@ -61,15 +53,6 @@ h1 {
 [class*="term-"] {
   transition: opacity 0.2s ease;
 }
-
-/* Dynamically set colors via CSS variables */
-.term-imaginary { color: var(--color-imaginary, #000) !important; }
-.term-planck { color: var(--color-planck, #000) !important; }
-.term-timederiv { color: var(--color-timederiv, #000) !important; }
-.term-kinetic { color: var(--color-kinetic, #000) !important; }
-.term-spatial { color: var(--color-spatial, #000) !important; }
-.term-potential { color: var(--color-potential, #000) !important; }
-.term-wavefunction { color: var(--color-wavefunction, #000) !important; }
 
 /* Hover effects - generic for all term classes */
 [class*="term-"]:hover,

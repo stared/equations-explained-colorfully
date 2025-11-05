@@ -102,6 +102,36 @@ export function parseContent(markdown: string): ParsedContent {
     definitions.set(currentDefClass, currentDefContent.join('\n').trim());
   }
 
+  // Validate that all terms have definitions
+  const missingDefinitions: string[] = [];
+  for (const term of termOrder) {
+    if (!definitions.has(term)) {
+      missingDefinitions.push(term);
+    }
+  }
+
+  if (missingDefinitions.length > 0) {
+    console.warn(
+      'Warning: The following terms are referenced but have no definitions:',
+      missingDefinitions
+    );
+  }
+
+  // Optionally warn about unused definitions
+  const unusedDefinitions: string[] = [];
+  for (const defTerm of definitions.keys()) {
+    if (!seenTerms.has(defTerm)) {
+      unusedDefinitions.push(defTerm);
+    }
+  }
+
+  if (unusedDefinitions.length > 0) {
+    console.warn(
+      'Warning: The following definitions are not referenced in equation or description:',
+      unusedDefinitions
+    );
+  }
+
   return {
     latex: latex.trim(),
     description: description.trim(),
