@@ -2,6 +2,17 @@ import katex from 'katex';
 import './style.css';
 import { loadContent, type ParsedContent } from './parser';
 
+// Equation metadata
+interface EquationInfo {
+  id: string;
+  title: string;
+  category: string;
+  file: string;
+}
+
+let equations: EquationInfo[] = [];
+let currentEquationId = 'schrodinger';
+
 // Render LaTeX in text (handles $...$ inline math)
 function renderLatexInText(text: string): string {
   return text.replace(/\$([^\$]+)\$/g, (_match, latex) => {
@@ -22,19 +33,31 @@ interface ColorScheme {
 const colorSchemes: Record<string, ColorScheme> = {
   vibrant: {
     name: 'Vibrant',
-    colors: ['#8b5cf6', '#10b981', '#ec4899', '#3b82f6', '#06b6d4', '#f59e0b', '#ef4444'],
+    colors: [
+      '#8b5cf6', '#10b981', '#ec4899', '#3b82f6', '#06b6d4', '#f59e0b', '#ef4444',
+      '#a855f7', '#14b8a6', '#84cc16', '#6366f1', '#f97316'
+    ],
   },
   accessible: {
     name: 'Accessible',
-    colors: ['#0072B2', '#E69F00', '#009E73', '#56B4E9', '#CC79A7', '#F0E442', '#D55E00'],
+    colors: [
+      '#0072B2', '#E69F00', '#009E73', '#56B4E9', '#CC79A7', '#F0E442', '#D55E00',
+      '#000000', '#999999', '#4B0082', '#8B4513', '#2F4F4F'
+    ],
   },
   contrast: {
     name: 'High Contrast',
-    colors: ['#0066CC', '#FF6600', '#9933CC', '#00AA88', '#CC0066', '#CCAA00', '#CC3300'],
+    colors: [
+      '#0066CC', '#FF6600', '#9933CC', '#00AA88', '#CC0066', '#CCAA00', '#CC3300',
+      '#006600', '#660099', '#996633', '#336699', '#663366'
+    ],
   },
   nocolor: {
     name: 'No color',
-    colors: ['#000000', '#000000', '#000000', '#000000', '#000000', '#000000', '#000000'],
+    colors: [
+      '#000000', '#000000', '#000000', '#000000', '#000000', '#000000', '#000000',
+      '#000000', '#000000', '#000000', '#000000', '#000000'
+    ],
   },
 };
 
@@ -151,24 +174,96 @@ function createColorSchemeSwitcher() {
   });
 }
 
+// Load equations list
+async function loadEquationsList(): Promise<EquationInfo[]> {
+  const response = await fetch('./examples/equations.json');
+  return response.json();
+}
+
+// Load and render a specific equation
+async function loadEquation(equationId: string) {
+  const equation = equations.find(eq => eq.id === equationId);
+  if (!equation) return;
+
+  currentEquationId = equationId;
+
+  // Load the markdown content
+  parsedContent = await loadContent(`./examples/${equation.file}`);
+
+  // Update title
+  const titleElement = document.getElementById('equation-title');
+  if (titleElement) {
+    titleElement.textContent = equation.title;
+  }
+
+  // Clear and re-render
+  const equationContainer = document.getElementById('equation-container');
+  const descriptionContainer = document.getElementById('static-description');
+  const hoverContainer = document.getElementById('hover-explanation');
+
+  if (equationContainer) equationContainer.innerHTML = '';
+  if (descriptionContainer) descriptionContainer.innerHTML = '';
+  if (hoverContainer) {
+    hoverContainer.innerHTML = '';
+    hoverContainer.classList.remove('visible');
+  }
+
+  // Render content
+  renderEquation();
+  renderDescription();
+
+  // Apply colors AFTER rendering
+  applyColorScheme(currentScheme);
+
+  // Setup hover effects
+  setupHoverEffects();
+
+  // Update active button
+  const selectorDiv = document.getElementById('equation-selector');
+  if (selectorDiv) {
+    selectorDiv.querySelectorAll('button').forEach(btn => {
+      if (btn.dataset.equationId === equationId) {
+        btn.classList.add('active');
+      } else {
+        btn.classList.remove('active');
+      }
+    });
+  }
+}
+
+// Create equation selector buttons
+function createEquationSelector() {
+  const selectorDiv = document.getElementById('equation-selector');
+  if (!selectorDiv) return;
+
+  equations.forEach(equation => {
+    const button = document.createElement('button');
+    button.innerHTML = `${equation.title} <span class="category">(${equation.category})</span>`;
+    button.dataset.equationId = equation.id;
+    button.className = equation.id === currentEquationId ? 'active' : '';
+
+    button.addEventListener('click', async () => {
+      await loadEquation(equation.id);
+    });
+
+    selectorDiv.appendChild(button);
+  });
+}
+
 // Initialize - load content and render
 document.addEventListener('DOMContentLoaded', async () => {
   try {
-    // Load content from markdown file (use relative path for GitHub Pages base URL)
-    parsedContent = await loadContent('./content.md');
+    // Load equations list
+    equations = await loadEquationsList();
+
+    // Create equation selector
+    createEquationSelector();
 
     // Create color scheme switcher
     createColorSchemeSwitcher();
 
-    // Render content
-    renderEquation();
-    renderDescription();
-
-    // Apply colors AFTER rendering (elements must exist first)
-    applyColorScheme(currentScheme);
-
-    // Setup hover effects after both renders
-    setupHoverEffects();
+    // Load initial equation
+    await loadEquation(currentEquationId);
   } catch (error) {
     console.error('Failed to load content:', error);
     // Re-throw to fail the build

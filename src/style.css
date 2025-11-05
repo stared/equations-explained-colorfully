@@ -61,6 +61,35 @@ h1 {
   cursor: pointer;
 }
 
+/* Equation selector */
+.equation-selector {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.equation-selector button {
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--border-color);
+  background-color: transparent;
+  color: var(--text-color);
+  font-size: 0.875rem;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.equation-selector button.active {
+  background-color: var(--text-color);
+  color: var(--bg-color);
+}
+
+.equation-selector .category {
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin-left: 0.25rem;
+}
+
 /* Color scheme switcher */
 .color-scheme-switcher {
   display: flex;
