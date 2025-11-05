@@ -170,5 +170,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     setupHoverEffects();
   } catch (error) {
     console.error('Failed to load content:', error);
+    // Re-throw to fail the build
+    throw error;
   }
 });

@@ -21,7 +21,9 @@ export function parseContent(markdown: string): ParsedContent {
   let description = '';
   const definitions = new Map<string, string>();
   const termOrder: string[] = [];
-  const seenTerms = new Set<string>();
+  const equationTerms = new Set<string>(); // Terms marked in equation with \mark
+  const descriptionTerms = new Set<string>(); // Terms used in description with [text]{.class}
+  const seenTerms = new Set<string>(); // All terms seen (for color ordering)
 
   let inEquation = false;
   let inDescription = false;
@@ -47,6 +49,7 @@ export function parseContent(markdown: string): ParsedContent {
       // Convert \mark[class]{latex} to \htmlClass{term-class}{latex}
       const converted = line.replace(/\\mark\[([^\]]+)\]\{/g, (_match, className) => {
         const termClass = `term-${className}`;
+        equationTerms.add(className); // Track equation terms
         if (!seenTerms.has(className)) {
           termOrder.push(className);
           seenTerms.add(className);
@@ -81,6 +84,7 @@ export function parseContent(markdown: string): ParsedContent {
       // Convert [text]{.class} to <span class="term-class">text</span>
       const converted = line.replace(/\[([^\]]+)\]\{\.([^\}]+)\}/g, (_match, text, className) => {
         const termClass = `term-${className}`;
+        descriptionTerms.add(className); // Track description terms
         if (!seenTerms.has(className)) {
           termOrder.push(className);
           seenTerms.add(className);
@@ -102,34 +106,56 @@ export function parseContent(markdown: string): ParsedContent {
     definitions.set(currentDefClass, currentDefContent.join('\n').trim());
   }
 
-  // Validate that all terms have definitions
-  const missingDefinitions: string[] = [];
-  for (const term of termOrder) {
+  // VALIDATION: Build-time checks
+  const errors: string[] = [];
+  const warnings: string[] = [];
+
+  // ERROR: Terms used in description but not marked in equation
+  for (const term of descriptionTerms) {
+    if (!equationTerms.has(term)) {
+      errors.push(
+        `Term "${term}" is used in description [text]{.${term}} but not marked in equation with \\mark[${term}]{...}`
+      );
+    }
+  }
+
+  // ERROR: Terms marked in equation but have no definition
+  for (const term of equationTerms) {
     if (!definitions.has(term)) {
-      missingDefinitions.push(term);
+      errors.push(
+        `Term "${term}" is marked in equation with \\mark[${term}]{...} but has no definition (## .${term})`
+      );
     }
   }
 
-  if (missingDefinitions.length > 0) {
-    console.warn(
-      'Warning: The following terms are referenced but have no definitions:',
-      missingDefinitions
-    );
+  // WARNING: Terms marked in equation but not used in description
+  for (const term of equationTerms) {
+    if (!descriptionTerms.has(term)) {
+      warnings.push(
+        `Term "${term}" is marked in equation but not used in description`
+      );
+    }
   }
 
-  // Optionally warn about unused definitions
-  const unusedDefinitions: string[] = [];
+  // WARNING: Definitions exist but term never marked in equation
   for (const defTerm of definitions.keys()) {
-    if (!seenTerms.has(defTerm)) {
-      unusedDefinitions.push(defTerm);
+    if (!equationTerms.has(defTerm)) {
+      warnings.push(
+        `Definition "## .${defTerm}" exists but term is never marked in equation`
+      );
     }
   }
 
-  if (unusedDefinitions.length > 0) {
-    console.warn(
-      'Warning: The following definitions are not referenced in equation or description:',
-      unusedDefinitions
-    );
+  // Throw errors if any validation failed
+  if (errors.length > 0) {
+    const errorMessage = 'Content validation failed:\n' + errors.map(e => `  - ${e}`).join('\n');
+    throw new Error(errorMessage);
+  }
+
+  // Log warnings
+  if (warnings.length > 0) {
+    console.warn('Content validation warnings:');
+    warnings.forEach(w => console.warn(`  - ${w}`));
   }
 
   return {
