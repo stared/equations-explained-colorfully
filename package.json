@@ -16,7 +16,7 @@
     "physics"
   ],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "packageManager": "pnpm@10.19.0",
   "devDependencies": {
     "@types/node": "^24.9.2",
@@ -27,7 +27,6 @@
     "vite": "^7.1.12"
   },
   "dependencies": {
-    "katex": "^0.16.25",
-    "marked": "^16.4.1"
+    "katex": "^0.16.25"
   }
 }
