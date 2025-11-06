@@ -50,11 +50,31 @@ body {
   margin: 0 auto;
 }
 
+.title-bar {
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
 h1 {
   font-size: 2rem;
   font-weight: 400;
-  margin-bottom: 0.5rem;
   color: var(--text-color);
+  margin: 0;
+}
+
+.source-link {
+  font-size: 0.875rem;
+  color: #6b7280;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.source-link:hover {
+  color: var(--text-color);
+  border-bottom-color: #6b7280;
 }
 
 .subtitle {

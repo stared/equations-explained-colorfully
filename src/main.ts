@@ -213,6 +213,12 @@ async function loadEquation(equationId: string, updateHash = true) {
     titleElement.textContent = equation.title;
   }
 
+  // Update source link
+  const sourceLink = document.getElementById('source-link') as HTMLAnchorElement;
+  if (sourceLink) {
+    sourceLink.href = `https://github.com/stared/equations-explained-colorfully/blob/main/public/examples/${equation.file}`;
+  }
+
   // Clear and re-render
   const equationContainer = document.getElementById('equation-container');
   const descriptionContainer = document.getElementById('static-description');
