@@ -108,44 +108,86 @@ export function extractClassNames(markdown: string): string[] {
   return Array.from(classNames);
 }
 
-// Apply term colors to highlighted code
-export function applyTermColors(
+// Mark errors in editor with subtle underlines
+export function markErrors(
   element: HTMLElement,
-  termOrder: string[],
-  colors: string[]
+  errors: string[]
 ) {
-  // Apply colors to \mark[classname] elements
-  element.querySelectorAll('.latex-mark').forEach(el => {
-    const text = el.textContent || '';
-    const match = text.match(/\[([^\]]+)\]/);
-    if (match) {
-      const className = match[1];
-      const colorIndex = termOrder.indexOf(className);
-      if (colorIndex >= 0 && colors[colorIndex]) {
-        (el as HTMLElement).style.color = colors[colorIndex];
+  if (errors.length === 0) return;
+
+  // Only mark terms that are missing definitions (critical errors)
+  // Don't mark terms that are just unused in description (warnings)
+  const termsWithoutDefinitions = new Set<string>();
+
+  errors.forEach(error => {
+    // Only mark "marked in equation but has no definition" errors
+    if (error.includes('has no definition')) {
+      const termMatch = error.match(/Term "([^"]+)"/);
+      if (termMatch) {
+        termsWithoutDefinitions.add(termMatch[1]);
       }
     }
   });
 
-  // Apply colors to [text]{.classname} elements
-  element.querySelectorAll('.md-ref').forEach(el => {
+  if (termsWithoutDefinitions.size === 0) return;
+
+  // Mark only the \mark[term] in equations and ## .term headings
+  // Don't mark references in description (those are fine)
+  element.querySelectorAll('.token.latex-mark').forEach(el => {
+    const text = el.textContent || '';
+    termsWithoutDefinitions.forEach(term => {
+      if (text.includes(`[${term}]`)) {
+        el.classList.add('has-error');
+      }
+    });
+  });
+}
+
+// Apply term colors to highlighted code based on dynamic markdown content
+export function applyTermColors(
+  element: HTMLElement,
+  markdown: string,
+  colors: string[]
+) {
+  // Re-extract term order from current markdown content
+  const termOrder = extractClassNames(markdown);
+
+  // Apply colors to entire \mark[classname]{content} elements
+  element.querySelectorAll('.token.latex-mark').forEach(el => {
+    const text = el.textContent || '';
+    const match = text.match(/\\mark\[([^\]]+)\]/);
+    if (match) {
+      const className = match[1];
+      const colorIndex = termOrder.indexOf(className);
+      if (colorIndex >= 0 && colors[colorIndex]) {
+        (el as HTMLElement).style.setProperty('color', colors[colorIndex], 'important');
+      }
+    }
+  });
+
+  // Apply colors to entire [text]{.classname} elements
+  element.querySelectorAll('.token.md-ref').forEach(el => {
     const text = el.textContent || '';
     const match = text.match(/\{\.([^\}]+)\}/);
     if (match) {
       const className = match[1];
       const colorIndex = termOrder.indexOf(className);
       if (colorIndex >= 0 && colors[colorIndex]) {
-        (el as HTMLElement).style.color = colors[colorIndex];
+        (el as HTMLElement).style.setProperty('color', colors[colorIndex], 'important');
       }
     }
   });
 
-  // Apply colors to ## .classname headings
-  element.querySelectorAll('.heading-class .class-name').forEach(el => {
-    const className = (el.textContent || '').replace('.', '');
-    const colorIndex = termOrder.indexOf(className);
-    if (colorIndex >= 0 && colors[colorIndex]) {
-      (el as HTMLElement).style.color = colors[colorIndex];
+  // Apply colors to entire ## .classname headings
+  element.querySelectorAll('.token.heading-class').forEach(el => {
+    const text = el.textContent || '';
+    const match = text.match(/##\s+\.([a-z][a-z0-9-]*)/);
+    if (match) {
+      const className = match[1];
+      const colorIndex = termOrder.indexOf(className);
+      if (colorIndex >= 0 && colors[colorIndex]) {
+        (el as HTMLElement).style.setProperty('color', colors[colorIndex], 'important');
+      }
     }
   });
 }

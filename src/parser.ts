@@ -1,10 +1,13 @@
 // Parser for interactive math markdown format
 
 export interface ParsedContent {
+  title?: string; // Optional title from # heading
   latex: string; // LaTeX equation with \htmlClass annotations
   description: string; // HTML description with term spans
   definitions: Map<string, string>; // class -> definition HTML
   termOrder: string[]; // Order of first appearance for color indexing
+  errors: string[]; // Validation errors (non-fatal)
+  warnings: string[]; // Validation warnings
 }
 
 /**
@@ -17,6 +20,7 @@ export interface ParsedContent {
  */
 export function parseContent(markdown: string): ParsedContent {
   const lines = markdown.split('\n');
+  let title: string | undefined = undefined;
   let latex = '';
   let description = '';
   const definitions = new Map<string, string>();
@@ -32,6 +36,12 @@ export function parseContent(markdown: string): ParsedContent {
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
+
+    // Parse title from # heading (only first one)
+    if (!title && line.match(/^#\s+[^#]/)) {
+      title = line.substring(2).trim(); // Remove "# "
+      continue;
+    }
 
     // Detect equation block
     if (line.trim() === '$$') {
@@ -146,23 +156,23 @@ export function parseContent(markdown: string): ParsedContent {
     }
   }
 
-  // Throw errors if any validation failed
+  // Return errors and warnings without throwing (allow preview to continue)
   if (errors.length > 0) {
-    const errorMessage = 'Content validation failed:\n' + errors.map(e => `  - ${e}`).join('\n');
-    throw new Error(errorMessage);
+    console.error('Content validation errors:', errors);
   }
 
-  // Log warnings
   if (warnings.length > 0) {
-    console.warn('Content validation warnings:');
-    warnings.forEach(w => console.warn(`  - ${w}`));
+    console.warn('Content validation warnings:', warnings);
   }
 
   return {
+    title,
     latex: latex.trim(),
     description: description.trim(),
     definitions,
     termOrder,
+    errors,
+    warnings,
   };
 }
 

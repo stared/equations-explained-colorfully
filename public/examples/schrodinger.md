@@ -1,4 +1,4 @@
-# Interactive Schrödinger Equation
+# Schrödinger Equation
 
 ## Equation
 

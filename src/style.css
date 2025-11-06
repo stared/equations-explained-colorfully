@@ -316,34 +316,9 @@ h1 {
   margin: 0;
 }
 
-/* Syntax highlighting colors */
-.token.keyword {
-  color: #d73a49;
+/* Syntax highlighting - minimal, term colors applied via JS */
+.token.heading {
   font-weight: 600;
-}
-
-.token.mark-class,
-.token.ref-class,
-.token.class-name {
-  color: #005cc5;
-  font-weight: 600;
-}
-
-.token.mark-content,
-.token.ref-text {
-  color: #032f62;
-}
-
-.token.heading,
-.token.heading-class {
-  color: #22863a;
-  font-weight: 600;
-}
-
-.token.latex-display,
-.token.latex-inline {
-  color: #6f42c1;
-  font-style: italic;
 }
 
 .token.bold {
@@ -356,6 +331,13 @@ h1 {
 
 .token.punctuation {
   color: #6a737d;
+}
+
+/* Error highlighting - subtle, only in editor */
+.token.has-error {
+  text-decoration: underline dotted rgba(239, 68, 68, 0.4);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
 }
 
 /* Responsive design */

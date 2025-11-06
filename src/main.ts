@@ -4,7 +4,7 @@ import { loadContent, type ParsedContent } from './parser';
 import { CodeJar } from 'codejar';
 import Prism from 'prismjs';
 import './prism-custom';
-import { applyTermColors } from './prism-custom';
+import { applyTermColors, markErrors } from './prism-custom';
 
 // Equation metadata
 interface EquationInfo {
@@ -190,6 +190,11 @@ function createColorSchemeSwitcher() {
       applyColorScheme(schemeKey);
       // Re-setup hover effects after re-rendering
       setupHoverEffects();
+      // Update editor highlighting with new color scheme
+      const codeElement = document.querySelector('#editor-container code') as HTMLElement;
+      if (codeElement) {
+        highlightEditor(codeElement);
+      }
     });
     switcherDiv.appendChild(button);
   });
@@ -216,10 +221,10 @@ async function loadEquation(equationId: string, updateHash = true) {
   // Load the markdown content
   parsedContent = await loadContent(`./examples/${equation.file}`);
 
-  // Update title
+  // Update title (prefer title from markdown, fallback to equations.json)
   const titleElement = document.getElementById('equation-title');
   if (titleElement) {
-    titleElement.textContent = equation.title;
+    titleElement.textContent = parsedContent.title || equation.title;
   }
 
   // Update source link
@@ -299,16 +304,21 @@ window.addEventListener('hashchange', async () => {
 
 // Editor functions
 function highlightEditor(editorElement: HTMLElement) {
+  const markdown = editorElement.textContent || '';
+
   // Use Prism to highlight
   editorElement.innerHTML = Prism.highlight(
-    editorElement.textContent || '',
+    markdown,
     Prism.languages.eqmd,
     'eqmd'
   );
 
-  // Apply term colors if we have parsed content
-  if (parsedContent) {
-    applyTermColors(editorElement, parsedContent.termOrder, colorSchemes[currentScheme].colors);
+  // Apply term colors dynamically based on current markdown
+  applyTermColors(editorElement, markdown, colorSchemes[currentScheme].colors);
+
+  // Mark errors with red underlines if parsed content has errors
+  if (parsedContent && parsedContent.errors.length > 0) {
+    markErrors(editorElement, parsedContent.errors);
   }
 }
 
@@ -349,6 +359,14 @@ async function updatePreview() {
   try {
     // Parse markdown content
     parsedContent = await loadContent(currentMarkdown, true); // true = from string
+
+    // Update title if present in markdown
+    if (parsedContent.title) {
+      const titleElement = document.getElementById('equation-title');
+      if (titleElement) {
+        titleElement.textContent = parsedContent.title;
+      }
+    }
 
     // Clear and re-render
     const equationContainer = document.getElementById('equation-container');
