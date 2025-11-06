@@ -50,31 +50,12 @@ body {
   margin: 0 auto;
 }
 
-.title-bar {
-  display: flex;
-  align-items: baseline;
-  gap: 1rem;
-  margin-bottom: 0.5rem;
-}
-
 h1 {
   font-size: 2rem;
   font-weight: 400;
   color: var(--text-color);
   margin: 0;
-}
-
-.source-link {
-  font-size: 0.875rem;
-  color: #6b7280;
-  text-decoration: none;
-  border-bottom: 1px solid transparent;
-  transition: color 0.2s ease, border-color 0.2s ease;
-}
-
-.source-link:hover {
-  color: var(--text-color);
-  border-bottom-color: #6b7280;
+  margin-bottom: 0.5rem;
 }
 
 .subtitle {
@@ -252,41 +233,54 @@ h1 {
 
 .editor-toolbar {
   display: flex;
-  gap: 0.5rem;
+  gap: 1rem;
   padding: 1rem;
   border-bottom: 1px solid var(--border-color);
-  background-color: #ffffff;
+  background-color: #f9fafb;
   flex-shrink: 0;
+  align-items: center;
 }
 
 .editor-sidebar.collapsed .editor-toolbar {
   flex-direction: column;
-  gap: 0.25rem;
+  gap: 0.5rem;
   padding: 0.5rem 0.25rem;
 }
 
 .toolbar-btn {
-  padding: 0.5rem 0.75rem;
-  border: 1px solid var(--border-color);
-  background-color: transparent;
+  padding: 0;
+  border: none;
+  background: none;
   color: var(--text-color);
-  font-size: 0.875rem;
+  font-size: 1rem;
   cursor: pointer;
   font-family: inherit;
-  transition: background-color 0.2s ease, color 0.2s ease;
-  white-space: nowrap;
+  transition: opacity 0.2s ease;
 }
 
 .toolbar-btn:hover {
-  background-color: var(--text-color);
-  color: var(--bg-color);
+  opacity: 0.6;
 }
 
-.editor-sidebar.collapsed .toolbar-btn {
-  padding: 0.5rem 0.25rem;
-  font-size: 0.75rem;
+.toolbar-link {
+  font-size: 0.875rem;
+  color: #6b7280;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: color 0.2s ease, border-color 0.2s ease;
+  white-space: nowrap;
+}
+
+.toolbar-link:hover {
+  color: var(--text-color);
+  border-bottom-color: #6b7280;
+}
+
+.editor-sidebar.collapsed .toolbar-btn,
+.editor-sidebar.collapsed .toolbar-link {
   writing-mode: vertical-rl;
   text-orientation: mixed;
+  font-size: 0.875rem;
 }
 
 #toggle-editor-btn .icon {

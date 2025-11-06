@@ -71,7 +71,6 @@ let parsedContent: ParsedContent | null = null;
 
 // Editor state
 let editor: any = null;
-let isNewEquationMode = false;
 let currentMarkdown = '';
 let previewTimeout: number | null = null;
 
@@ -263,10 +262,8 @@ async function loadEquation(equationId: string, updateHash = true) {
     });
   }
 
-  // Load markdown into editor (for existing equation mode)
-  if (!isNewEquationMode) {
-    await loadMarkdownIntoEditor(`./examples/${equation.file}`);
-  }
+  // Load markdown into editor
+  await loadMarkdownIntoEditor(`./examples/${equation.file}`);
 }
 
 // Create equation selector buttons
@@ -410,97 +407,6 @@ function setupEditorControls() {
       editorSidebar.classList.toggle('collapsed');
     });
   }
-
-  // New equation mode toggle
-  const newEquationBtn = document.getElementById('new-equation-btn');
-  if (newEquationBtn && editorSidebar) {
-    newEquationBtn.addEventListener('click', () => {
-      isNewEquationMode = !isNewEquationMode;
-
-      if (isNewEquationMode) {
-        // Switch to new mode: show editor, load template
-        editorSidebar.classList.remove('collapsed');
-        newEquationBtn.textContent = 'Exit New Mode';
-
-        // Load template
-        const template = `# Equation
-
-$$
-\\mark[term1]{E} = \\mark[term2]{m} \\mark[term3]{c^2}
-$$
-
-# Description
-
-The famous [mass-energy equivalence]{.term2}: [energy]{.term1} equals [mass]{.term2} times the [speed of light]{.term3} squared.
-
-## .term1
-
-Energy (E) is the capacity to do work, measured in joules.
-
-## .term2
-
-Mass (m) is the amount of matter in an object, measured in kilograms.
-
-## .term3
-
-The speed of light (c) is approximately 299,792,458 meters per second.
-`;
-        currentMarkdown = template;
-        if (editor) {
-          editor.updateCode(template);
-        }
-      } else {
-        // Exit new mode: reload current equation
-        newEquationBtn.textContent = 'New';
-        if (currentEquationId) {
-          loadEquation(currentEquationId);
-        }
-      }
-    });
-  }
-
-  // Download markdown
-  const downloadBtn = document.getElementById('download-btn');
-  if (downloadBtn) {
-    downloadBtn.addEventListener('click', () => {
-      const markdown = currentMarkdown || '';
-      const blob = new Blob([markdown], { type: 'text/markdown' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = isNewEquationMode ? 'new-equation.md' : `${currentEquationId}.md`;
-      a.click();
-      URL.revokeObjectURL(url);
-    });
-  }
-
-  // Contribute instructions
-  const contributeBtn = document.getElementById('contribute-btn');
-  if (contributeBtn) {
-    contributeBtn.addEventListener('click', () => {
-      showContributeInstructions();
-    });
-  }
-}
-
-function showContributeInstructions() {
-  const instructions = `To contribute your equation to the repository:
-
-1. Download your markdown file using the Download button
-2. Fork the repository: https://github.com/stared/equations-explained-colorfully
-3. Add your .md file to the public/examples/ directory
-4. Add an entry to public/examples/equations.json:
-   {
-     "id": "your-equation-id",
-     "title": "Your Equation Name",
-     "category": "Field (e.g., Physics, Math)",
-     "file": "your-file.md"
-   }
-5. Submit a pull request with your changes
-
-Thank you for contributing!`;
-
-  alert(instructions);
 }
 
 // Initialize - load content and render
