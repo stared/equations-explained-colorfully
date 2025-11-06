@@ -167,10 +167,16 @@ export function parseContent(markdown: string): ParsedContent {
 }
 
 /**
- * Load and parse content from a markdown file
+ * Load and parse content from a markdown file or string
  */
-export async function loadContent(path: string): Promise<ParsedContent> {
-  const response = await fetch(path);
-  const markdown = await response.text();
-  return parseContent(markdown);
+export async function loadContent(pathOrMarkdown: string, fromString = false): Promise<ParsedContent> {
+  if (fromString) {
+    // Parse directly from string
+    return parseContent(pathOrMarkdown);
+  } else {
+    // Fetch from URL and parse
+    const response = await fetch(pathOrMarkdown);
+    const markdown = await response.text();
+    return parseContent(markdown);
+  }
 }

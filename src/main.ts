@@ -1,6 +1,10 @@
 import katex from 'katex';
 import './style.css';
 import { loadContent, type ParsedContent } from './parser';
+import { CodeJar } from 'codejar';
+import Prism from 'prismjs';
+import './prism-custom';
+import { applyTermColors } from './prism-custom';
 
 // Equation metadata
 interface EquationInfo {
@@ -64,6 +68,12 @@ const colorSchemes: Record<string, ColorScheme> = {
 // Current color scheme and loaded content
 let currentScheme = 'vibrant';
 let parsedContent: ParsedContent | null = null;
+
+// Editor state
+let editor: any = null;
+let isNewEquationMode = false;
+let currentMarkdown = '';
+let previewTimeout: number | null = null;
 
 function applyColorScheme(schemeName: string) {
   const scheme = colorSchemes[schemeName];
@@ -252,6 +262,11 @@ async function loadEquation(equationId: string, updateHash = true) {
       }
     });
   }
+
+  // Load markdown into editor (for existing equation mode)
+  if (!isNewEquationMode) {
+    await loadMarkdownIntoEditor(`./examples/${equation.file}`);
+  }
 }
 
 // Create equation selector buttons
@@ -285,6 +300,209 @@ window.addEventListener('hashchange', async () => {
   await loadEquation(equationId, false); // Don't update hash again
 });
 
+// Editor functions
+function highlightEditor(editorElement: HTMLElement) {
+  // Use Prism to highlight
+  editorElement.innerHTML = Prism.highlight(
+    editorElement.textContent || '',
+    Prism.languages.eqmd,
+    'eqmd'
+  );
+
+  // Apply term colors if we have parsed content
+  if (parsedContent) {
+    applyTermColors(editorElement, parsedContent.termOrder, colorSchemes[currentScheme].colors);
+  }
+}
+
+function initializeEditor() {
+  const editorContainer = document.getElementById('editor-container');
+  if (!editorContainer) return;
+
+  // Create code element for CodeJar
+  const codeElement = document.createElement('code');
+  codeElement.className = 'language-eqmd';
+  editorContainer.appendChild(codeElement);
+
+  // Initialize CodeJar with Prism highlighting
+  editor = CodeJar(codeElement, highlightEditor, {
+    tab: '  ', // 2 spaces for tab
+    indentOn: /[({[]$/,
+  });
+
+  // Update preview on change (debounced)
+  editor.onUpdate((code: string) => {
+    currentMarkdown = code;
+
+    // Clear previous timeout
+    if (previewTimeout !== null) {
+      clearTimeout(previewTimeout);
+    }
+
+    // Debounce: update after 500ms of inactivity
+    previewTimeout = window.setTimeout(async () => {
+      await updatePreview();
+    }, 500);
+  });
+}
+
+async function updatePreview() {
+  if (!currentMarkdown.trim()) return;
+
+  try {
+    // Parse markdown content
+    parsedContent = await loadContent(currentMarkdown, true); // true = from string
+
+    // Clear and re-render
+    const equationContainer = document.getElementById('equation-container');
+    const descriptionContainer = document.getElementById('static-description');
+    const hoverContainer = document.getElementById('hover-explanation');
+
+    if (equationContainer) equationContainer.innerHTML = '';
+    if (descriptionContainer) descriptionContainer.innerHTML = '';
+    if (hoverContainer) {
+      hoverContainer.innerHTML = '';
+      hoverContainer.classList.remove('visible');
+    }
+
+    // Render content
+    renderEquation();
+    renderDescription();
+
+    // Apply colors
+    applyColorScheme(currentScheme);
+
+    // Setup hover effects
+    setupHoverEffects();
+
+    // Update editor highlighting with new colors
+    const codeElement = document.querySelector('#editor-container code') as HTMLElement;
+    if (codeElement) {
+      highlightEditor(codeElement);
+    }
+  } catch (error) {
+    console.error('Failed to parse markdown:', error);
+    // Could show error message to user
+  }
+}
+
+async function loadMarkdownIntoEditor(url: string) {
+  try {
+    const response = await fetch(url);
+    const markdown = await response.text();
+    currentMarkdown = markdown;
+
+    if (editor) {
+      editor.updateCode(markdown);
+    }
+  } catch (error) {
+    console.error('Failed to load markdown:', error);
+  }
+}
+
+function setupEditorControls() {
+  // Toggle editor collapse/expand
+  const toggleBtn = document.getElementById('toggle-editor-btn');
+  const editorSidebar = document.getElementById('editor-sidebar');
+
+  if (toggleBtn && editorSidebar) {
+    toggleBtn.addEventListener('click', () => {
+      editorSidebar.classList.toggle('collapsed');
+    });
+  }
+
+  // New equation mode toggle
+  const newEquationBtn = document.getElementById('new-equation-btn');
+  if (newEquationBtn && editorSidebar) {
+    newEquationBtn.addEventListener('click', () => {
+      isNewEquationMode = !isNewEquationMode;
+
+      if (isNewEquationMode) {
+        // Switch to new mode: show editor, load template
+        editorSidebar.classList.remove('collapsed');
+        newEquationBtn.textContent = 'Exit New Mode';
+
+        // Load template
+        const template = `# Equation
+
+$$
+\\mark[term1]{E} = \\mark[term2]{m} \\mark[term3]{c^2}
+$$
+
+# Description
+
+The famous [mass-energy equivalence]{.term2}: [energy]{.term1} equals [mass]{.term2} times the [speed of light]{.term3} squared.
+
+## .term1
+
+Energy (E) is the capacity to do work, measured in joules.
+
+## .term2
+
+Mass (m) is the amount of matter in an object, measured in kilograms.
+
+## .term3
+
+The speed of light (c) is approximately 299,792,458 meters per second.
+`;
+        currentMarkdown = template;
+        if (editor) {
+          editor.updateCode(template);
+        }
+      } else {
+        // Exit new mode: reload current equation
+        newEquationBtn.textContent = 'New';
+        if (currentEquationId) {
+          loadEquation(currentEquationId);
+        }
+      }
+    });
+  }
+
+  // Download markdown
+  const downloadBtn = document.getElementById('download-btn');
+  if (downloadBtn) {
+    downloadBtn.addEventListener('click', () => {
+      const markdown = currentMarkdown || '';
+      const blob = new Blob([markdown], { type: 'text/markdown' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = isNewEquationMode ? 'new-equation.md' : `${currentEquationId}.md`;
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+  }
+
+  // Contribute instructions
+  const contributeBtn = document.getElementById('contribute-btn');
+  if (contributeBtn) {
+    contributeBtn.addEventListener('click', () => {
+      showContributeInstructions();
+    });
+  }
+}
+
+function showContributeInstructions() {
+  const instructions = `To contribute your equation to the repository:
+
+1. Download your markdown file using the Download button
+2. Fork the repository: https://github.com/stared/equations-explained-colorfully
+3. Add your .md file to the public/examples/ directory
+4. Add an entry to public/examples/equations.json:
+   {
+     "id": "your-equation-id",
+     "title": "Your Equation Name",
+     "category": "Field (e.g., Physics, Math)",
+     "file": "your-file.md"
+   }
+5. Submit a pull request with your changes
+
+Thank you for contributing!`;
+
+  alert(instructions);
+}
+
 // Initialize - load content and render
 document.addEventListener('DOMContentLoaded', async () => {
   try {
@@ -296,6 +514,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Create color scheme switcher
     createColorSchemeSwitcher();
+
+    // Initialize editor
+    initializeEditor();
+    setupEditorControls();
 
     // Load equation from URL hash or default
     const initialEquation = getEquationFromHash();

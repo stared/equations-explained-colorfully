@@ -233,7 +233,145 @@ h1 {
   border-bottom-color: #6b7280;
 }
 
+/* Editor sidebar */
+.editor-sidebar {
+  width: 500px;
+  min-width: 500px;
+  background-color: #f9fafb;
+  border-left: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s ease, width 0.3s ease;
+  overflow: hidden;
+}
+
+.editor-sidebar.collapsed {
+  width: 50px;
+  min-width: 50px;
+}
+
+.editor-toolbar {
+  display: flex;
+  gap: 0.5rem;
+  padding: 1rem;
+  border-bottom: 1px solid var(--border-color);
+  background-color: #ffffff;
+  flex-shrink: 0;
+}
+
+.editor-sidebar.collapsed .editor-toolbar {
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.5rem 0.25rem;
+}
+
+.toolbar-btn {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--border-color);
+  background-color: transparent;
+  color: var(--text-color);
+  font-size: 0.875rem;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background-color 0.2s ease, color 0.2s ease;
+  white-space: nowrap;
+}
+
+.toolbar-btn:hover {
+  background-color: var(--text-color);
+  color: var(--bg-color);
+}
+
+.editor-sidebar.collapsed .toolbar-btn {
+  padding: 0.5rem 0.25rem;
+  font-size: 0.75rem;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+}
+
+#toggle-editor-btn .icon {
+  display: inline-block;
+  transition: transform 0.3s ease;
+}
+
+.editor-sidebar.collapsed #toggle-editor-btn .icon {
+  transform: rotate(180deg);
+}
+
+.editor-container {
+  flex: 1;
+  overflow: auto;
+  padding: 1rem;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', monospace;
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+.editor-sidebar.collapsed .editor-container {
+  display: none;
+}
+
+/* Prism.js syntax highlighting styles */
+.editor-container code {
+  display: block;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  color: var(--text-color);
+  outline: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* Syntax highlighting colors */
+.token.keyword {
+  color: #d73a49;
+  font-weight: 600;
+}
+
+.token.mark-class,
+.token.ref-class,
+.token.class-name {
+  color: #005cc5;
+  font-weight: 600;
+}
+
+.token.mark-content,
+.token.ref-text {
+  color: #032f62;
+}
+
+.token.heading,
+.token.heading-class {
+  color: #22863a;
+  font-weight: 600;
+}
+
+.token.latex-display,
+.token.latex-inline {
+  color: #6f42c1;
+  font-style: italic;
+}
+
+.token.bold {
+  font-weight: 600;
+}
+
+.token.italic {
+  font-style: italic;
+}
+
+.token.punctuation {
+  color: #6a737d;
+}
+
 /* Responsive design */
+@media (max-width: 1200px) {
+  .editor-sidebar {
+    width: 400px;
+    min-width: 400px;
+  }
+}
+
 @media (max-width: 768px) {
   #app {
     flex-direction: column;
@@ -257,5 +395,27 @@ h1 {
 
   #equation-container .katex {
     font-size: 1.2rem;
+  }
+
+  .editor-sidebar {
+    width: 100%;
+    min-width: 100%;
+    border-left: none;
+    border-top: 1px solid var(--border-color);
+    max-height: 50vh;
+  }
+
+  .editor-sidebar.collapsed {
+    width: 100%;
+    min-width: 100%;
+    max-height: 50px;
+  }
+
+  .editor-sidebar.collapsed .editor-toolbar {
+    flex-direction: row;
+  }
+
+  .editor-sidebar.collapsed .toolbar-btn {
+    writing-mode: horizontal-tb;
   }
 }

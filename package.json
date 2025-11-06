@@ -29,6 +29,8 @@
     "vite": "^7.1.12"
   },
   "dependencies": {
-    "katex": "^0.16.25"
+    "codejar": "^4.3.0",
+    "katex": "^0.16.25",
+    "prismjs": "^1.30.0"
   }
 }
