@@ -193,11 +193,16 @@ async function loadEquationsList(): Promise<EquationInfo[]> {
 }
 
 // Load and render a specific equation
-async function loadEquation(equationId: string) {
+async function loadEquation(equationId: string, updateHash = true) {
   const equation = equations.find(eq => eq.id === equationId);
   if (!equation) return;
 
   currentEquationId = equationId;
+
+  // Update URL hash
+  if (updateHash) {
+    window.location.hash = equationId;
+  }
 
   // Load the markdown content
   parsedContent = await loadContent(`./examples/${equation.file}`);
@@ -262,6 +267,18 @@ function createEquationSelector() {
   });
 }
 
+// Get equation ID from URL hash
+function getEquationFromHash(): string {
+  const hash = window.location.hash.slice(1); // Remove #
+  return hash || currentEquationId;
+}
+
+// Handle browser back/forward
+window.addEventListener('hashchange', async () => {
+  const equationId = getEquationFromHash();
+  await loadEquation(equationId, false); // Don't update hash again
+});
+
 // Initialize - load content and render
 document.addEventListener('DOMContentLoaded', async () => {
   try {
@@ -274,8 +291,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Create color scheme switcher
     createColorSchemeSwitcher();
 
-    // Load initial equation
-    await loadEquation(currentEquationId);
+    // Load equation from URL hash or default
+    const initialEquation = getEquationFromHash();
+    await loadEquation(initialEquation);
   } catch (error) {
     console.error('Failed to load content:', error);
     // Re-throw to fail the build
