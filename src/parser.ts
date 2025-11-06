@@ -95,10 +95,7 @@ export function parseContent(markdown: string): ParsedContent {
       const converted = line.replace(/\[([^\]]+)\]\{\.([^\}]+)\}/g, (_match, text, className) => {
         const termClass = `term-${className}`;
         descriptionTerms.add(className); // Track description terms
-        if (!seenTerms.has(className)) {
-          termOrder.push(className);
-          seenTerms.add(className);
-        }
+        // NOTE: Do NOT add to termOrder here - only equation marks define termOrder
         return `<span class="${termClass}">${text}</span>`;
       });
       description += converted + ' ';

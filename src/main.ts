@@ -78,7 +78,12 @@ function applyColorScheme(schemeName: string) {
   const scheme = colorSchemes[schemeName];
   if (!scheme || !parsedContent) return;
 
-  // Apply colors directly to all term elements via TypeScript
+  // First, reset all term colors to default
+  document.querySelectorAll('[class*="term-"]').forEach((el) => {
+    (el as HTMLElement).style.color = '';
+  });
+
+  // Apply colors ONLY to terms that exist in equation (termOrder)
   parsedContent.termOrder.forEach((className, index) => {
     const color = scheme.colors[index] || '#000000';
     const elements = document.querySelectorAll(`.term-${className}`);
@@ -318,7 +323,7 @@ function highlightEditor(editorElement: HTMLElement) {
 
   // Mark errors with red underlines if parsed content has errors
   if (parsedContent && parsedContent.errors.length > 0) {
-    markErrors(editorElement, parsedContent.errors);
+    markErrors(editorElement, markdown, parsedContent.errors);
   }
 }
 
@@ -446,6 +451,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Load equation from URL hash or default
     const initialEquation = getEquationFromHash();
     await loadEquation(initialEquation);
+
+    // Expose test helpers for automated testing
+    (window as any).__testHelpers = {
+      editor,
+      updatePreview,
+      parsedContent: () => parsedContent
+    };
   } catch (error) {
     console.error('Failed to load content:', error);
     // Re-throw to fail the build

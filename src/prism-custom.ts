@@ -84,6 +84,7 @@ Prism.languages.eqmd = {
 };
 
 // Helper to extract class names from markdown content
+// NOTE: This extracts from ALL sources - use extractEquationTerms for equation-only
 export function extractClassNames(markdown: string): string[] {
   const classNames = new Set<string>();
 
@@ -108,38 +109,88 @@ export function extractClassNames(markdown: string): string[] {
   return Array.from(classNames);
 }
 
+// Extract ONLY terms from equation section ($$...$$)
+export function extractEquationTerms(markdown: string): string[] {
+  const terms: string[] = [];
+  const seenTerms = new Set<string>();
+
+  // Extract equation block (everything between $$...$$)
+  const equationMatch = markdown.match(/\$\$([\s\S]*?)\$\$/);
+  if (!equationMatch) return terms;
+
+  const equationContent = equationMatch[1];
+
+  // Extract \mark[classname] in order of appearance
+  const markPattern = /\\mark\[([^\]]+)\]/g;
+  let match;
+  while ((match = markPattern.exec(equationContent)) !== null) {
+    const term = match[1];
+    if (!seenTerms.has(term)) {
+      terms.push(term);
+      seenTerms.add(term);
+    }
+  }
+
+  return terms;
+}
+
 // Mark errors in editor with subtle underlines
 export function markErrors(
   element: HTMLElement,
+  markdown: string,
   errors: string[]
 ) {
-  if (errors.length === 0) return;
+  // Remove any existing error markings
+  element.querySelectorAll('.has-error').forEach(el => {
+    el.classList.remove('has-error');
+  });
 
-  // Only mark terms that are missing definitions (critical errors)
-  // Don't mark terms that are just unused in description (warnings)
+  // Get equation terms (source of truth)
+  const equationTerms = new Set(extractEquationTerms(markdown));
+
+  // Track terms with errors
   const termsWithoutDefinitions = new Set<string>();
+  const termsNotInEquation = new Set<string>();
 
   errors.forEach(error => {
-    // Only mark "marked in equation but has no definition" errors
+    const termMatch = error.match(/Term "([^"]+)"/);
+    if (!termMatch) return;
+    const term = termMatch[1];
+
     if (error.includes('has no definition')) {
-      const termMatch = error.match(/Term "([^"]+)"/);
-      if (termMatch) {
-        termsWithoutDefinitions.add(termMatch[1]);
-      }
+      // \mark[term]{...} exists but no ## .term
+      termsWithoutDefinitions.add(term);
+    } else if (error.includes('not marked in equation')) {
+      // [text]{.term} or ## .term exists but no \mark[term]{...}
+      termsNotInEquation.add(term);
     }
   });
 
-  if (termsWithoutDefinitions.size === 0) return;
-
-  // Mark only the \mark[term] in equations and ## .term headings
-  // Don't mark references in description (those are fine)
+  // Mark \mark[term]{...} that have no definitions
   element.querySelectorAll('.token.latex-mark').forEach(el => {
     const text = el.textContent || '';
-    termsWithoutDefinitions.forEach(term => {
-      if (text.includes(`[${term}]`)) {
-        el.classList.add('has-error');
-      }
-    });
+    const match = text.match(/\\mark\[([^\]]+)\]/);
+    if (match && termsWithoutDefinitions.has(match[1])) {
+      el.classList.add('has-error');
+    }
+  });
+
+  // Mark [text]{.term} that are not in equation
+  element.querySelectorAll('.token.md-ref').forEach(el => {
+    const text = el.textContent || '';
+    const match = text.match(/\{\.([^\}]+)\}/);
+    if (match && !equationTerms.has(match[1])) {
+      el.classList.add('has-error');
+    }
+  });
+
+  // Mark ## .term that are not in equation
+  element.querySelectorAll('.token.heading-class').forEach(el => {
+    const text = el.textContent || '';
+    const match = text.match(/##\s+\.([a-z][a-z0-9-]*)/);
+    if (match && !equationTerms.has(match[1])) {
+      el.classList.add('has-error');
+    }
   });
 }
 
@@ -149,8 +200,13 @@ export function applyTermColors(
   markdown: string,
   colors: string[]
 ) {
-  // Re-extract term order from current markdown content
-  const termOrder = extractClassNames(markdown);
+  // Extract term order ONLY from equation section
+  const termOrder = extractEquationTerms(markdown);
+
+  // First, reset all colors to default
+  element.querySelectorAll('.token.latex-mark, .token.md-ref, .token.heading-class').forEach(el => {
+    (el as HTMLElement).style.removeProperty('color');
+  });
 
   // Apply colors to entire \mark[classname]{content} elements
   element.querySelectorAll('.token.latex-mark').forEach(el => {
@@ -165,7 +221,7 @@ export function applyTermColors(
     }
   });
 
-  // Apply colors to entire [text]{.classname} elements
+  // Apply colors to entire [text]{.classname} elements (only if term exists in equation)
   element.querySelectorAll('.token.md-ref').forEach(el => {
     const text = el.textContent || '';
     const match = text.match(/\{\.([^\}]+)\}/);
@@ -175,10 +231,11 @@ export function applyTermColors(
       if (colorIndex >= 0 && colors[colorIndex]) {
         (el as HTMLElement).style.setProperty('color', colors[colorIndex], 'important');
       }
+      // If not in termOrder, color stays default (black)
     }
   });
 
-  // Apply colors to entire ## .classname headings
+  // Apply colors to entire ## .classname headings (only if term exists in equation)
   element.querySelectorAll('.token.heading-class').forEach(el => {
     const text = el.textContent || '';
     const match = text.match(/##\s+\.([a-z][a-z0-9-]*)/);
@@ -188,6 +245,7 @@ export function applyTermColors(
       if (colorIndex >= 0 && colors[colorIndex]) {
         (el as HTMLElement).style.setProperty('color', colors[colorIndex], 'important');
       }
+      // If not in termOrder, color stays default (black)
     }
   });
 }
