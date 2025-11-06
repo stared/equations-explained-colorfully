@@ -16,11 +16,37 @@ body {
   background-color: var(--bg-color);
   color: var(--text-color);
   line-height: 1.6;
-  padding: 2rem;
+  margin: 0;
+  padding: 0;
 }
 
 #app {
-  max-width: 800px;
+  display: flex;
+  min-height: 100vh;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 250px;
+  min-width: 250px;
+  background-color: #f9fafb;
+  border-right: 1px solid var(--border-color);
+  padding: 2rem 1.5rem;
+  overflow-y: auto;
+}
+
+.sidebar h2 {
+  font-size: 1.25rem;
+  font-weight: 400;
+  margin-bottom: 1.5rem;
+  color: var(--text-color);
+}
+
+/* Main content */
+.main-content {
+  flex: 1;
+  padding: 2rem;
+  max-width: 900px;
   margin: 0 auto;
 }
 
@@ -71,19 +97,24 @@ h1 {
 /* Equation selector */
 .equation-selector {
   display: flex;
-  gap: 0.5rem;
-  margin-bottom: 1.5rem;
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 0.75rem;
 }
 
 .equation-selector button {
-  padding: 0.5rem 1rem;
+  padding: 0.75rem 1rem;
   border: 1px solid var(--border-color);
   background-color: transparent;
   color: var(--text-color);
   font-size: 0.875rem;
   cursor: pointer;
   font-family: inherit;
+  text-align: left;
+  transition: background-color 0.2s ease;
+}
+
+.equation-selector button:hover {
+  background-color: #e5e7eb;
 }
 
 .equation-selector button.active {
@@ -92,9 +123,10 @@ h1 {
 }
 
 .equation-selector .category {
+  display: block;
   font-size: 0.75rem;
   color: #6b7280;
-  margin-left: 0.25rem;
+  margin-top: 0.25rem;
 }
 
 /* Color scheme switcher */
@@ -190,8 +222,20 @@ h1 {
 
 /* Responsive design */
 @media (max-width: 768px) {
-  body {
-    padding: 1rem;
+  #app {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    min-width: 100%;
+    border-right: none;
+    border-bottom: 1px solid var(--border-color);
+    padding: 1.5rem 1rem;
+  }
+
+  .main-content {
+    padding: 1.5rem 1rem;
   }
 
   h1 {

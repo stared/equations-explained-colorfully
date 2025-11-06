@@ -8,29 +8,34 @@
   </head>
   <body>
     <div id="app">
-      <h1 id="equation-title">Interactive Equations</h1>
-      <p class="subtitle">Hover over colored terms to explore their meaning</p>
+      <aside id="sidebar" class="sidebar">
+        <h2>Equations</h2>
+        <nav id="equation-selector" class="equation-selector"></nav>
+      </aside>
 
-      <div id="equation-selector" class="equation-selector"></div>
+      <main id="main-content" class="main-content">
+        <h1 id="equation-title">Interactive Equations</h1>
+        <p class="subtitle">Hover over colored terms to explore their meaning</p>
 
-      <div id="color-scheme-switcher" class="color-scheme-switcher"></div>
+        <div id="color-scheme-switcher" class="color-scheme-switcher"></div>
 
-      <div id="equation-container"></div>
+        <div id="equation-container"></div>
 
-      <div id="static-description" class="static-description"></div>
+        <div id="static-description" class="static-description"></div>
 
-      <div id="hover-explanation" class="hover-explanation"></div>
+        <div id="hover-explanation" class="hover-explanation"></div>
 
-      <footer class="footer">
-        <p>
-          Demo by <a href="https://p.migdal.pl" target="_blank" rel="noopener">Piotr Migdał</a> ·
-          <a href="https://github.com/stared/equations-explained-colorfully" target="_blank" rel="noopener">View source on GitHub</a>
-        </p>
-        <p>
-          For more on interactive explanations, see:
-          <a href="https://p.migdal.pl/blog/2024/05/science-games-explorable-explanations/" target="_blank" rel="noopener">Science, games, and explorable explanations</a>
-        </p>
-      </footer>
+        <footer class="footer">
+          <p>
+            Demo by <a href="https://p.migdal.pl" target="_blank" rel="noopener">Piotr Migdał</a> ·
+            <a href="https://github.com/stared/equations-explained-colorfully" target="_blank" rel="noopener">View source on GitHub</a>
+          </p>
+          <p>
+            For more on interactive explanations, see:
+            <a href="https://p.migdal.pl/blog/2024/05/science-games-explorable-explanations/" target="_blank" rel="noopener">Science, games, and explorable explanations</a>
+          </p>
+        </footer>
+      </main>
     </div>
     <script type="module" src="/src/main.ts"></script>
   </body>
