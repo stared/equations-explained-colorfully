@@ -98,35 +98,28 @@ h1 {
 .equation-selector {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 0.5rem;
 }
 
 .equation-selector button {
-  padding: 0.75rem 1rem;
-  border: 1px solid var(--border-color);
-  background-color: transparent;
-  color: var(--text-color);
-  font-size: 0.875rem;
+  padding: 0.5rem 0;
+  border: none;
+  background: none;
+  color: #6b7280;
+  font-size: 0.9375rem;
   cursor: pointer;
   font-family: inherit;
   text-align: left;
-  transition: background-color 0.2s ease;
+  transition: color 0.2s ease;
 }
 
 .equation-selector button:hover {
-  background-color: #e5e7eb;
+  color: var(--text-color);
 }
 
 .equation-selector button.active {
-  background-color: var(--text-color);
-  color: var(--bg-color);
-}
-
-.equation-selector .category {
-  display: block;
-  font-size: 0.75rem;
-  color: #6b7280;
-  margin-top: 0.25rem;
+  color: var(--text-color);
+  font-weight: 500;
 }
 
 /* Color scheme switcher */

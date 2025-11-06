@@ -250,7 +250,7 @@ function createEquationSelector() {
 
   equations.forEach(equation => {
     const button = document.createElement('button');
-    button.innerHTML = `${equation.title} <span class="category">(${equation.category})</span>`;
+    button.textContent = equation.title;
     button.dataset.equationId = equation.id;
     button.className = equation.id === currentEquationId ? 'active' : '';
 
