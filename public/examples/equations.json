@@ -1,5 +1,11 @@
 [
   {
+    "id": "new",
+    "title": "New Equation",
+    "category": "Template",
+    "file": "new.md"
+  },
+  {
     "id": "schrodinger",
     "title": "Schrödinger Equation",
     "category": "Quantum Mechanics",
