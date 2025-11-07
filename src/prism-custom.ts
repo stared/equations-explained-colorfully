@@ -3,15 +3,16 @@ import Prism from 'prismjs';
 // Define custom language for interactive equation markdown
 Prism.languages.eqmd = {
   // LaTeX \mark[classname]{content}
+  // Handles nested braces up to 2 levels deep (sufficient for \frac{\partial\psi}{\partial t})
   'latex-mark': {
-    pattern: /\\mark\[[^\]]+\]\{[^}]+\}/g,
+    pattern: /\\mark\[[^\]]+\]\{(?:[^{}]|\{(?:[^{}]|\{[^}]*\})*\})*\}/g,
     inside: {
       'mark-class': {
         pattern: /\[[^\]]+\]/,
         lookbehind: true,
       },
       'mark-content': {
-        pattern: /\{[^}]+\}/,
+        pattern: /\{(?:[^{}]|\{(?:[^{}]|\{[^}]*\})*\})*\}/,
         lookbehind: true,
       },
       'keyword': /\\mark/,

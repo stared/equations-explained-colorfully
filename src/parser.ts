@@ -10,6 +10,80 @@ export interface ParsedContent {
   warnings: string[]; // Validation warnings
 }
 
+// Helper function to convert \mark[class]{content} to \htmlClass{term-class}{content}
+// Handles nested braces correctly
+function convertMarkToHtmlClass(line: string, equationTerms: Set<string>, termOrder: string[], seenTerms: Set<string>): string {
+  let result = '';
+  let i = 0;
+
+  while (i < line.length) {
+    // Look for \mark[
+    if (line.substring(i, i + 6) === '\\mark[') {
+      // Find the closing ]
+      const classStart = i + 6;
+      let classEnd = line.indexOf(']', classStart);
+
+      if (classEnd === -1) {
+        // Malformed, just copy and continue
+        result += line[i];
+        i++;
+        continue;
+      }
+
+      const className = line.substring(classStart, classEnd);
+
+      // Check if there's a { after ]
+      if (line[classEnd + 1] !== '{') {
+        // Malformed, just copy and continue
+        result += line.substring(i, classEnd + 1);
+        i = classEnd + 1;
+        continue;
+      }
+
+      // Track the term
+      const termClass = `term-${className}`;
+      equationTerms.add(className);
+      if (!seenTerms.has(className)) {
+        termOrder.push(className);
+        seenTerms.add(className);
+      }
+
+      // Find the matching closing brace
+      const contentStart = classEnd + 2; // After ]{
+      let braceCount = 1;
+      let contentEnd = contentStart;
+
+      while (contentEnd < line.length && braceCount > 0) {
+        if (line[contentEnd] === '{' && line[contentEnd - 1] !== '\\') {
+          braceCount++;
+        } else if (line[contentEnd] === '}' && line[contentEnd - 1] !== '\\') {
+          braceCount--;
+        }
+        contentEnd++;
+      }
+
+      if (braceCount !== 0) {
+        // Unmatched braces, just copy and continue
+        result += line.substring(i, contentStart);
+        i = contentStart;
+        continue;
+      }
+
+      // Extract content (excluding the final })
+      const content = line.substring(contentStart, contentEnd - 1);
+
+      // Replace with \htmlClass{term-class}{content}
+      result += `\\htmlClass{${termClass}}{${content}}`;
+      i = contentEnd;
+    } else {
+      result += line[i];
+      i++;
+    }
+  }
+
+  return result;
+}
+
 /**
  * Parse markdown content with interactive math annotations
  *
@@ -57,15 +131,8 @@ export function parseContent(markdown: string): ParsedContent {
     // Parse equation content
     if (inEquation) {
       // Convert \mark[class]{latex} to \htmlClass{term-class}{latex}
-      const converted = line.replace(/\\mark\[([^\]]+)\]\{/g, (_match, className) => {
-        const termClass = `term-${className}`;
-        equationTerms.add(className); // Track equation terms
-        if (!seenTerms.has(className)) {
-          termOrder.push(className);
-          seenTerms.add(className);
-        }
-        return `\\htmlClass{${termClass}}{`;
-      });
+      // Use helper function to handle nested braces correctly
+      const converted = convertMarkToHtmlClass(line, equationTerms, termOrder, seenTerms);
       latex += converted + '\n';
       continue;
     }
