@@ -3,21 +3,21 @@
 ## Equation
 
 $$
-\mark[a]{a} + \mark[b]{b}
+\mark[sine]{\sin(\pi)} = \mark[zero]{0}
 $$
 
 ## Description
 
-[First term]{.a} plus [second term]{.b}.
+The [sine function]{.sine} equals [zero]{.zero}.
 
-## .a
+## .sine
 
-The first term in the equation.
+The sine function evaluated at π.
 
-Edit this equation to create your own!
+Edit this equation to create your own! The syntax is `\mark[label]{displayed content}` where `label` is used for coloring and references, and `displayed content` is what appears in the equation.
 
-## .b
+## .zero
 
-The second term in the equation.
+The result: zero.
 
-Try adding more terms using `\mark[name]{content}` in the equation, then reference them with `[text]{.name}` in the description.
+Reference terms in descriptions using `[text]{.label}` where `label` matches the one used in `\mark[label]{...}`.
