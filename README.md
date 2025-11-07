@@ -4,15 +4,18 @@ A minimal framework for creating interactive mathematical explanations with colo
 
 **Demo:** [https://p.migdal.pl/equations-explained-colorfully/](https://p.migdal.pl/equations-explained-colorfully/)
 
-Inspired by the concept of [explorable explanations](https://p.migdal.pl/blog/2024/05/science-games-explorable-explanations/), this framework makes mathematical equations more accessible through color-coding and interactive hover effects.
+**Inspired by:**
+- [Explorable explanations](https://p.migdal.pl/blog/2024/05/science-games-explorable-explanations/) as a learning medium
+- [BetterExplained's colorized equations](https://betterexplained.com/articles/colorized-math-equations/)
+- Stuart Riffle's [color-coded Fourier transform](https://web.archive.org/web/20130318211259/http://www.altdevblogaday.com/2011/05/17/understanding-the-fourier-transform) (2011)
 
 ## Features
 
-- Simple markdown-based content format
-- Color-coded equation terms with hover interactions
-- Multiple color schemes (including accessibility options)
-- Minimal dependencies
-- Reusable across different equations
+- **Markdown-based**: Write equations in simple markdown format
+- **Interactive**: Hover over colored terms to see definitions
+- **Accessible**: Multiple color schemes including color-blind friendly options
+- **Minimal**: Built with KaTeX, CodeJar, and Prism (~10KB total)
+- **Editable**: Real-time editor for creating and modifying equations
 
 ## Content Format
 
@@ -56,39 +59,23 @@ Fundamental constant connecting energy and frequency.
 **Value:** $\hbar \approx 1.055 \times 10^{-34}$ J·s
 ```
 
-## Color Schemes
-
-Colors are automatically assigned based on the order terms appear in the document:
-
-```typescript
-colorSchemes = {
-  vibrant: ['#8b5cf6', '#10b981', '#ec4899', ...],
-  accessible: ['#0072B2', '#E69F00', '#009E73', ...], // Wong palette
-  contrast: ['#0066CC', '#FF6600', '#9933CC', ...],
-  nocolor: ['#000000', '#000000', '#000000', ...]
-}
-```
-
-The first term gets `colors[0]`, second gets `colors[1]`, etc.
-
 ## How It Works
 
-1. **Parse** markdown content to extract:
-   - LaTeX equation (converting `\mark` to `\htmlClass`)
-   - Description text (converting `{.class}` to `<span>`)
-   - Definitions from heading sections
+1. **Parse** markdown: Convert `\mark[label]{content}` to `\htmlClass{term-label}{content}` for KaTeX
+2. **Render** equation using KaTeX, description and definitions as HTML
+3. **Color** terms based on order of appearance in equation (first term → first color, etc.)
+4. **Interact**: Hover over colored terms to see definitions, click to lock
 
-2. **Render** using KaTeX for math and HTML for text
+**Color schemes available:** Vibrant (default), Accessible (Wong palette), High Contrast, No Color
 
-3. **Color** terms dynamically using CSS variables:
-   - `.imaginary` → `--color-imaginary` → `colors[0]`
-   - `.planck` → `--color-planck` → `colors[1]`
+## Examples
 
-4. **Interact** with hover effects showing definitions
-
-## Example
-
-See [content.md](content.md) for a complete example (Schrödinger equation).
+See `public/examples/` for complete examples:
+- `new.md` - Simple starter template (E = mc²)
+- `schrodinger.md` - Schrödinger equation
+- `maxwell.md` - Maxwell's equations
+- `navier-stokes.md` - Navier-Stokes equation
+- `euler.md` - Euler's identity
 
 ## Usage
 
@@ -103,36 +90,36 @@ pnpm dev
 pnpm build
 ```
 
-## Creating New Interactive Equations
+## Creating New Equations
 
-1. Create a new markdown file following the format above
-2. Update `loadContent('/your-file.md')` in `main.ts`
-3. Adjust color scheme arrays if you need more/fewer colors
+1. Create a markdown file in `public/examples/` (e.g., `my-equation.md`)
+2. Add entry to `public/examples/equations.json`:
+   ```json
+   {
+     "id": "my-equation",
+     "title": "My Equation",
+     "category": "Physics",
+     "file": "my-equation.md"
+   }
+   ```
+3. Use the in-browser editor to refine your equation interactively
 
-## Design Philosophy
-
-- **Minimal syntax**: Natural markdown with simple annotations
-- **Separation of concerns**: Content (markdown) separate from styling (CSS) and logic (TypeScript)
-- **Accessibility**: Multiple color schemes including color-blind friendly options
-- **Tufte-inspired**: Clean, minimal design focusing on content
-
-## File Structure
+## Key Files
 
 ```
-├── content.md              # Equation content in markdown
-├── src/
-│   ├── main.ts            # Main application logic
-│   ├── parser.ts          # Markdown parser
-│   └── style.css          # Styles
-├── index.html             # HTML entry point
-└── README.md              # This file
+public/examples/          # Equation markdown files
+  ├── equations.json      # List of available equations
+  └── *.md               # Individual equation files
+src/
+  ├── main.ts            # Main app logic & editor
+  ├── parser.ts          # Markdown → KaTeX/HTML parser
+  ├── prism-custom.ts    # Syntax highlighting for editor
+  └── style.css          # Tufte-inspired minimal styles
 ```
 
 ## Author
 
-Created by [Piotr Migdał](https://p.migdal.pl).
-
-For more on interactive explanations and science communication, see: [Science, games, and explorable explanations](https://p.migdal.pl/blog/2024/05/science-games-explorable-explanations/).
+Created by [Piotr Migdał](https://p.migdal.pl)
 
 ## License
 
