@@ -7,7 +7,9 @@ A minimal framework for creating interactive mathematical explanations with colo
 **Inspired by:**
 - [Explorable explanations](https://p.migdal.pl/blog/2024/05/science-games-explorable-explanations/) as a learning medium
 - [BetterExplained's colorized equations](https://betterexplained.com/articles/colorized-math-equations/)
-- Stuart Riffle's [color-coded Fourier transform](https://web.archive.org/web/20130318211259/http://www.altdevblogaday.com/2011/05/17/understanding-the-fourier-transform) (2011)
+- [Stuart Riffle's color-coded Fourier transform](https://web.archive.org/web/20130318211259/http://www.altdevblogaday.com/2011/05/17/understanding-the-fourier-transform) (2011)
+
+![](public/social-media-preview.png)
 
 ## Features
 
