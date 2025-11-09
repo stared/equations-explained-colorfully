@@ -1,11 +1,11 @@
-# Interactive Math Framework
+# Equations Explained Colorfully
 
 A minimal framework for creating interactive mathematical explanations with colored, annotated equations.
 
 **Demo:** [https://p.migdal.pl/equations-explained-colorfully/](https://p.migdal.pl/equations-explained-colorfully/)
 
 **Inspired by:**
-- [Explorable explanations](https://p.migdal.pl/blog/2024/05/science-games-explorable-explanations/) as a learning medium
+- [Explorable explanations and science-based games](https://p.migdal.pl/blog/2024/05/science-games-explorable-explanations/)
 - [BetterExplained's colorized equations](https://betterexplained.com/articles/colorized-math-equations/)
 - [Stuart Riffle's color-coded Fourier transform](https://web.archive.org/web/20130318211259/http://www.altdevblogaday.com/2011/05/17/understanding-the-fourier-transform) (2011)
 
