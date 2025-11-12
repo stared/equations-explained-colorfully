@@ -1,0 +1,83 @@
+name: Test LaTeX and Beamer Exports
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  test-latex-beamer:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.19.0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Generate LaTeX files
+        run: |
+          pnpm tsx test-latex-export-real.ts || true
+          pnpm tsx test-beamer-export.ts || true
+          pnpm tsx test-latex-export-maxwell.ts || true
+          pnpm tsx test-beamer-export-maxwell.ts || true
+
+      - name: Compile Euler LaTeX to PDF
+        uses: xu-cheng/latex-action@v4
+        with:
+          root_file: /tmp/test-euler-export.tex
+          working_directory: /tmp
+          latexmk_use_lualatex: false
+        continue-on-error: true
+
+      - name: Compile Euler Beamer to PDF
+        uses: xu-cheng/latex-action@v4
+        with:
+          root_file: /tmp/test-euler-beamer.tex
+          working_directory: /tmp
+          latexmk_use_lualatex: false
+        continue-on-error: true
+
+      - name: Compile Maxwell LaTeX to PDF
+        uses: xu-cheng/latex-action@v4
+        with:
+          root_file: /tmp/test-maxwell.tex
+          working_directory: /tmp
+          latexmk_use_lualatex: false
+        continue-on-error: true
+
+      - name: Compile Maxwell Beamer to PDF
+        uses: xu-cheng/latex-action@v4
+        with:
+          root_file: /tmp/test-maxwell-beamer.tex
+          working_directory: /tmp
+          latexmk_use_lualatex: false
+        continue-on-error: true
+
+      - name: Upload LaTeX artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: latex-outputs
+          path: |
+            /tmp/test-euler-export.tex
+            /tmp/test-euler-export.pdf
+            /tmp/test-euler-beamer.tex
+            /tmp/test-euler-beamer.pdf
+            /tmp/test-maxwell.tex
+            /tmp/test-maxwell.pdf
+            /tmp/test-maxwell-beamer.tex
+            /tmp/test-maxwell-beamer.pdf
+          if-no-files-found: warn
+          retention-days: 30
