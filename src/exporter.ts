@@ -65,6 +65,48 @@ export function escapeLaTeX(text: string): string {
 }
 
 /**
+ * Escape LaTeX text while preserving inline math ($...$)
+ */
+function escapeLatexPreservingMath(text: string): string {
+  let result = '';
+  let i = 0;
+  let inMath = false;
+  let mathStart = -1;
+
+  while (i < text.length) {
+    if (text[i] === '$' && (i === 0 || text[i - 1] !== '\\')) {
+      if (!inMath) {
+        // Start of math
+        mathStart = i;
+        inMath = true;
+        result += '$'; // Keep the $ for math mode
+        i++;
+      } else {
+        // End of math - keep everything in math mode as-is
+        result += text.substring(mathStart + 1, i) + '$';
+        inMath = false;
+        i++;
+        mathStart = -1;
+      }
+    } else if (!inMath) {
+      // Outside math - escape special characters
+      result += escapeLaTeX(text[i]);
+      i++;
+    } else {
+      // Inside math - don't process yet, will be added when we hit closing $
+      i++;
+    }
+  }
+
+  // Handle unclosed math
+  if (inMath) {
+    result += escapeLaTeX(text.substring(mathStart));
+  }
+
+  return result;
+}
+
+/**
  * Get file extension for export format
  */
 export function getFileExtension(format: ExportFormat): string {
@@ -487,14 +529,219 @@ function renderInlineMath(text: string): string {
 }
 
 /**
+ * Strip \htmlClass wrappers from LaTeX and replace with \textcolor
+ * Converts \htmlClass{term-X}{content} → \textcolor{termX}{content}
+ */
+function stripHtmlClassForLatex(latex: string): string {
+  let result = '';
+  let i = 0;
+
+  while (i < latex.length) {
+    // Look for \htmlClass{
+    if (latex.substring(i, i + 11) === '\\htmlClass{') {
+      // Find the closing }
+      const classStart = i + 11;
+      let classEnd = latex.indexOf('}', classStart);
+
+      if (classEnd === -1) {
+        // Malformed, just copy and continue
+        result += latex[i];
+        i++;
+        continue;
+      }
+
+      const fullClassName = latex.substring(classStart, classEnd);
+
+      // Check if it's a term-X class
+      if (!fullClassName.startsWith('term-')) {
+        // Not a term class, just copy
+        result += latex.substring(i, classEnd + 1);
+        i = classEnd + 1;
+        continue;
+      }
+
+      // Extract className from term-X
+      const className = fullClassName.substring(5); // Remove 'term-' prefix
+      const latexColorName = `term${className}`;
+
+      // Check if there's a { after }
+      if (latex[classEnd + 1] !== '{') {
+        // Malformed, just copy and continue
+        result += latex.substring(i, classEnd + 1);
+        i = classEnd + 1;
+        continue;
+      }
+
+      // Find the matching closing brace for content
+      const contentStart = classEnd + 2; // After }{
+      let braceCount = 1;
+      let contentEnd = contentStart;
+
+      while (contentEnd < latex.length && braceCount > 0) {
+        if (latex[contentEnd] === '{' && latex[contentEnd - 1] !== '\\') {
+          braceCount++;
+        } else if (latex[contentEnd] === '}' && latex[contentEnd - 1] !== '\\') {
+          braceCount--;
+        }
+        contentEnd++;
+      }
+
+      if (braceCount !== 0) {
+        // Unmatched braces, just copy and continue
+        result += latex.substring(i, contentStart);
+        i = contentStart;
+        continue;
+      }
+
+      // Extract content (excluding the final })
+      const content = latex.substring(contentStart, contentEnd - 1);
+
+      // Replace with \textcolor{termX}{content}
+      result += `\\textcolor{${latexColorName}}{${content}}`;
+
+      i = contentEnd;
+    } else {
+      result += latex[i];
+      i++;
+    }
+  }
+
+  return result;
+}
+
+/**
+ * Convert HTML description to LaTeX text
+ * Strips <span> tags and converts content to LaTeX
+ */
+function convertDescriptionToLatex(html: string): string {
+  let result = '';
+  let i = 0;
+
+  while (i < html.length) {
+    // Look for <span class="term-X">
+    if (html.substring(i, i + 18) === '<span class="term-') {
+      // Find the closing >
+      const tagEnd = html.indexOf('>', i);
+      if (tagEnd === -1) {
+        result += escapeLaTeX(html[i]);
+        i++;
+        continue;
+      }
+
+      // Extract class name
+      const tagContent = html.substring(i, tagEnd + 1);
+      const classMatch = tagContent.match(/class="term-([^"]+)"/);
+
+      if (!classMatch) {
+        result += escapeLaTeX(html.substring(i, tagEnd + 1));
+        i = tagEnd + 1;
+        continue;
+      }
+
+      const className = classMatch[1];
+      const latexColorName = `term${className}`;
+
+      // Find the closing </span>
+      const closeTag = '</span>';
+      const closeIndex = html.indexOf(closeTag, tagEnd + 1);
+
+      if (closeIndex === -1) {
+        result += escapeLaTeX(html.substring(i, tagEnd + 1));
+        i = tagEnd + 1;
+        continue;
+      }
+
+      // Extract content between tags
+      const content = html.substring(tagEnd + 1, closeIndex);
+
+      // Output colored text in LaTeX
+      result += `\\textcolor{${latexColorName}}{${escapeLaTeX(content)}}`;
+
+      i = closeIndex + closeTag.length;
+    } else if (html.substring(i, i + 3) === '<p>') {
+      // Skip <p> tags
+      i += 3;
+    } else if (html.substring(i, i + 4) === '</p>') {
+      // Replace </p> with paragraph break
+      result += '\n\n';
+      i += 4;
+    } else {
+      // Regular text - escape for LaTeX
+      result += escapeLaTeX(html[i]);
+      i++;
+    }
+  }
+
+  return result.trim();
+}
+
+/**
  * Export to LaTeX (complete document with xcolor)
- * Implementation: Commit 3
+ * Non-interactive: colors defined in preamble, applied with \textcolor
  */
 export function exportToLaTeX(
-  _content: ParsedContent,
-  _colorScheme: ColorScheme
+  content: ParsedContent,
+  colorScheme: ColorScheme
 ): string {
-  throw new Error('LaTeX export not yet implemented');
+  // Generate color definitions for preamble
+  const colorDefinitions = content.termOrder
+    .map((className) => {
+      const color = getTermColor(className, content.termOrder, colorScheme);
+      const latexColorName = `term${className}`;
+      // Convert #RRGGBB to uppercase hex for LaTeX
+      const hexColor = color.replace('#', '').toUpperCase();
+      return `\\definecolor{${latexColorName}}{HTML}{${hexColor}}`;
+    })
+    .join('\n');
+
+  // Convert LaTeX: replace \htmlClass{term-X}{content} with \textcolor{termX}{content}
+  const coloredLatex = stripHtmlClassForLatex(content.latex);
+
+  // Convert description: strip HTML tags, convert to LaTeX
+  const descriptionLatex = convertDescriptionToLatex(content.description);
+
+  // Convert definitions
+  const definitionsLatex = Array.from(content.definitions.entries())
+    .map(([className, definition]) => {
+      const latexColorName = `term${className}`;
+      // Definitions are plain text, but may contain inline math $...$ which should be kept as-is
+      // Escape text outside of math mode, keep math mode untouched
+      const definitionLatex = escapeLatexPreservingMath(definition);
+      return `\\subsection*{\\textcolor{${latexColorName}}{${escapeLaTeX(className)}}}\n${definitionLatex}`;
+    })
+    .join('\n\n');
+
+  return `\\documentclass{article}
+
+% Minimal preamble
+\\usepackage[T1]{fontenc}
+\\usepackage{amsmath}
+\\usepackage{xcolor}
+
+% Define colors from scheme
+${colorDefinitions}
+
+\\title{${escapeLaTeX(content.title || 'Mathematical Equation')}}
+\\date{}
+
+\\begin{document}
+\\maketitle
+
+\\section*{Equation}
+
+\\begin{equation}
+${coloredLatex}
+\\end{equation}
+
+\\section*{Description}
+
+${descriptionLatex}
+
+\\section*{Definitions}
+
+${definitionsLatex}
+
+\\end{document}`;
 }
 
 /**
