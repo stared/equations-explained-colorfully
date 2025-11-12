@@ -745,14 +745,190 @@ ${definitionsLatex}
 }
 
 /**
+ * Inject TikZ coordinate nodes into LaTeX equation
+ * Converts \htmlClass{term-X}{content} → \tikz[na] \node[coordinate] (nN) {};\textcolor{termX}{content}
+ * Returns the modified LaTeX and the count of nodes added
+ */
+function injectTikzNodesInLatex(latex: string): { latex: string; nodeCount: number } {
+  let result = '';
+  let i = 0;
+  let nodeIndex = 0;
+
+  while (i < latex.length) {
+    // Look for \htmlClass{
+    if (latex.substring(i, i + 11) === '\\htmlClass{') {
+      // Find the closing }
+      const classStart = i + 11;
+      let classEnd = latex.indexOf('}', classStart);
+
+      if (classEnd === -1) {
+        // Malformed, just copy and continue
+        result += latex[i];
+        i++;
+        continue;
+      }
+
+      const fullClassName = latex.substring(classStart, classEnd);
+
+      // Check if it's a term-X class
+      if (!fullClassName.startsWith('term-')) {
+        // Not a term class, just copy
+        result += latex.substring(i, classEnd + 1);
+        i = classEnd + 1;
+        continue;
+      }
+
+      // Extract className from term-X
+      const className = fullClassName.substring(5); // Remove 'term-' prefix
+      const latexColorName = `term${className}`;
+      const nodeId = `n${nodeIndex}`;
+      nodeIndex++;
+
+      // Check if there's a { after }
+      if (latex[classEnd + 1] !== '{') {
+        // Malformed, just copy and continue
+        result += latex.substring(i, classEnd + 1);
+        i = classEnd + 1;
+        continue;
+      }
+
+      // Find the matching closing brace for content
+      const contentStart = classEnd + 2; // After }{
+      let braceCount = 1;
+      let contentEnd = contentStart;
+
+      while (contentEnd < latex.length && braceCount > 0) {
+        if (latex[contentEnd] === '{' && latex[contentEnd - 1] !== '\\') {
+          braceCount++;
+        } else if (latex[contentEnd] === '}' && latex[contentEnd - 1] !== '\\') {
+          braceCount--;
+        }
+        contentEnd++;
+      }
+
+      if (braceCount !== 0) {
+        // Unmatched braces, just copy and continue
+        result += latex.substring(i, contentStart);
+        i = contentStart;
+        continue;
+      }
+
+      // Extract content (excluding the final })
+      const content = latex.substring(contentStart, contentEnd - 1);
+
+      // Place colored content with coordinate node at right edge (for arrow connection)
+      result += `\\textcolor{${latexColorName}}{${content}}\\tikz[baseline,remember picture,overlay] \\coordinate (${nodeId});`;
+
+      i = contentEnd;
+    } else {
+      result += latex[i];
+      i++;
+    }
+  }
+
+  return { latex: result, nodeCount: nodeIndex };
+}
+
+/**
  * Export to Beamer with TikZ arrows (presentation format)
- * Implementation: Commit 4
+ * Based on texample.net/tikz/examples/beamer-arrows/ pattern
  */
 export function exportToBeamer(
-  _content: ParsedContent,
-  _colorScheme: ColorScheme
+  content: ParsedContent,
+  colorScheme: ColorScheme
 ): string {
-  throw new Error('Beamer export not yet implemented');
+  // Generate color definitions for preamble
+  const colorDefinitions = content.termOrder
+    .map((className) => {
+      const color = getTermColor(className, content.termOrder, colorScheme);
+      const latexColorName = `term${className}`;
+      const hexColor = color.replace('#', '').toUpperCase();
+      return `\\definecolor{${latexColorName}}{HTML}{${hexColor}}`;
+    })
+    .join('\n');
+
+  // Convert LaTeX with TikZ nodes at each term
+  const { latex: equationWithNodes } = injectTikzNodesInLatex(content.latex);
+
+  // Convert description
+  const descriptionLatex = convertDescriptionToLatex(content.description);
+
+  // Generate individual frames for each term with arrow
+  const definitionFrames = Array.from(content.definitions.entries())
+    .map(([className, definition], index) => {
+      const latexColorName = `term${className}`;
+      const nodeId = `def${index}`;
+      const equationNodeId = `n${index}`;
+      const definitionLatex = escapeLatexPreservingMath(definition);
+      const bend = index % 2 === 0 ? 'bend left' : 'bend right';
+
+      return `\\begin{frame}<${index + 2}>[label=term${index}]
+\\frametitle{${escapeLaTeX(content.title || 'Equation')}}
+
+\\begin{equation*}
+${equationWithNodes}
+\\end{equation*}
+
+\\vspace{0.5em}
+
+\\begin{block}{}
+\\tikz[na] \\node[coordinate] (${nodeId}) {};
+${definitionLatex}
+\\end{block}
+
+% Draw clean arrow from term to definition (offset left to approximate center, down for margin)
+\\begin{tikzpicture}[overlay,remember picture]
+  \\draw[->,${latexColorName},line width=1.5pt,rounded corners=5pt] ($(${equationNodeId})+(-0.3em,-0.2em)$) -- ++(0,-0.6) -| (${nodeId});
+\\end{tikzpicture}
+
+\\end{frame}`;
+    })
+    .join('\n\n');
+
+  return `\\documentclass{beamer}
+
+% Beamer theme
+\\usetheme{default}
+\\setbeamertemplate{navigation symbols}{}
+
+% TikZ for arrows
+\\usepackage{tikz}
+\\usetikzlibrary{arrows,shapes,calc}
+\\tikzstyle{every picture}+=[remember picture]
+\\tikzstyle{na} = [baseline=-.5ex]
+
+% Colors and math
+\\usepackage{amsmath}
+\\usepackage{xcolor}
+
+% Define colors from scheme
+${colorDefinitions}
+
+\\title{${escapeLaTeX(content.title || 'Mathematical Equation')}}
+\\date{}
+
+\\begin{document}
+
+\\begin{frame}
+\\titlepage
+\\end{frame}
+
+\\begin{frame}[label=overview]
+\\frametitle{Equation}
+
+\\begin{equation*}
+${equationWithNodes}
+\\end{equation*}
+
+\\vspace{1em}
+
+${descriptionLatex}
+
+\\end{frame}
+
+${definitionFrames}
+
+\\end{document}`;
 }
 
 /**
