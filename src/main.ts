@@ -5,6 +5,7 @@ import { CodeJar } from 'codejar';
 import Prism from 'prismjs';
 import './prism-custom';
 import { applyTermColors, markErrors } from './prism-custom';
+import { exportContent, type ExportFormat, type ColorScheme as ExportColorScheme } from './exporter';
 
 // Equation metadata
 interface EquationInfo {
@@ -432,6 +433,24 @@ function setupEditorControls() {
   }
 }
 
+/**
+ * Generate export for current content
+ * UI will be added in Commit 6
+ */
+function generateExport(format: ExportFormat): string {
+  if (!parsedContent) {
+    throw new Error('No content loaded');
+  }
+
+  // Convert ColorScheme to ExportColorScheme format
+  const exportColorScheme: ExportColorScheme = {
+    name: colorSchemes[currentScheme].name,
+    colors: colorSchemes[currentScheme].colors,
+  };
+
+  return exportContent(format, parsedContent, exportColorScheme);
+}
+
 // Initialize - load content and render
 document.addEventListener('DOMContentLoaded', async () => {
   try {
@@ -456,7 +475,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     (window as any).__testHelpers = {
       editor,
       updatePreview,
-      parsedContent: () => parsedContent
+      parsedContent: () => parsedContent,
+      generateExport,
     };
   } catch (error) {
     console.error('Failed to load content:', error);
