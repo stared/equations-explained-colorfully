@@ -1,0 +1,107 @@
+import { test, expect } from '@playwright/test';
+import { readFileSync } from 'fs';
+
+test.describe('HTML Export Interactivity', () => {
+  test.beforeEach(async ({ page }) => {
+    // Load the exported HTML file
+    const htmlPath = `file:///tmp/test-export.html`;
+    await page.goto(htmlPath);
+  });
+
+  test('should display equation with colored terms', async ({ page }) => {
+    // Check equation is rendered
+    await expect(page.locator('.equation-container .katex').first()).toBeVisible();
+
+    // Check terms have color styles
+    const exponentialInEquation = page.locator('.equation-container .term-exponential').first();
+    await expect(exponentialInEquation).toBeVisible();
+  });
+
+  test('should show hover explanation when hovering over equation term', async ({ page }) => {
+    const hoverDiv = page.locator('#hover-explanation');
+
+    // Initially hidden
+    await expect(hoverDiv).not.toHaveClass(/visible/);
+
+    // Hover over a term in the equation
+    const exponentialInEquation = page.locator('.equation-container .term-exponential').first();
+    await exponentialInEquation.hover();
+
+    // Hover explanation should become visible
+    await expect(hoverDiv).toHaveClass(/visible/);
+    await expect(hoverDiv).toContainText('Euler');
+  });
+
+  test('should show hover explanation when hovering over description term', async ({ page }) => {
+    const hoverDiv = page.locator('#hover-explanation');
+
+    // Hover over a term in the description
+    const exponentialInDesc = page.locator('.description .term-exponential').first();
+    await exponentialInDesc.hover();
+
+    // Hover explanation should become visible
+    await expect(hoverDiv).toHaveClass(/visible/);
+    await expect(hoverDiv).toContainText('Euler');
+  });
+
+  test('should highlight all instances of a term on hover', async ({ page }) => {
+    // Hover over exponential in equation
+    const exponentialInEquation = page.locator('.equation-container .term-exponential').first();
+    await exponentialInEquation.hover();
+
+    // All exponential terms should have term-active class
+    const allExponentialTerms = page.locator('.term-exponential');
+    const count = await allExponentialTerms.count();
+
+    for (let i = 0; i < count; i++) {
+      await expect(allExponentialTerms.nth(i)).toHaveClass(/term-active/);
+    }
+  });
+
+  test('should lock definition on click', async ({ page }) => {
+    const hoverDiv = page.locator('#hover-explanation');
+    const exponentialInEquation = page.locator('.equation-container .term-exponential').first();
+
+    // Click to lock
+    await exponentialInEquation.click();
+
+    // Should have term-clicked class
+    await expect(exponentialInEquation).toHaveClass(/term-clicked/);
+
+    // Hover explanation should remain visible even after moving mouse away
+    await page.mouse.move(0, 0);
+    await page.waitForTimeout(100);
+    await expect(hoverDiv).toHaveClass(/visible/);
+  });
+
+  test('should unlock definition on second click', async ({ page }) => {
+    const hoverDiv = page.locator('#hover-explanation');
+    const exponentialInEquation = page.locator('.equation-container .term-exponential').first();
+
+    // First click to lock
+    await exponentialInEquation.click();
+    await expect(exponentialInEquation).toHaveClass(/term-clicked/);
+
+    // Second click to unlock
+    await exponentialInEquation.click();
+    await expect(exponentialInEquation).not.toHaveClass(/term-clicked/);
+
+    // Hover explanation should be hidden
+    await expect(hoverDiv).not.toHaveClass(/visible/);
+  });
+
+  test('should hide definitions section (only show on hover)', async ({ page }) => {
+    const definitionsSection = page.locator('.definitions');
+    await expect(definitionsSection).toBeHidden();
+  });
+
+  test('should have bidirectional interactivity between equation and description', async ({ page }) => {
+    // Hover on description term
+    const exponentialInDesc = page.locator('.description .term-exponential').first();
+    await exponentialInDesc.hover();
+
+    // All terms (including in equation) should be highlighted
+    const exponentialInEquation = page.locator('.equation-container .term-exponential').first();
+    await expect(exponentialInEquation).toHaveClass(/term-active/);
+  });
+});
