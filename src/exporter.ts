@@ -416,15 +416,6 @@ function injectColorsIntoLatex(latex: string, termOrder: string[], colorScheme: 
 }
 
 /**
- * Convert hex color to format supported by KaTeX
- * KaTeX supports hex colors directly like #RRGGBB
- */
-function convertHexToLatexColor(hex: string): string {
-  // KaTeX supports hex colors directly
-  return hex;
-}
-
-/**
  * Apply colors to description HTML (spans with term-X classes)
  */
 function applyColorsToHTML(html: string, termOrder: string[], colorScheme: ColorScheme): string {

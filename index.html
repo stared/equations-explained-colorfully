@@ -58,7 +58,14 @@
           <button id="toggle-editor-btn" class="toolbar-btn" title="Show/hide editor">
             <span class="icon">◀</span>
           </button>
-          <a id="source-link" class="toolbar-link" href="#" target="_blank" rel="noopener">View source</a>
+          <div class="export-dropdown">
+            <button id="export-btn" class="toolbar-btn" title="Export">Export as...</button>
+            <div id="export-menu" class="export-menu" style="display: none;">
+              <button class="export-option" data-format="html">HTML</button>
+            </div>
+          </div>
+          <button id="copy-btn" class="toolbar-btn" title="Copy to clipboard">Copy</button>
+          <button id="download-btn" class="toolbar-btn" title="Download file">Download</button>
           <a href="https://github.com/stared/equations-explained-colorfully" class="toolbar-link" target="_blank" rel="noopener">Contribute</a>
         </div>
         <div id="editor-container" class="editor-container"></div>

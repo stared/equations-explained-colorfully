@@ -251,15 +251,16 @@ h1 {
   padding: 0;
   border: none;
   background: none;
-  color: var(--text-color);
-  font-size: 1rem;
+  color: #6b7280;
+  font-size: 0.875rem;
   cursor: pointer;
   font-family: inherit;
-  transition: opacity 0.2s ease;
+  transition: color 0.2s ease;
+  white-space: nowrap;
 }
 
 .toolbar-btn:hover {
-  opacity: 0.6;
+  color: var(--text-color);
 }
 
 .toolbar-link {
@@ -338,6 +339,48 @@ h1 {
   text-decoration: underline dotted rgba(239, 68, 68, 0.4);
   text-decoration-thickness: 1px;
   text-underline-offset: 3px;
+}
+
+/* Export dropdown */
+.export-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.export-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: #ffffff;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  min-width: 120px;
+  margin-top: 0.25rem;
+}
+
+.export-option {
+  display: block;
+  width: 100%;
+  padding: 0.5rem 1rem;
+  border: none;
+  background: none;
+  color: var(--text-color);
+  font-size: 0.875rem;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+  transition: background-color 0.2s ease;
+}
+
+.export-option:hover {
+  background-color: #f9fafb;
+}
+
+/* Editor in export mode */
+.editor-container.export-mode code {
+  color: #6a737d;
+  font-size: 0.75rem;
 }
 
 /* Responsive design */
