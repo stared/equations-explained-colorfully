@@ -28,10 +28,15 @@ jobs:
 
       - name: Generate LaTeX files
         run: |
-          pnpm tsx test-latex-export-real.ts || true
-          pnpm tsx test-beamer-export.ts || true
-          pnpm tsx test-latex-export-maxwell.ts || true
-          pnpm tsx test-beamer-export-maxwell.ts || true
+          pnpm tsx test-latex-export-real.ts
+          pnpm tsx test-beamer-export.ts
+          pnpm tsx test-latex-export-maxwell.ts
+          pnpm tsx test-beamer-export-maxwell.ts
+
+      - name: Verify generated files exist
+        run: |
+          ls -lh /tmp/test-euler-export.tex /tmp/test-euler-beamer.tex /tmp/test-maxwell.tex /tmp/test-maxwell-beamer.tex
+          echo "All LaTeX files generated successfully"
 
       - name: Compile Euler LaTeX to PDF
         uses: xu-cheng/latex-action@v4
@@ -39,7 +44,6 @@ jobs:
           root_file: /tmp/test-euler-export.tex
           working_directory: /tmp
           latexmk_use_lualatex: false
-        continue-on-error: true
 
       - name: Compile Euler Beamer to PDF
         uses: xu-cheng/latex-action@v4
@@ -47,7 +51,6 @@ jobs:
           root_file: /tmp/test-euler-beamer.tex
           working_directory: /tmp
           latexmk_use_lualatex: false
-        continue-on-error: true
 
       - name: Compile Maxwell LaTeX to PDF
         uses: xu-cheng/latex-action@v4
@@ -55,7 +58,6 @@ jobs:
           root_file: /tmp/test-maxwell.tex
           working_directory: /tmp
           latexmk_use_lualatex: false
-        continue-on-error: true
 
       - name: Compile Maxwell Beamer to PDF
         uses: xu-cheng/latex-action@v4
@@ -63,7 +65,6 @@ jobs:
           root_file: /tmp/test-maxwell-beamer.tex
           working_directory: /tmp
           latexmk_use_lualatex: false
-        continue-on-error: true
 
       - name: Upload LaTeX artifacts
         uses: actions/upload-artifact@v4
