@@ -37,6 +37,8 @@
   "dependencies": {
     "codejar": "^4.3.0",
     "katex": "^0.16.25",
-    "prismjs": "^1.30.0"
+    "prismjs": "^1.30.0",
+    "tex-to-typst": "^0.0.19",
+    "tex2typst": "^0.4.1"
   }
 }

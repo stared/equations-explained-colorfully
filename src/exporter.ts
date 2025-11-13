@@ -3,6 +3,7 @@
 
 import type { ParsedContent } from './parser';
 import katex from 'katex';
+import { tex2typst } from 'tex2typst';
 
 export interface ColorScheme {
   name: string;
@@ -941,14 +942,287 @@ ${definitionFrames}
 }
 
 /**
+ * Escape Typst special characters
+ */
+function escapeTypst(text: string): string {
+  // In Typst, special characters that need escaping in markup mode
+  return text
+    .replace(/\\/g, '\\\\')
+    .replace(/#/g, '\\#')
+    .replace(/\*/g, '\\*')
+    .replace(/_/g, '\\_')
+    .replace(/\[/g, '\\[')
+    .replace(/\]/g, '\\]')
+    .replace(/`/g, '\\`');
+}
+
+/**
+ * Escape Typst text while preserving inline math ($...$)
+ */
+function escapeTypstPreservingMath(text: string): string {
+  let result = '';
+  let i = 0;
+  let inMath = false;
+  let mathStart = -1;
+
+  while (i < text.length) {
+    if (text[i] === '$' && (i === 0 || text[i - 1] !== '\\')) {
+      if (!inMath) {
+        // Start of math
+        mathStart = i;
+        inMath = true;
+        result += '$';
+        i++;
+      } else {
+        // End of math - keep math content as-is
+        result += text.substring(mathStart + 1, i) + '$';
+        inMath = false;
+        i++;
+        mathStart = -1;
+      }
+    } else if (!inMath) {
+      // Outside math - escape special characters
+      result += escapeTypst(text[i]);
+      i++;
+    } else {
+      // Inside math - don't process yet
+      i++;
+    }
+  }
+
+  // Handle unclosed math
+  if (inMath) {
+    result += escapeTypst(text.substring(mathStart));
+  }
+
+  return result;
+}
+
+/**
+ * Convert HTML description to Typst text with colored terms
+ */
+function convertDescriptionToTypst(html: string, termOrder: string[], colorScheme: ColorScheme): string {
+  let result = '';
+  let i = 0;
+
+  while (i < html.length) {
+    // Look for <span class="term-X">
+    if (html.substring(i, i + 18) === '<span class="term-') {
+      const tagEnd = html.indexOf('>', i);
+      if (tagEnd === -1) {
+        result += escapeTypst(html[i]);
+        i++;
+        continue;
+      }
+
+      const tagContent = html.substring(i, tagEnd + 1);
+      const classMatch = tagContent.match(/class="term-([^"]+)"/);
+
+      if (!classMatch) {
+        result += escapeTypst(html.substring(i, tagEnd + 1));
+        i = tagEnd + 1;
+        continue;
+      }
+
+      const className = classMatch[1];
+      const color = getTermColor(className, termOrder, colorScheme);
+
+      const closeTag = '</span>';
+      const closeIndex = html.indexOf(closeTag, tagEnd + 1);
+
+      if (closeIndex === -1) {
+        result += escapeTypst(html.substring(i, tagEnd + 1));
+        i = tagEnd + 1;
+        continue;
+      }
+
+      const content = html.substring(tagEnd + 1, closeIndex);
+
+      // Output colored text in Typst
+      result += `#text(fill: rgb("${color}"))[${escapeTypst(content)}]`;
+
+      i = closeIndex + closeTag.length;
+    } else if (html.substring(i, i + 3) === '<p>') {
+      i += 3;
+    } else if (html.substring(i, i + 4) === '</p>') {
+      result += '\n\n';
+      i += 4;
+    } else {
+      result += escapeTypst(html[i]);
+      i++;
+    }
+  }
+
+  return result.trim();
+}
+
+/**
+ * Convert \htmlClass LaTeX to Typst by preprocessing to \textcolor
+ * tex2typst natively handles \textcolor, converting it to #text(fill: color)[$...$]
+ */
+function convertLatexToTypst(latex: string, termOrder: string[], colorScheme: ColorScheme): string {
+  // Replace \htmlClass{term-X}{content} with \textcolor{#hex}{content}
+  // tex2typst will then convert \textcolor to proper Typst syntax
+  let i = 0;
+  let result = '';
+
+  while (i < latex.length) {
+    // Look for \htmlClass{
+    if (latex.substring(i, i + 11) === '\\htmlClass{') {
+      const classStart = i + 11;
+      let classEnd = latex.indexOf('}', classStart);
+
+      if (classEnd === -1) {
+        result += latex[i];
+        i++;
+        continue;
+      }
+
+      const fullClassName = latex.substring(classStart, classEnd);
+
+      if (!fullClassName.startsWith('term-')) {
+        result += latex.substring(i, classEnd + 1);
+        i = classEnd + 1;
+        continue;
+      }
+
+      const className = fullClassName.substring(5); // Remove 'term-' prefix
+
+      if (latex[classEnd + 1] !== '{') {
+        result += latex.substring(i, classEnd + 1);
+        i = classEnd + 1;
+        continue;
+      }
+
+      // Find matching closing brace for content
+      const contentStart = classEnd + 2;
+      let braceCount = 1;
+      let contentEnd = contentStart;
+
+      while (contentEnd < latex.length && braceCount > 0) {
+        if (latex[contentEnd] === '{' && latex[contentEnd - 1] !== '\\') {
+          braceCount++;
+        } else if (latex[contentEnd] === '}' && latex[contentEnd - 1] !== '\\') {
+          braceCount--;
+        }
+        contentEnd++;
+      }
+
+      if (braceCount !== 0) {
+        result += latex.substring(i, contentStart);
+        i = contentStart;
+        continue;
+      }
+
+      const content = latex.substring(contentStart, contentEnd - 1);
+
+      // Get color for this term
+      try {
+        const color = getTermColor(className, termOrder, colorScheme);
+        // Replace with \textcolor - tex2typst will handle the conversion
+        result += `\\textcolor{${color}}{${content}}`;
+      } catch (error) {
+        // Term not found, keep original content without wrapper
+        result += content;
+      }
+
+      i = contentEnd;
+    } else {
+      result += latex[i];
+      i++;
+    }
+  }
+
+  // Convert to Typst using tex2typst (handles \textcolor natively!)
+  return tex2typst(result);
+}
+
+/**
  * Export to Typst (modern LaTeX alternative)
- * Implementation: Commit 5
+ * Uses tex2typst library for LaTeX-to-Typst conversion
+ * Defines colors as variables at the top, references them throughout
  */
 export function exportToTypst(
-  _content: ParsedContent,
-  _colorScheme: ColorScheme
+  content: ParsedContent,
+  colorScheme: ColorScheme
 ): string {
-  throw new Error('Typst export not yet implemented');
+  // Generate color definitions
+  const colorDefinitions = content.termOrder
+    .map((className) => {
+      const color = getTermColor(className, content.termOrder, colorScheme);
+      const typstVarName = `term${className}`;
+      return `#let ${typstVarName} = rgb("${color}")`;
+    })
+    .join('\n');
+
+  // Convert equation LaTeX to Typst (produces inline colors initially)
+  const equationTypstRaw = convertLatexToTypst(content.latex, content.termOrder, colorScheme);
+
+  // Replace inline colors with variable references in equation
+  let equationTypst = equationTypstRaw;
+  content.termOrder.forEach((className) => {
+    const color = getTermColor(className, content.termOrder, colorScheme);
+    const typstVarName = `term${className}`;
+    // Replace rgb("#hex") format that tex2typst produces
+    const hexPattern = color.replace('#', '\\#');
+    equationTypst = equationTypst.replace(
+      new RegExp(`rgb\\("${hexPattern}"\\)`, 'g'),
+      typstVarName
+    );
+    // Also replace bare #hex format if it appears
+    equationTypst = equationTypst.replace(
+      new RegExp(`${hexPattern}(?![a-fA-F0-9])`, 'g'),
+      typstVarName
+    );
+  });
+
+  // Convert description and replace inline colors with variable references
+  const descriptionTextRaw = convertDescriptionToTypst(content.description, content.termOrder, colorScheme);
+  let descriptionText = descriptionTextRaw;
+  content.termOrder.forEach((className) => {
+    const color = getTermColor(className, content.termOrder, colorScheme);
+    const typstVarName = `term${className}`;
+    const hexPattern = color.replace('#', '\\#');
+    descriptionText = descriptionText.replace(
+      new RegExp(`rgb\\("${hexPattern}"\\)`, 'g'),
+      typstVarName
+    );
+  });
+
+  // Convert definitions using variable names directly
+  const definitionsTypst = Array.from(content.definitions.entries())
+    .map(([className, definition]) => {
+      const typstVarName = `term${className}`;
+      const definitionText = escapeTypstPreservingMath(definition);
+      return `=== #text(fill: ${typstVarName})[${escapeTypst(className)}]\n\n${definitionText}`;
+    })
+    .join('\n\n');
+
+  return `#set document(title: [${escapeTypst(content.title || 'Mathematical Equation')}])
+#set page(paper: "a4")
+#set text(font: "New Computer Modern", size: 11pt)
+
+// Color definitions
+${colorDefinitions}
+
+= ${escapeTypst(content.title || 'Mathematical Equation')}
+
+== Equation
+
+$ ${equationTypst} $
+
+== Description
+
+${descriptionText}
+
+== Definitions
+
+${definitionsTypst}
+
+#align(center)[
+  _Generated with #link("https://github.com/stared/equations-explained-colorfully")[Equations Explained Colorfully]_
+]
+`;
 }
 
 /**
