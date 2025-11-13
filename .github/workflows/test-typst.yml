@@ -1,0 +1,59 @@
+name: Test Typst Export
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  test-typst:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.19.0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Generate Typst file
+        run: pnpm tsx test-typst-export.ts
+
+      - name: Verify generated file exists
+        run: |
+          ls -lh /tmp/test-euler.typ
+          echo "Typst file generated successfully"
+
+      - name: Install Typst
+        uses: typst-community/setup-typst@v3
+        with:
+          typst-version: latest
+
+      - name: Compile Euler Typst to PDF
+        run: typst compile /tmp/test-euler.typ /tmp/test-euler.pdf
+
+      - name: Verify PDF was created
+        run: |
+          ls -lh /tmp/test-euler.pdf
+          echo "PDF created successfully"
+
+      - name: Upload Typst artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: typst-outputs
+          path: |
+            /tmp/test-euler.typ
+            /tmp/test-euler.pdf
+          if-no-files-found: warn
+          retention-days: 30
