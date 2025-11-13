@@ -138,28 +138,35 @@ export function exportToHTML(
     strict: false, // Allow HTML extension
   });
 
-  // Apply inline colors to description spans
-  const descriptionHTML = applyColorsToHTML(content.description, content.termOrder, colorScheme);
+  // Apply CSS variable references to description spans
+  const descriptionHTML = applyColorsToHTML(content.description, content.termOrder);
 
   // Generate definitions HTML with colors and render inline math
   const definitionsHTML = Array.from(content.definitions.entries())
     .map(([className, definition]) => {
-      const color = getTermColor(className, content.termOrder, colorScheme);
+      const cssVarName = `--term-${className}`;
       // Render inline math in definitions
       const processedDefinition = renderInlineMath(definition);
       return `
     <div class="definition">
-      <h3 style="color: ${color};">${escapeHTML(className)}</h3>
+      <h3 style="color: var(${cssVarName});">${escapeHTML(className)}</h3>
       <p>${processedDefinition}</p>
     </div>`;
     })
     .join('\n');
 
-  // Generate inline styles for term classes
-  const termStyles = content.termOrder
+  // Generate CSS custom properties for colors
+  const colorVariables = content.termOrder
     .map((className) => {
       const color = getTermColor(className, content.termOrder, colorScheme);
-      return `.term-${className} { color: ${color}; }`;
+      return `--term-${className}: ${color};`;
+    })
+    .join('\n      ');
+
+  // Generate inline styles for term classes referencing CSS variables
+  const termStyles = content.termOrder
+    .map((className) => {
+      return `.term-${className} { color: var(--term-${className}); }`;
     })
     .join('\n    ');
 
@@ -178,6 +185,8 @@ export function exportToHTML(
       --bg-color: #ffffff;
       --text-color: #1f2937;
       --border-color: #d1d5db;
+      /* Color definitions */
+      ${colorVariables}
     }
 
     * {
@@ -459,18 +468,19 @@ function injectColorsIntoLatex(latex: string, termOrder: string[], colorScheme: 
 
 /**
  * Apply colors to description HTML (spans with term-X classes)
+ * Uses CSS custom properties (variables) instead of inline hex colors
  */
-function applyColorsToHTML(html: string, termOrder: string[], colorScheme: ColorScheme): string {
+function applyColorsToHTML(html: string, termOrder: string[]): string {
   let result = html;
 
   termOrder.forEach((className) => {
-    const color = getTermColor(className, termOrder, colorScheme);
     const termClass = `term-${className}`;
+    const cssVarName = `--term-${className}`;
 
-    // Replace <span class="term-X"> with <span class="term-X" style="color: #hex">
+    // Replace <span class="term-X"> with <span class="term-X" style="color: var(--term-X)">
     result = result.replace(
       new RegExp(`<span class="${termClass}">`, 'g'),
-      `<span class="${termClass}" style="color: ${color}; font-weight: 600;">`
+      `<span class="${termClass}" style="color: var(${cssVarName}); font-weight: 600;">`
     );
   });
 
@@ -860,7 +870,6 @@ export function exportToBeamer(
       const nodeId = `def${index}`;
       const equationNodeId = `n${index}`;
       const definitionLatex = escapeLatexPreservingMath(definition);
-      const bend = index % 2 === 0 ? 'bend left' : 'bend right';
 
       return `\\begin{frame}<${index + 2}>[label=term${index}]
 \\frametitle{${escapeLaTeX(content.title || 'Equation')}}
