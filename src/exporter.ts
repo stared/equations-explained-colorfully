@@ -958,6 +958,7 @@ function escapeTypst(text: string): string {
 
 /**
  * Escape Typst text while preserving inline math ($...$)
+ * Converts LaTeX math to Typst math using tex2typst
  */
 function escapeTypstPreservingMath(text: string): string {
   let result = '';
@@ -974,8 +975,16 @@ function escapeTypstPreservingMath(text: string): string {
         result += '$';
         i++;
       } else {
-        // End of math - keep math content as-is
-        result += text.substring(mathStart + 1, i) + '$';
+        // End of math - convert LaTeX math to Typst
+        const latexMath = text.substring(mathStart + 1, i);
+        try {
+          // Use tex2typst to convert the LaTeX math to Typst
+          const typstMath = tex2typst(latexMath);
+          result += typstMath + '$';
+        } catch (error) {
+          // If conversion fails, keep original
+          result += latexMath + '$';
+        }
         inMath = false;
         i++;
         mathStart = -1;
