@@ -4,10 +4,10 @@ import { exportToBeamer } from './src/exporter';
 import type { ColorScheme } from './src/exporter';
 import { writeFileSync, readFileSync } from 'fs';
 
-// Test color scheme
+// Test color scheme - Maxwell has 10 terms
 const colorScheme: ColorScheme = {
   name: 'vibrant',
-  colors: ['#e6194B', '#3cb44b', '#ffe119', '#4363d8', '#f58231', '#911eb4', '#46f0f0'],
+  colors: ['#e6194B', '#3cb44b', '#ffe119', '#4363d8', '#f58231', '#911eb4', '#46f0f0', '#f032e6', '#bcf60c', '#fabebe'],
 };
 
 async function testBeamerExport() {
@@ -29,15 +29,15 @@ async function testBeamerExport() {
   const checks = [
     { name: 'Document class', test: () => beamer.includes('\\documentclass{beamer}') },
     { name: 'TikZ package', test: () => beamer.includes('\\usepackage{tikz}') },
-    { name: 'TikZ libraries', test: () => beamer.includes('\\usetikzlibrary{arrows,shapes}') },
+    { name: 'TikZ libraries', test: () => beamer.includes('\\usetikzlibrary{arrows,shapes,calc}') },
     { name: 'Remember picture style', test: () => beamer.includes('remember picture') },
     { name: 'xcolor package', test: () => beamer.includes('\\usepackage{xcolor}') },
     { name: 'Color definitions', test: () => beamer.includes('\\definecolor{term') },
-    { name: 'TikZ nodes in equation', test: () => beamer.includes('\\tikz[na] \\node[coordinate]') },
+    { name: 'TikZ coordinate nodes', test: () => beamer.includes('\\coordinate (n') },
     { name: 'Colored equation terms', test: () => beamer.includes('\\textcolor{term') },
     { name: 'No \\htmlClass', test: () => !beamer.includes('\\htmlClass') },
     { name: 'Title frame', test: () => beamer.includes('\\titlepage') },
-    { name: 'TikZ overlay', test: () => beamer.includes('\\begin{tikzpicture}[overlay]') },
+    { name: 'TikZ overlay with remember picture', test: () => beamer.includes('\\begin{tikzpicture}[overlay,remember picture]') },
     { name: 'Equation not empty', test: () => {
       const eqMatch = beamer.match(/\\begin\{equation\*?\}(.+?)\\end\{equation\*?\}/s);
       return eqMatch && eqMatch[1].trim().length > 0;

@@ -29,21 +29,21 @@ async function testBeamerExport() {
   const checks = [
     { name: 'Document class', test: () => beamer.includes('\\documentclass{beamer}') },
     { name: 'TikZ package', test: () => beamer.includes('\\usepackage{tikz}') },
-    { name: 'TikZ libraries', test: () => beamer.includes('\\usetikzlibrary{arrows,shapes}') },
+    { name: 'TikZ libraries', test: () => beamer.includes('\\usetikzlibrary{arrows,shapes,calc}') },
     { name: 'Remember picture style', test: () => beamer.includes('remember picture') },
     { name: 'xcolor package', test: () => beamer.includes('\\usepackage{xcolor}') },
     { name: 'Color definitions', test: () => beamer.includes('\\definecolor{term') },
-    { name: 'TikZ nodes in equation', test: () => beamer.includes('\\tikz[na] \\node[coordinate]') },
+    { name: 'TikZ coordinate nodes', test: () => beamer.includes('\\coordinate (n') },
     { name: 'Colored equation terms', test: () => beamer.includes('\\textcolor{term') },
     { name: 'No \\htmlClass', test: () => !beamer.includes('\\htmlClass') },
     { name: 'Title frame', test: () => beamer.includes('\\titlepage') },
-    { name: 'Equation frame', test: () => beamer.includes('\\begin{frame}{Equation}') },
-    { name: 'Description list', test: () => beamer.includes('\\begin{description}') },
-    { name: 'TikZ overlay', test: () => beamer.includes('\\begin{tikzpicture}[overlay]') },
-    { name: 'Arrows with colors', test: () => beamer.includes('\\path[->') && beamer.includes('term') },
-    { name: 'Bend left/right', test: () => beamer.includes('bend left') || beamer.includes('bend right') },
+    { name: 'Equation frametitle', test: () => beamer.includes('\\frametitle{Equation}') },
+    { name: 'Block environment', test: () => beamer.includes('\\begin{block}{}') },
+    { name: 'TikZ overlay with remember picture', test: () => beamer.includes('\\begin{tikzpicture}[overlay,remember picture]') },
+    { name: 'Arrows with colors', test: () => beamer.includes('\\draw[->,term') },
+    { name: 'Rounded corners arrows', test: () => beamer.includes('rounded corners') },
     { name: 'Equation not empty', test: () => {
-      const eqMatch = beamer.match(/\\begin\{equation\}(.+?)\\end\{equation\}/s);
+      const eqMatch = beamer.match(/\\begin\{equation\*\}(.+?)\\end\{equation\*\}/s);
       return eqMatch && eqMatch[1].trim().length > 0;
     }},
   ];

@@ -4,10 +4,10 @@ import { exportToLaTeX } from './src/exporter';
 import type { ColorScheme } from './src/exporter';
 import { writeFileSync, readFileSync } from 'fs';
 
-// Test color scheme
+// Test color scheme - Maxwell has 10 terms
 const colorScheme: ColorScheme = {
   name: 'viridis',
-  colors: ['#440154', '#31688e', '#35b779', '#fde724', '#20908d', '#5ec962', '#3b528b'],
+  colors: ['#440154', '#31688e', '#35b779', '#fde724', '#20908d', '#5ec962', '#3b528b', '#29af7f', '#2c728e', '#482173'],
 };
 
 async function testLatexExport() {
