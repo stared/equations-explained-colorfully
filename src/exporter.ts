@@ -129,13 +129,6 @@ export function exportToHTML(
   content: ParsedContent,
   colorScheme: ColorScheme
 ): string {
-  if (!content.title) {
-    throw new Error('Content must have a title (# heading)');
-  }
-  if (!content.latex) {
-    throw new Error('Content must have an equation ($$ block)');
-  }
-
   // Convert \htmlClass to \textcolor for colored rendering
   const coloredLatex = injectColorsIntoLatex(content.latex, content.termOrder, colorScheme);
 
@@ -184,7 +177,7 @@ export function exportToHTML(
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${escapeHTML(content.title)}</title>
+  <title>${escapeHTML(content.title!)}</title>
 
   <!-- KaTeX CSS -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex.min.css" crossorigin="anonymous">
@@ -304,7 +297,7 @@ export function exportToHTML(
   </style>
 </head>
 <body>
-  <h1>${escapeHTML(content.title)}</h1>
+  <h1>${escapeHTML(content.title!)}</h1>
 
   <div class="equation-container">
     ${equationHTML}
@@ -682,13 +675,6 @@ export function exportToLaTeX(
   content: ParsedContent,
   colorScheme: ColorScheme
 ): string {
-  if (!content.title) {
-    throw new Error('Content must have a title (# heading)');
-  }
-  if (!content.latex) {
-    throw new Error('Content must have an equation ($$ block)');
-  }
-
   // Generate color definitions for preamble
   const colorDefinitions = content.termOrder
     .map((className) => {
@@ -727,7 +713,7 @@ export function exportToLaTeX(
 % Define colors from scheme
 ${colorDefinitions}
 
-\\title{${escapeLaTeX(content.title)}}
+\\title{${escapeLaTeX(content.title!)}}
 \\date{}
 
 \\begin{document}
@@ -833,13 +819,6 @@ export function exportToBeamer(
   content: ParsedContent,
   colorScheme: ColorScheme
 ): string {
-  if (!content.title) {
-    throw new Error('Content must have a title (# heading)');
-  }
-  if (!content.latex) {
-    throw new Error('Content must have an equation ($$ block)');
-  }
-
   // Generate color definitions for preamble
   const colorDefinitions = content.termOrder
     .map((className) => {
@@ -906,7 +885,7 @@ ${definitionLatex}
 % Define colors from scheme
 ${colorDefinitions}
 
-\\title{${escapeLaTeX(content.title)}}
+\\title{${escapeLaTeX(content.title!)}}
 \\date{}
 
 \\begin{document}
@@ -1137,13 +1116,6 @@ export function exportToTypst(
   content: ParsedContent,
   colorScheme: ColorScheme
 ): string {
-  if (!content.title) {
-    throw new Error('Content must have a title (# heading)');
-  }
-  if (!content.latex) {
-    throw new Error('Content must have an equation ($$ block)');
-  }
-
   // Generate color definitions
   const colorDefinitions = content.termOrder
     .map((className) => {
@@ -1196,14 +1168,14 @@ export function exportToTypst(
     })
     .join('\n\n');
 
-  return `#set document(title: [${escapeTypst(content.title)}])
+  return `#set document(title: [${escapeTypst(content.title!)}])
 #set page(paper: "a4")
 #set text(font: "New Computer Modern", size: 11pt)
 
 // Color definitions
 ${colorDefinitions}
 
-= ${escapeTypst(content.title)}
+= ${escapeTypst(content.title!)}
 
 == Equation
 
