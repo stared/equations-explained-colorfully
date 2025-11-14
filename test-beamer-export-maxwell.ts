@@ -65,10 +65,10 @@ async function testBeamerExport() {
   console.log(`\n${passed}/${checks.length} checks passed\n`);
 
   // Write to file for manual inspection
-  const outputPath = '/tmp/test-maxwell-beamer.tex';
+  const outputPath = './test-output/test-maxwell-beamer.tex';
   writeFileSync(outputPath, beamer);
   console.log(`Beamer output written to: ${outputPath}`);
-  console.log('Compile with: pdflatex /tmp/test-maxwell-beamer.tex');
+  console.log('Compile with: pdflatex ./test-output/test-maxwell-beamer.tex');
   console.log('Note: Run pdflatex TWICE for TikZ arrows to work correctly\n');
 
   // Show first few lines

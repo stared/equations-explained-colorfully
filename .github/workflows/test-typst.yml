@@ -31,7 +31,7 @@ jobs:
 
       - name: Verify generated file exists
         run: |
-          ls -lh /tmp/test-euler.typ
+          ls -lh ./test-output/test-euler.typ
           echo "Typst file generated successfully"
 
       - name: Install Typst
@@ -40,11 +40,11 @@ jobs:
           typst-version: latest
 
       - name: Compile Euler Typst to PDF
-        run: typst compile /tmp/test-euler.typ /tmp/test-euler.pdf
+        run: typst compile ./test-output/test-euler.typ ./test-output/test-euler.pdf
 
       - name: Verify PDF was created
         run: |
-          ls -lh /tmp/test-euler.pdf
+          ls -lh ./test-output/test-euler.pdf
           echo "PDF created successfully"
 
       - name: Upload Typst artifacts
@@ -53,7 +53,7 @@ jobs:
         with:
           name: typst-outputs
           path: |
-            /tmp/test-euler.typ
-            /tmp/test-euler.pdf
+            test-output/test-euler.typ
+            test-output/test-euler.pdf
           if-no-files-found: warn
           retention-days: 30

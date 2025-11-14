@@ -1,22 +1,40 @@
-// Test LaTeX export with real equation file
+// Test LaTeX export functionality
 import { parseContent } from './src/parser';
 import { exportToLaTeX } from './src/exporter';
 import type { ColorScheme } from './src/exporter';
-import { writeFileSync, readFileSync } from 'fs';
+import { writeFileSync } from 'fs';
+
+// Test markdown content (using actual syntax from the parser)
+const testMarkdown = `# Energy-mass equivalence
+
+\`\`\`latex
+\\htmlClass{term-energy}{E} = \\htmlClass{term-mass}{m}\\htmlClass{term-speed}{c}^2
+\`\`\`
+
+The [energy]{.energy} of a body is equal to its [mass]{.mass} times the [speed of light]{.speed} squared.
+
+## .energy
+Energy of the body
+
+## .mass
+Rest mass of the body
+
+## .speed
+Speed of light in vacuum ($c \\approx 3 \\times 10^8$ m/s)
+`;
 
 // Test color scheme
 const colorScheme: ColorScheme = {
   name: 'viridis',
-  colors: ['#440154', '#31688e', '#35b779', '#fde724', '#20908d', '#5ec962', '#3b528b'],
+  colors: ['#440154', '#31688e', '#35b779'],
 };
 
 async function testLatexExport() {
-  console.log('Testing LaTeX export with real equation file...\n');
+  console.log('Testing LaTeX export...\n');
 
-  // Load Euler's identity equation
-  const markdown = readFileSync('./public/examples/euler.md', 'utf-8');
-  const parsed = await parseContent(markdown);
-  console.log('✓ Content loaded successfully');
+  // Parse content
+  const parsed = await parseContent(testMarkdown);
+  console.log('✓ Content parsed successfully');
   console.log(`  Title: ${parsed.title}`);
   console.log(`  Terms: ${parsed.termOrder.join(', ')}`);
   console.log(`  Definitions: ${parsed.definitions.size}\n`);
@@ -30,18 +48,19 @@ async function testLatexExport() {
     { name: 'Document class', test: () => latex.includes('\\documentclass{article}') },
     { name: 'xcolor package', test: () => latex.includes('\\usepackage{xcolor}') },
     { name: 'amsmath package', test: () => latex.includes('\\usepackage{amsmath}') },
-    { name: 'Color definitions exist', test: () => latex.includes('\\definecolor{term') },
-    { name: 'Colored equation terms', test: () => latex.includes('\\textcolor{term') },
+    { name: 'Color definitions', test: () => latex.includes('\\definecolor{termenergy}{HTML}') },
+    { name: 'Colored equation terms (energy)', test: () => latex.includes('\\textcolor{termenergy}{E}') },
+    { name: 'Colored equation terms (mass)', test: () => latex.includes('\\textcolor{termmass}{m}') },
+    { name: 'Colored equation terms (speed)', test: () => latex.includes('\\textcolor{termspeed}{c}') },
     { name: 'No \\htmlClass', test: () => !latex.includes('\\htmlClass') },
-    { name: 'Title present', test: () => latex.includes('Euler') },
+    { name: 'Title escaped', test: () => latex.includes('Energy-mass equivalence') },
     { name: 'Description section', test: () => latex.includes('\\section*{Description}') },
     { name: 'Definitions section', test: () => latex.includes('\\section*{Definitions}') },
+    { name: 'Colored definition heading', test: () => latex.includes('\\subsection*{\\textcolor{termenergy}{energy}}') },
+    { name: 'Escaped LaTeX chars', test: () => !latex.match(/(?<!\\)[&%#_]/) }, // No unescaped special chars
+    { name: 'Math mode preserved', test: () => latex.includes('$c \\approx 3 \\times 10^8$') },
     { name: 'Document structure', test: () => latex.includes('\\begin{document}') && latex.includes('\\end{document}') },
     { name: 'Equation environment', test: () => latex.includes('\\begin{equation}') && latex.includes('\\end{equation}') },
-    { name: 'Equation not empty', test: () => {
-      const eqMatch = latex.match(/\\begin\{equation\}(.+?)\\end\{equation\}/s);
-      return eqMatch && eqMatch[1].trim().length > 0;
-    }},
   ];
 
   let passed = 0;
@@ -65,15 +84,15 @@ async function testLatexExport() {
   console.log(`\n${passed}/${checks.length} checks passed\n`);
 
   // Write to file for manual inspection
-  const outputPath = './test-output/test-euler-export.tex';
+  const outputPath = '/tmp/test-export.tex';
   writeFileSync(outputPath, latex);
   console.log(`LaTeX output written to: ${outputPath}`);
-  console.log('You can compile it with: pdflatex ./test-output/test-euler-export.tex\n');
+  console.log('You can compile it with: pdflatex /tmp/test-export.tex\n');
 
   // Show first few lines
-  console.log('First 40 lines of LaTeX output:');
+  console.log('First 30 lines of LaTeX output:');
   console.log('---');
-  console.log(latex.split('\n').slice(0, 40).join('\n'));
+  console.log(latex.split('\n').slice(0, 30).join('\n'));
   console.log('...\n');
 
   if (failed > 0) {

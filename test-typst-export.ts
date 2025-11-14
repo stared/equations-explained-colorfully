@@ -65,10 +65,10 @@ async function testTypstExport() {
   console.log(`\n${passed}/${checks.length} checks passed\n`);
 
   // Write to file for manual inspection
-  const outputPath = '/tmp/test-euler.typ';
+  const outputPath = './test-output/test-euler.typ';
   writeFileSync(outputPath, typst);
   console.log(`Typst output written to: ${outputPath}`);
-  console.log('You can compile it with: typst compile /tmp/test-euler.typ\n');
+  console.log('You can compile it with: typst compile ./test-output/test-euler.typ\n');
 
   // Show first few lines
   console.log('First 50 lines of Typst output:');

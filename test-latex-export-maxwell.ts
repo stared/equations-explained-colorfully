@@ -65,10 +65,10 @@ async function testLatexExport() {
   console.log(`\n${passed}/${checks.length} checks passed\n`);
 
   // Write to file for manual inspection
-  const outputPath = '/tmp/test-maxwell.tex';
+  const outputPath = './test-output/test-maxwell.tex';
   writeFileSync(outputPath, latex);
   console.log(`LaTeX output written to: ${outputPath}`);
-  console.log('You can compile it with: pdflatex /tmp/test-maxwell.tex\n');
+  console.log('You can compile it with: pdflatex ./test-output/test-maxwell.tex\n');
 
   // Show first few lines
   console.log('First 40 lines of LaTeX output:');

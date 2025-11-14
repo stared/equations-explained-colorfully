@@ -35,35 +35,35 @@ jobs:
 
       - name: Verify generated files exist
         run: |
-          ls -lh /tmp/test-euler-export.tex /tmp/test-euler-beamer.tex /tmp/test-maxwell.tex /tmp/test-maxwell-beamer.tex
+          ls -lh ./test-output/test-euler-export.tex ./test-output/test-euler-beamer.tex ./test-output/test-maxwell.tex ./test-output/test-maxwell-beamer.tex
           echo "All LaTeX files generated successfully"
 
       - name: Compile Euler LaTeX to PDF
         uses: xu-cheng/latex-action@v4
         with:
-          root_file: /tmp/test-euler-export.tex
-          working_directory: /tmp
+          root_file: test-euler-export.tex
+          working_directory: test-output
           latexmk_use_lualatex: false
 
       - name: Compile Euler Beamer to PDF
         uses: xu-cheng/latex-action@v4
         with:
-          root_file: /tmp/test-euler-beamer.tex
-          working_directory: /tmp
+          root_file: test-euler-beamer.tex
+          working_directory: test-output
           latexmk_use_lualatex: false
 
       - name: Compile Maxwell LaTeX to PDF
         uses: xu-cheng/latex-action@v4
         with:
-          root_file: /tmp/test-maxwell.tex
-          working_directory: /tmp
+          root_file: test-maxwell.tex
+          working_directory: test-output
           latexmk_use_lualatex: false
 
       - name: Compile Maxwell Beamer to PDF
         uses: xu-cheng/latex-action@v4
         with:
-          root_file: /tmp/test-maxwell-beamer.tex
-          working_directory: /tmp
+          root_file: test-maxwell-beamer.tex
+          working_directory: test-output
           latexmk_use_lualatex: false
 
       - name: Upload LaTeX artifacts
@@ -72,13 +72,13 @@ jobs:
         with:
           name: latex-outputs
           path: |
-            /tmp/test-euler-export.tex
-            /tmp/test-euler-export.pdf
-            /tmp/test-euler-beamer.tex
-            /tmp/test-euler-beamer.pdf
-            /tmp/test-maxwell.tex
-            /tmp/test-maxwell.pdf
-            /tmp/test-maxwell-beamer.tex
-            /tmp/test-maxwell-beamer.pdf
+            test-output/test-euler-export.tex
+            test-output/test-euler-export.pdf
+            test-output/test-euler-beamer.tex
+            test-output/test-euler-beamer.pdf
+            test-output/test-maxwell.tex
+            test-output/test-maxwell.pdf
+            test-output/test-maxwell-beamer.tex
+            test-output/test-maxwell-beamer.pdf
           if-no-files-found: warn
           retention-days: 30
