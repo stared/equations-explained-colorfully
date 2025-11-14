@@ -5,7 +5,7 @@ import { CodeJar } from 'codejar';
 import Prism from 'prismjs';
 import './prism-custom';
 import { applyTermColors, markErrors } from './prism-custom';
-import { exportContent, getFileExtension, type ExportFormat, type ColorScheme as ExportColorScheme } from './exporter';
+import { exportContent, getFileExtension, type ExportFormat, type ColorScheme } from './exporter';
 
 // Equation metadata
 interface EquationInfo {
@@ -30,11 +30,6 @@ function renderLatexInText(text: string): string {
 }
 
 // Color schemes - arrays indexed by order of appearance
-interface ColorScheme {
-  name: string;
-  colors: string[];
-}
-
 const colorSchemes: Record<string, ColorScheme> = {
   vibrant: {
     name: 'Vibrant',
@@ -71,7 +66,7 @@ let currentScheme = 'vibrant';
 let parsedContent: ParsedContent | null = null;
 
 // Editor state
-let editor: any = null;
+let editor: CodeJar | null = null;
 let currentMarkdown = '';
 let previewTimeout: number | null = null;
 let isExportMode = false;
@@ -565,13 +560,7 @@ function generateExport(format: ExportFormat): string {
     throw new Error('No content loaded');
   }
 
-  // Convert ColorScheme to ExportColorScheme format
-  const exportColorScheme: ExportColorScheme = {
-    name: colorSchemes[currentScheme].name,
-    colors: colorSchemes[currentScheme].colors,
-  };
-
-  return exportContent(format, parsedContent, exportColorScheme);
+  return exportContent(format, parsedContent, colorSchemes[currentScheme]);
 }
 
 // Initialize - load content and render
