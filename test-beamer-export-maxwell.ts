@@ -2,7 +2,7 @@
 import { parseContent } from './src/parser';
 import { exportToBeamer } from './src/exporter';
 import type { ColorScheme } from './src/exporter';
-import { writeFileSync, readFileSync } from 'fs';
+import { writeFileSync, readFileSync, mkdirSync } from 'fs';
 
 // Test color scheme - Maxwell has 10 terms
 const colorScheme: ColorScheme = {
@@ -66,6 +66,7 @@ async function testBeamerExport() {
 
   // Write to file for manual inspection
   const outputPath = './test-output/test-maxwell-beamer.tex';
+  mkdirSync('./test-output', { recursive: true });
   writeFileSync(outputPath, beamer);
   console.log(`Beamer output written to: ${outputPath}`);
   console.log('Compile with: pdflatex ./test-output/test-maxwell-beamer.tex');

@@ -2,7 +2,7 @@
 import { parseContent } from './src/parser';
 import { exportToLaTeX } from './src/exporter';
 import type { ColorScheme } from './src/exporter';
-import { writeFileSync, readFileSync } from 'fs';
+import { writeFileSync, readFileSync, mkdirSync } from 'fs';
 
 // Test color scheme
 const colorScheme: ColorScheme = {
@@ -66,6 +66,7 @@ async function testLatexExport() {
 
   // Write to file for manual inspection
   const outputPath = './test-output/test-euler-export.tex';
+  mkdirSync('./test-output', { recursive: true });
   writeFileSync(outputPath, latex);
   console.log(`LaTeX output written to: ${outputPath}`);
   console.log('You can compile it with: pdflatex ./test-output/test-euler-export.tex\n');
