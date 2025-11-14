@@ -1,5 +1,7 @@
 // Parser for interactive math markdown format
 
+import { findMatchingBrace } from './latex-utils';
+
 export interface ParsedContent {
   title?: string; // Optional title from # heading
   latex: string; // LaTeX equation with \htmlClass annotations
@@ -50,19 +52,9 @@ function convertMarkToHtmlClass(line: string, equationTerms: Set<string>, termOr
 
       // Find the matching closing brace
       const contentStart = classEnd + 2; // After ]{
-      let braceCount = 1;
-      let contentEnd = contentStart;
+      const contentEnd = findMatchingBrace(line, contentStart);
 
-      while (contentEnd < line.length && braceCount > 0) {
-        if (line[contentEnd] === '{' && line[contentEnd - 1] !== '\\') {
-          braceCount++;
-        } else if (line[contentEnd] === '}' && line[contentEnd - 1] !== '\\') {
-          braceCount--;
-        }
-        contentEnd++;
-      }
-
-      if (braceCount !== 0) {
+      if (contentEnd === -1) {
         // Unmatched braces, just copy and continue
         result += line.substring(i, contentStart);
         i = contentStart;
