@@ -4,6 +4,7 @@
 import type { ParsedContent } from './parser';
 import katex from 'katex';
 import { tex2typst } from 'tex2typst';
+import { findMatchingBrace } from './latex-utils';
 
 export interface ColorScheme {
   name: string;
@@ -176,7 +177,7 @@ export function exportToHTML(
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${escapeHTML(content.title || 'Mathematical Equation')}</title>
+  <title>${escapeHTML(content.title!)}</title>
 
   <!-- KaTeX CSS -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex.min.css" crossorigin="anonymous">
@@ -296,7 +297,7 @@ export function exportToHTML(
   </style>
 </head>
 <body>
-  <h1>${escapeHTML(content.title || 'Mathematical Equation')}</h1>
+  <h1>${escapeHTML(content.title!)}</h1>
 
   <div class="equation-container">
     ${equationHTML}
@@ -425,19 +426,9 @@ function injectColorsIntoLatex(latex: string, termOrder: string[], colorScheme: 
 
       // Find the matching closing brace for content
       const contentStart = classEnd + 2; // After }{
-      let braceCount = 1;
-      let contentEnd = contentStart;
+      const contentEnd = findMatchingBrace(latex, contentStart);
 
-      while (contentEnd < latex.length && braceCount > 0) {
-        if (latex[contentEnd] === '{' && latex[contentEnd - 1] !== '\\') {
-          braceCount++;
-        } else if (latex[contentEnd] === '}' && latex[contentEnd - 1] !== '\\') {
-          braceCount--;
-        }
-        contentEnd++;
-      }
-
-      if (braceCount !== 0) {
+      if (contentEnd === -1) {
         // Unmatched braces, just copy and continue
         result += latex.substring(i, contentStart);
         i = contentStart;
@@ -585,19 +576,9 @@ function stripHtmlClassForLatex(latex: string): string {
 
       // Find the matching closing brace for content
       const contentStart = classEnd + 2; // After }{
-      let braceCount = 1;
-      let contentEnd = contentStart;
+      const contentEnd = findMatchingBrace(latex, contentStart);
 
-      while (contentEnd < latex.length && braceCount > 0) {
-        if (latex[contentEnd] === '{' && latex[contentEnd - 1] !== '\\') {
-          braceCount++;
-        } else if (latex[contentEnd] === '}' && latex[contentEnd - 1] !== '\\') {
-          braceCount--;
-        }
-        contentEnd++;
-      }
-
-      if (braceCount !== 0) {
+      if (contentEnd === -1) {
         // Unmatched braces, just copy and continue
         result += latex.substring(i, contentStart);
         i = contentStart;
@@ -732,7 +713,7 @@ export function exportToLaTeX(
 % Define colors from scheme
 ${colorDefinitions}
 
-\\title{${escapeLaTeX(content.title || 'Mathematical Equation')}}
+\\title{${escapeLaTeX(content.title!)}}
 \\date{}
 
 \\begin{document}
@@ -805,19 +786,9 @@ function injectTikzNodesInLatex(latex: string): { latex: string; nodeCount: numb
 
       // Find the matching closing brace for content
       const contentStart = classEnd + 2; // After }{
-      let braceCount = 1;
-      let contentEnd = contentStart;
+      const contentEnd = findMatchingBrace(latex, contentStart);
 
-      while (contentEnd < latex.length && braceCount > 0) {
-        if (latex[contentEnd] === '{' && latex[contentEnd - 1] !== '\\') {
-          braceCount++;
-        } else if (latex[contentEnd] === '}' && latex[contentEnd - 1] !== '\\') {
-          braceCount--;
-        }
-        contentEnd++;
-      }
-
-      if (braceCount !== 0) {
+      if (contentEnd === -1) {
         // Unmatched braces, just copy and continue
         result += latex.substring(i, contentStart);
         i = contentStart;
@@ -873,7 +844,7 @@ export function exportToBeamer(
       const definitionLatex = escapeLatexPreservingMath(definition);
 
       return `\\begin{frame}<${index + 2}>[label=term${index}]
-\\frametitle{${escapeLaTeX(content.title || 'Equation')}}
+\\frametitle{${escapeLaTeX(content.title!)}}
 
 \\begin{equation*}
 ${equationWithNodes}
@@ -914,7 +885,7 @@ ${definitionLatex}
 % Define colors from scheme
 ${colorDefinitions}
 
-\\title{${escapeLaTeX(content.title || 'Mathematical Equation')}}
+\\title{${escapeLaTeX(content.title!)}}
 \\date{}
 
 \\begin{document}
@@ -1105,19 +1076,9 @@ function convertLatexToTypst(latex: string, termOrder: string[], colorScheme: Co
 
       // Find matching closing brace for content
       const contentStart = classEnd + 2;
-      let braceCount = 1;
-      let contentEnd = contentStart;
+      const contentEnd = findMatchingBrace(latex, contentStart);
 
-      while (contentEnd < latex.length && braceCount > 0) {
-        if (latex[contentEnd] === '{' && latex[contentEnd - 1] !== '\\') {
-          braceCount++;
-        } else if (latex[contentEnd] === '}' && latex[contentEnd - 1] !== '\\') {
-          braceCount--;
-        }
-        contentEnd++;
-      }
-
-      if (braceCount !== 0) {
+      if (contentEnd === -1) {
         result += latex.substring(i, contentStart);
         i = contentStart;
         continue;
@@ -1207,14 +1168,14 @@ export function exportToTypst(
     })
     .join('\n\n');
 
-  return `#set document(title: [${escapeTypst(content.title || 'Mathematical Equation')}])
+  return `#set document(title: [${escapeTypst(content.title!)}])
 #set page(paper: "a4")
 #set text(font: "New Computer Modern", size: 11pt)
 
 // Color definitions
 ${colorDefinitions}
 
-= ${escapeTypst(content.title || 'Mathematical Equation')}
+= ${escapeTypst(content.title!)}
 
 == Equation
 

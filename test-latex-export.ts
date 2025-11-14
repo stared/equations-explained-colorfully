@@ -7,9 +7,11 @@ import { writeFileSync } from 'fs';
 // Test markdown content (using actual syntax from the parser)
 const testMarkdown = `# Energy-mass equivalence
 
-\`\`\`latex
-\\htmlClass{term-energy}{E} = \\htmlClass{term-mass}{m}\\htmlClass{term-speed}{c}^2
-\`\`\`
+$$
+\\mark[energy]{E} = \\mark[mass]{m}\\mark[speed]{c}^2
+$$
+
+## Description
 
 The [energy]{.energy} of a body is equal to its [mass]{.mass} times the [speed of light]{.speed} squared.
 
