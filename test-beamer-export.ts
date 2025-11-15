@@ -1,14 +1,8 @@
 // Test Beamer export with TikZ arrows
 import { parseContent } from './src/parser';
 import { exportToBeamer } from './src/exporter';
-import type { ColorScheme } from './src/exporter';
-import { writeFileSync, readFileSync, mkdirSync } from 'fs';
-
-// Test color scheme
-const colorScheme: ColorScheme = {
-  name: 'vibrant',
-  colors: ['#e6194B', '#3cb44b', '#ffe119', '#4363d8', '#f58231'],
-};
+import { vibrantScheme, runChecks, reportTestResults } from './tests/test-utils';
+import { readFileSync, writeFileSync, mkdirSync } from 'fs';
 
 async function testBeamerExport() {
   console.log('Testing Beamer export with TikZ arrows...\n');
@@ -22,7 +16,7 @@ async function testBeamerExport() {
   console.log(`  Definitions: ${parsed.definitions.size}\n`);
 
   // Generate Beamer export
-  const beamer = exportToBeamer(parsed, colorScheme);
+  const beamer = exportToBeamer(parsed, vibrantScheme);
   console.log('✓ Beamer export generated successfully\n');
 
   // Validation checks
@@ -48,31 +42,13 @@ async function testBeamerExport() {
     }},
   ];
 
-  let passed = 0;
-  let failed = 0;
-
-  checks.forEach((check) => {
-    try {
-      if (check.test()) {
-        console.log(`  ✓ ${check.name}`);
-        passed++;
-      } else {
-        console.log(`  ✗ ${check.name}`);
-        failed++;
-      }
-    } catch (error) {
-      console.log(`  ✗ ${check.name} (error: ${error})`);
-      failed++;
-    }
-  });
-
-  console.log(`\n${passed}/${checks.length} checks passed\n`);
+  const { passed, failed } = runChecks(checks);
 
   // Write to file for manual inspection
   const outputPath = './test-output/test-euler-beamer.tex';
   mkdirSync('./test-output', { recursive: true });
   writeFileSync(outputPath, beamer);
-  console.log(`Beamer output written to: ${outputPath}`);
+  console.log(`\nBeamer output written to: ${outputPath}`);
   console.log('Compile with: pdflatex ./test-output/test-euler-beamer.tex');
   console.log('Note: Run pdflatex TWICE for TikZ arrows to work correctly\n');
 
@@ -82,12 +58,7 @@ async function testBeamerExport() {
   console.log(beamer.split('\n').slice(0, 50).join('\n'));
   console.log('...\n');
 
-  if (failed > 0) {
-    console.error(`❌ ${failed} checks failed`);
-    process.exit(1);
-  } else {
-    console.log('✅ All checks passed!');
-  }
+  reportTestResults(passed, checks.length, 'Beamer export');
 }
 
 testBeamerExport().catch((error) => {
