@@ -615,6 +615,26 @@ function convertDescriptionToTypst(html: string, termOrder: string[], colorSchem
   );
 }
 
+// Replace inline rgb("#hex") colors with Typst variable references
+function replaceTypstInlineColors(
+  text: string,
+  termOrder: string[],
+  colorScheme: ColorScheme,
+  replaceBareHex: boolean = false
+): string {
+  let result = text;
+  termOrder.forEach((className) => {
+    const color = getTermColor(className, termOrder, colorScheme);
+    const typstVarName = `term${className}`;
+    const hexPattern = color.replace('#', '\\#');
+    result = result.replace(new RegExp(`rgb\\("${hexPattern}"\\)`, 'g'), typstVarName);
+    if (replaceBareHex) {
+      result = result.replace(new RegExp(`${hexPattern}(?![a-fA-F0-9])`, 'g'), typstVarName);
+    }
+  });
+  return result;
+}
+
 // Convert \htmlClass LaTeX to Typst via \textcolor preprocessing
 function convertLatexToTypst(latex: string, termOrder: string[], colorScheme: ColorScheme): string {
   const withColors = transformHtmlClass(latex, (className, content) => {
@@ -646,39 +666,20 @@ export function exportToTypst(
     })
     .join('\n');
 
-  // Convert equation LaTeX to Typst (produces inline colors initially)
-  const equationTypstRaw = convertLatexToTypst(content.latex, content.termOrder, colorScheme);
-
-  // Replace inline colors with variable references in equation
-  let equationTypst = equationTypstRaw;
-  content.termOrder.forEach((className) => {
-    const color = getTermColor(className, content.termOrder, colorScheme);
-    const typstVarName = `term${className}`;
-    // Replace rgb("#hex") format that tex2typst produces
-    const hexPattern = color.replace('#', '\\#');
-    equationTypst = equationTypst.replace(
-      new RegExp(`rgb\\("${hexPattern}"\\)`, 'g'),
-      typstVarName
-    );
-    // Also replace bare #hex format if it appears
-    equationTypst = equationTypst.replace(
-      new RegExp(`${hexPattern}(?![a-fA-F0-9])`, 'g'),
-      typstVarName
-    );
-  });
+  // Convert equation LaTeX to Typst and replace inline colors with variable references
+  const equationTypst = replaceTypstInlineColors(
+    convertLatexToTypst(content.latex, content.termOrder, colorScheme),
+    content.termOrder,
+    colorScheme,
+    true // also replace bare #hex format
+  );
 
   // Convert description and replace inline colors with variable references
-  const descriptionTextRaw = convertDescriptionToTypst(content.description, content.termOrder, colorScheme);
-  let descriptionText = descriptionTextRaw;
-  content.termOrder.forEach((className) => {
-    const color = getTermColor(className, content.termOrder, colorScheme);
-    const typstVarName = `term${className}`;
-    const hexPattern = color.replace('#', '\\#');
-    descriptionText = descriptionText.replace(
-      new RegExp(`rgb\\("${hexPattern}"\\)`, 'g'),
-      typstVarName
-    );
-  });
+  const descriptionText = replaceTypstInlineColors(
+    convertDescriptionToTypst(content.description, content.termOrder, colorScheme),
+    content.termOrder,
+    colorScheme
+  );
 
   // Convert definitions using variable names directly
   const definitionsTypst = Array.from(content.definitions.entries())
