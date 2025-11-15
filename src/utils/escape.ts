@@ -1,8 +1,9 @@
-// Escape text while preserving $...$ inline math
+// Escape text while processing $...$ inline math
+// The mathFormatter callback controls the complete output format (including delimiters if needed)
 export function escapePreservingMath(
   text: string,
   escaper: (char: string) => string,
-  mathConverter?: (math: string) => string
+  mathFormatter?: (math: string) => string
 ): string {
   let result = '';
   let i = 0;
@@ -14,18 +15,17 @@ export function escapePreservingMath(
       if (!inMath) {
         mathStart = i;
         inMath = true;
-        result += '$';
         i++;
       } else {
         const mathContent = text.substring(mathStart + 1, i);
-        if (mathConverter) {
+        if (mathFormatter) {
           try {
-            result += mathConverter(mathContent) + '$';
+            result += mathFormatter(mathContent);
           } catch {
-            result += mathContent + '$';
+            result += '$' + mathContent + '$'; // On error, preserve as-is
           }
         } else {
-          result += mathContent + '$';
+          result += '$' + mathContent + '$'; // Default: preserve math delimiters
         }
         inMath = false;
         i++;

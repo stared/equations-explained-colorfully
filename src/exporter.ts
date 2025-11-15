@@ -6,6 +6,7 @@ import katex from 'katex';
 import { tex2typst } from 'tex2typst';
 import { transformHtmlClass } from './utils/latex-parser';
 import { escapePreservingMath } from './utils/escape';
+import { convertHtmlDescription } from './utils/html-converter';
 
 export interface ColorScheme {
   name: string;
@@ -376,55 +377,15 @@ function applyColorsToHTML(html: string, termOrder: string[]): string {
   return result;
 }
 
-/**
- * Render inline $...$ math using KaTeX server-side
- */
+// Render inline $...$ math using KaTeX server-side
 function renderInlineMath(text: string): string {
-  // Replace $...$ with rendered KaTeX HTML, but escape the rest
-  let result = '';
-  let i = 0;
-  let inMath = false;
-  let mathStart = -1;
-
-  while (i < text.length) {
-    if (text[i] === '$' && (i === 0 || text[i - 1] !== '\\')) {
-      if (!inMath) {
-        // Start of math
-        mathStart = i;
-        inMath = true;
-        i++;
-      } else {
-        // End of math
-        const mathContent = text.substring(mathStart + 1, i);
-        try {
-          const rendered = katex.renderToString(mathContent, {
-            displayMode: false,
-            throwOnError: true,
-          });
-          result += rendered;
-        } catch (error) {
-          // If rendering fails, keep the original
-          result += '$' + escapeHTML(mathContent) + '$';
-        }
-        inMath = false;
-        i++;
-        mathStart = -1;
-      }
-    } else if (!inMath) {
-      result += escapeHTML(text[i]);
-      i++;
-    } else {
-      // Inside math, don't escape yet
-      i++;
+  return escapePreservingMath(text, escapeHTML, (math) => {
+    try {
+      return katex.renderToString(math, { displayMode: false, throwOnError: true });
+    } catch {
+      return '$' + escapeHTML(math) + '$'; // On error, keep original
     }
-  }
-
-  // Handle unclosed math
-  if (inMath) {
-    result += escapeHTML(text.substring(mathStart));
-  }
-
-  return result;
+  });
 }
 
 // Strip \htmlClass wrappers and replace with \textcolor
@@ -434,70 +395,13 @@ function stripHtmlClassForLatex(latex: string): string {
   );
 }
 
-/**
- * Convert HTML description to LaTeX text
- * Strips <span> tags and converts content to LaTeX
- */
+// Convert HTML description to LaTeX text
 function convertDescriptionToLatex(html: string): string {
-  let result = '';
-  let i = 0;
-
-  while (i < html.length) {
-    // Look for <span class="term-X">
-    if (html.substring(i, i + 18) === '<span class="term-') {
-      // Find the closing >
-      const tagEnd = html.indexOf('>', i);
-      if (tagEnd === -1) {
-        result += escapeLaTeX(html[i]);
-        i++;
-        continue;
-      }
-
-      // Extract class name
-      const tagContent = html.substring(i, tagEnd + 1);
-      const classMatch = tagContent.match(/class="term-([^"]+)"/);
-
-      if (!classMatch) {
-        result += escapeLaTeX(html.substring(i, tagEnd + 1));
-        i = tagEnd + 1;
-        continue;
-      }
-
-      const className = classMatch[1];
-      const latexColorName = `term${className}`;
-
-      // Find the closing </span>
-      const closeTag = '</span>';
-      const closeIndex = html.indexOf(closeTag, tagEnd + 1);
-
-      if (closeIndex === -1) {
-        result += escapeLaTeX(html.substring(i, tagEnd + 1));
-        i = tagEnd + 1;
-        continue;
-      }
-
-      // Extract content between tags
-      const content = html.substring(tagEnd + 1, closeIndex);
-
-      // Output colored text in LaTeX
-      result += `\\textcolor{${latexColorName}}{${escapeLaTeX(content)}}`;
-
-      i = closeIndex + closeTag.length;
-    } else if (html.substring(i, i + 3) === '<p>') {
-      // Skip <p> tags
-      i += 3;
-    } else if (html.substring(i, i + 4) === '</p>') {
-      // Replace </p> with paragraph break
-      result += '\n\n';
-      i += 4;
-    } else {
-      // Regular text - escape for LaTeX
-      result += escapeLaTeX(html[i]);
-      i++;
-    }
-  }
-
-  return result.trim();
+  return convertHtmlDescription(
+    html,
+    escapeLaTeX,
+    (className, content) => `\\textcolor{term${className}}{${escapeLaTeX(content)}}`
+  );
 }
 
 /**
@@ -696,64 +600,19 @@ function escapeTypst(text: string): string {
 }
 
 // Escape Typst text while preserving inline math (converts LaTeX math to Typst)
-const escapeTypstPreservingMath = (text: string) => escapePreservingMath(text, escapeTypst, tex2typst);
+const escapeTypstPreservingMath = (text: string) =>
+  escapePreservingMath(text, escapeTypst, (math) => `$${tex2typst(math)}$`);
 
-/**
- * Convert HTML description to Typst text with colored terms
- */
+// Convert HTML description to Typst text with colored terms
 function convertDescriptionToTypst(html: string, termOrder: string[], colorScheme: ColorScheme): string {
-  let result = '';
-  let i = 0;
-
-  while (i < html.length) {
-    // Look for <span class="term-X">
-    if (html.substring(i, i + 18) === '<span class="term-') {
-      const tagEnd = html.indexOf('>', i);
-      if (tagEnd === -1) {
-        result += escapeTypst(html[i]);
-        i++;
-        continue;
-      }
-
-      const tagContent = html.substring(i, tagEnd + 1);
-      const classMatch = tagContent.match(/class="term-([^"]+)"/);
-
-      if (!classMatch) {
-        result += escapeTypst(html.substring(i, tagEnd + 1));
-        i = tagEnd + 1;
-        continue;
-      }
-
-      const className = classMatch[1];
+  return convertHtmlDescription(
+    html,
+    escapeTypst,
+    (className, content) => {
       const color = getTermColor(className, termOrder, colorScheme);
-
-      const closeTag = '</span>';
-      const closeIndex = html.indexOf(closeTag, tagEnd + 1);
-
-      if (closeIndex === -1) {
-        result += escapeTypst(html.substring(i, tagEnd + 1));
-        i = tagEnd + 1;
-        continue;
-      }
-
-      const content = html.substring(tagEnd + 1, closeIndex);
-
-      // Output colored text in Typst
-      result += `#text(fill: rgb("${color}"))[${escapeTypst(content)}]`;
-
-      i = closeIndex + closeTag.length;
-    } else if (html.substring(i, i + 3) === '<p>') {
-      i += 3;
-    } else if (html.substring(i, i + 4) === '</p>') {
-      result += '\n\n';
-      i += 4;
-    } else {
-      result += escapeTypst(html[i]);
-      i++;
+      return `#text(fill: rgb("${color}"))[${escapeTypst(content)}]`;
     }
-  }
-
-  return result.trim();
+  );
 }
 
 // Convert \htmlClass LaTeX to Typst via \textcolor preprocessing
