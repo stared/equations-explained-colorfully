@@ -5,6 +5,7 @@ import type { ParsedContent } from './parser';
 import katex from 'katex';
 import { tex2typst } from 'tex2typst';
 import { transformHtmlClass } from './utils/latex-parser';
+import { escapePreservingMath } from './utils/escape';
 
 export interface ColorScheme {
   name: string;
@@ -66,47 +67,8 @@ export function escapeLaTeX(text: string): string {
   return text.replace(/[\\{}$&%#_~^]/g, (char) => map[char]);
 }
 
-/**
- * Escape LaTeX text while preserving inline math ($...$)
- */
-function escapeLatexPreservingMath(text: string): string {
-  let result = '';
-  let i = 0;
-  let inMath = false;
-  let mathStart = -1;
-
-  while (i < text.length) {
-    if (text[i] === '$' && (i === 0 || text[i - 1] !== '\\')) {
-      if (!inMath) {
-        // Start of math
-        mathStart = i;
-        inMath = true;
-        result += '$'; // Keep the $ for math mode
-        i++;
-      } else {
-        // End of math - keep everything in math mode as-is
-        result += text.substring(mathStart + 1, i) + '$';
-        inMath = false;
-        i++;
-        mathStart = -1;
-      }
-    } else if (!inMath) {
-      // Outside math - escape special characters
-      result += escapeLaTeX(text[i]);
-      i++;
-    } else {
-      // Inside math - don't process yet, will be added when we hit closing $
-      i++;
-    }
-  }
-
-  // Handle unclosed math
-  if (inMath) {
-    result += escapeLaTeX(text.substring(mathStart));
-  }
-
-  return result;
-}
+// Escape LaTeX text while preserving inline math ($...$)
+const escapeLatexPreservingMath = (text: string) => escapePreservingMath(text, escapeLaTeX);
 
 /**
  * Get file extension for export format
@@ -733,56 +695,8 @@ function escapeTypst(text: string): string {
     .replace(/`/g, '\\`');
 }
 
-/**
- * Escape Typst text while preserving inline math ($...$)
- * Converts LaTeX math to Typst math using tex2typst
- */
-function escapeTypstPreservingMath(text: string): string {
-  let result = '';
-  let i = 0;
-  let inMath = false;
-  let mathStart = -1;
-
-  while (i < text.length) {
-    if (text[i] === '$' && (i === 0 || text[i - 1] !== '\\')) {
-      if (!inMath) {
-        // Start of math
-        mathStart = i;
-        inMath = true;
-        result += '$';
-        i++;
-      } else {
-        // End of math - convert LaTeX math to Typst
-        const latexMath = text.substring(mathStart + 1, i);
-        try {
-          // Use tex2typst to convert the LaTeX math to Typst
-          const typstMath = tex2typst(latexMath);
-          result += typstMath + '$';
-        } catch (error) {
-          // If conversion fails, keep original
-          result += latexMath + '$';
-        }
-        inMath = false;
-        i++;
-        mathStart = -1;
-      }
-    } else if (!inMath) {
-      // Outside math - escape special characters
-      result += escapeTypst(text[i]);
-      i++;
-    } else {
-      // Inside math - don't process yet
-      i++;
-    }
-  }
-
-  // Handle unclosed math
-  if (inMath) {
-    result += escapeTypst(text.substring(mathStart));
-  }
-
-  return result;
-}
+// Escape Typst text while preserving inline math (converts LaTeX math to Typst)
+const escapeTypstPreservingMath = (text: string) => escapePreservingMath(text, escapeTypst, tex2typst);
 
 /**
  * Convert HTML description to Typst text with colored terms
