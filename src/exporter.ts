@@ -4,7 +4,7 @@
 import type { ParsedContent } from './parser';
 import katex from 'katex';
 import { tex2typst } from 'tex2typst';
-import { findMatchingBrace } from './latex-utils';
+import { transformHtmlClass } from './utils/latex-parser';
 
 export interface ColorScheme {
   name: string;
@@ -381,81 +381,16 @@ export function exportToHTML(
 </html>`;
 }
 
-/**
- * Inject colors into LaTeX while preserving \htmlClass for interactivity
- * Wraps \htmlClass{term-X}{content} with \textcolor for colors
- */
+// Inject colors into LaTeX while preserving \htmlClass for interactivity
 function injectColorsIntoLatex(latex: string, termOrder: string[], colorScheme: ColorScheme): string {
-  let result = '';
-  let i = 0;
-
-  while (i < latex.length) {
-    // Look for \htmlClass{
-    if (latex.substring(i, i + 11) === '\\htmlClass{') {
-      // Find the closing }
-      const classStart = i + 11;
-      let classEnd = latex.indexOf('}', classStart);
-
-      if (classEnd === -1) {
-        // Malformed, just copy and continue
-        result += latex[i];
-        i++;
-        continue;
-      }
-
-      const fullClassName = latex.substring(classStart, classEnd);
-
-      // Check if it's a term-X class
-      if (!fullClassName.startsWith('term-')) {
-        // Not a term class, just copy
-        result += latex.substring(i, classEnd + 1);
-        i = classEnd + 1;
-        continue;
-      }
-
-      // Extract className from term-X
-      const className = fullClassName.substring(5); // Remove 'term-' prefix
-
-      // Check if there's a { after }
-      if (latex[classEnd + 1] !== '{') {
-        // Malformed, just copy and continue
-        result += latex.substring(i, classEnd + 1);
-        i = classEnd + 1;
-        continue;
-      }
-
-      // Find the matching closing brace for content
-      const contentStart = classEnd + 2; // After }{
-      const contentEnd = findMatchingBrace(latex, contentStart);
-
-      if (contentEnd === -1) {
-        // Unmatched braces, just copy and continue
-        result += latex.substring(i, contentStart);
-        i = contentStart;
-        continue;
-      }
-
-      // Extract content (excluding the final })
-      const content = latex.substring(contentStart, contentEnd - 1);
-
-      // Get color for this term
-      try {
-        const color = getTermColor(className, termOrder, colorScheme);
-        // Wrap with both \htmlClass (for interactivity) and \textcolor (for color)
-        result += `\\htmlClass{${fullClassName}}{\\textcolor{${color}}{${content}}}`;
-      } catch (error) {
-        // Term not found in color scheme, keep original
-        result += latex.substring(i, contentEnd);
-      }
-
-      i = contentEnd;
-    } else {
-      result += latex[i];
-      i++;
+  return transformHtmlClass(latex, (className, content) => {
+    try {
+      const color = getTermColor(className, termOrder, colorScheme);
+      return `\\htmlClass{term-${className}}{\\textcolor{${color}}{${content}}}`;
+    } catch {
+      return null; // Keep original if term not found
     }
-  }
-
-  return result;
+  });
 }
 
 /**
@@ -530,75 +465,11 @@ function renderInlineMath(text: string): string {
   return result;
 }
 
-/**
- * Strip \htmlClass wrappers from LaTeX and replace with \textcolor
- * Converts \htmlClass{term-X}{content} → \textcolor{termX}{content}
- */
+// Strip \htmlClass wrappers and replace with \textcolor
 function stripHtmlClassForLatex(latex: string): string {
-  let result = '';
-  let i = 0;
-
-  while (i < latex.length) {
-    // Look for \htmlClass{
-    if (latex.substring(i, i + 11) === '\\htmlClass{') {
-      // Find the closing }
-      const classStart = i + 11;
-      let classEnd = latex.indexOf('}', classStart);
-
-      if (classEnd === -1) {
-        // Malformed, just copy and continue
-        result += latex[i];
-        i++;
-        continue;
-      }
-
-      const fullClassName = latex.substring(classStart, classEnd);
-
-      // Check if it's a term-X class
-      if (!fullClassName.startsWith('term-')) {
-        // Not a term class, just copy
-        result += latex.substring(i, classEnd + 1);
-        i = classEnd + 1;
-        continue;
-      }
-
-      // Extract className from term-X
-      const className = fullClassName.substring(5); // Remove 'term-' prefix
-      const latexColorName = `term${className}`;
-
-      // Check if there's a { after }
-      if (latex[classEnd + 1] !== '{') {
-        // Malformed, just copy and continue
-        result += latex.substring(i, classEnd + 1);
-        i = classEnd + 1;
-        continue;
-      }
-
-      // Find the matching closing brace for content
-      const contentStart = classEnd + 2; // After }{
-      const contentEnd = findMatchingBrace(latex, contentStart);
-
-      if (contentEnd === -1) {
-        // Unmatched braces, just copy and continue
-        result += latex.substring(i, contentStart);
-        i = contentStart;
-        continue;
-      }
-
-      // Extract content (excluding the final })
-      const content = latex.substring(contentStart, contentEnd - 1);
-
-      // Replace with \textcolor{termX}{content}
-      result += `\\textcolor{${latexColorName}}{${content}}`;
-
-      i = contentEnd;
-    } else {
-      result += latex[i];
-      i++;
-    }
-  }
-
-  return result;
+  return transformHtmlClass(latex, (className, content) =>
+    `\\textcolor{term${className}}{${content}}`
+  );
 }
 
 /**
@@ -736,79 +607,14 @@ ${definitionsLatex}
 \\end{document}`;
 }
 
-/**
- * Inject TikZ coordinate nodes into LaTeX equation
- * Converts \htmlClass{term-X}{content} → \tikz[na] \node[coordinate] (nN) {};\textcolor{termX}{content}
- * Returns the modified LaTeX and the count of nodes added
- */
+// Inject TikZ coordinate nodes into LaTeX equation
 function injectTikzNodesInLatex(latex: string): { latex: string; nodeCount: number } {
-  let result = '';
-  let i = 0;
-  let nodeIndex = 0;
-
-  while (i < latex.length) {
-    // Look for \htmlClass{
-    if (latex.substring(i, i + 11) === '\\htmlClass{') {
-      // Find the closing }
-      const classStart = i + 11;
-      let classEnd = latex.indexOf('}', classStart);
-
-      if (classEnd === -1) {
-        // Malformed, just copy and continue
-        result += latex[i];
-        i++;
-        continue;
-      }
-
-      const fullClassName = latex.substring(classStart, classEnd);
-
-      // Check if it's a term-X class
-      if (!fullClassName.startsWith('term-')) {
-        // Not a term class, just copy
-        result += latex.substring(i, classEnd + 1);
-        i = classEnd + 1;
-        continue;
-      }
-
-      // Extract className from term-X
-      const className = fullClassName.substring(5); // Remove 'term-' prefix
-      const latexColorName = `term${className}`;
-      const nodeId = `n${nodeIndex}`;
-      nodeIndex++;
-
-      // Check if there's a { after }
-      if (latex[classEnd + 1] !== '{') {
-        // Malformed, just copy and continue
-        result += latex.substring(i, classEnd + 1);
-        i = classEnd + 1;
-        continue;
-      }
-
-      // Find the matching closing brace for content
-      const contentStart = classEnd + 2; // After }{
-      const contentEnd = findMatchingBrace(latex, contentStart);
-
-      if (contentEnd === -1) {
-        // Unmatched braces, just copy and continue
-        result += latex.substring(i, contentStart);
-        i = contentStart;
-        continue;
-      }
-
-      // Extract content (excluding the final })
-      const content = latex.substring(contentStart, contentEnd - 1);
-
-      // Place colored content with coordinate node at right edge (for arrow connection)
-      result += `\\textcolor{${latexColorName}}{${content}}\\tikz[baseline,remember picture,overlay] \\coordinate (${nodeId});`;
-
-      i = contentEnd;
-    } else {
-      result += latex[i];
-      i++;
-    }
-  }
-
-  return { latex: result, nodeCount: nodeIndex };
+  let nodeCount = 0;
+  const result = transformHtmlClass(latex, (className, content, index) => {
+    nodeCount++;
+    return `\\textcolor{term${className}}{${content}}\\tikz[baseline,remember picture,overlay] \\coordinate (n${index});`;
+  });
+  return { latex: result, nodeCount };
 }
 
 /**
@@ -1036,75 +842,17 @@ function convertDescriptionToTypst(html: string, termOrder: string[], colorSchem
   return result.trim();
 }
 
-/**
- * Convert \htmlClass LaTeX to Typst by preprocessing to \textcolor
- * tex2typst natively handles \textcolor, converting it to #text(fill: color)[$...$]
- */
+// Convert \htmlClass LaTeX to Typst via \textcolor preprocessing
 function convertLatexToTypst(latex: string, termOrder: string[], colorScheme: ColorScheme): string {
-  // Replace \htmlClass{term-X}{content} with \textcolor{#hex}{content}
-  // tex2typst will then convert \textcolor to proper Typst syntax
-  let i = 0;
-  let result = '';
-
-  while (i < latex.length) {
-    // Look for \htmlClass{
-    if (latex.substring(i, i + 11) === '\\htmlClass{') {
-      const classStart = i + 11;
-      let classEnd = latex.indexOf('}', classStart);
-
-      if (classEnd === -1) {
-        result += latex[i];
-        i++;
-        continue;
-      }
-
-      const fullClassName = latex.substring(classStart, classEnd);
-
-      if (!fullClassName.startsWith('term-')) {
-        result += latex.substring(i, classEnd + 1);
-        i = classEnd + 1;
-        continue;
-      }
-
-      const className = fullClassName.substring(5); // Remove 'term-' prefix
-
-      if (latex[classEnd + 1] !== '{') {
-        result += latex.substring(i, classEnd + 1);
-        i = classEnd + 1;
-        continue;
-      }
-
-      // Find matching closing brace for content
-      const contentStart = classEnd + 2;
-      const contentEnd = findMatchingBrace(latex, contentStart);
-
-      if (contentEnd === -1) {
-        result += latex.substring(i, contentStart);
-        i = contentStart;
-        continue;
-      }
-
-      const content = latex.substring(contentStart, contentEnd - 1);
-
-      // Get color for this term
-      try {
-        const color = getTermColor(className, termOrder, colorScheme);
-        // Replace with \textcolor - tex2typst will handle the conversion
-        result += `\\textcolor{${color}}{${content}}`;
-      } catch (error) {
-        // Term not found, keep original content without wrapper
-        result += content;
-      }
-
-      i = contentEnd;
-    } else {
-      result += latex[i];
-      i++;
+  const withColors = transformHtmlClass(latex, (className, content) => {
+    try {
+      const color = getTermColor(className, termOrder, colorScheme);
+      return `\\textcolor{${color}}{${content}}`;
+    } catch {
+      return content; // Keep content without wrapper if term not found
     }
-  }
-
-  // Convert to Typst using tex2typst (handles \textcolor natively!)
-  return tex2typst(result);
+  });
+  return tex2typst(withColors);
 }
 
 /**
