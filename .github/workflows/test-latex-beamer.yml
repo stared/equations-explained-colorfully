@@ -28,20 +28,18 @@ jobs:
 
       - name: Generate LaTeX files
         run: |
-          pnpm tsx test-latex-export-real.ts
-          pnpm tsx test-beamer-export.ts
-          pnpm tsx test-latex-export-maxwell.ts
-          pnpm tsx test-beamer-export-maxwell.ts
+          pnpm tsx test-latex-exports.ts
+          pnpm tsx test-beamer-exports.ts
 
       - name: Verify generated files exist
         run: |
-          ls -lh ./test-output/test-euler-export.tex ./test-output/test-euler-beamer.tex ./test-output/test-maxwell.tex ./test-output/test-maxwell-beamer.tex
+          ls -lh ./test-output/test-euler.tex ./test-output/test-euler-beamer.tex ./test-output/test-maxwell.tex ./test-output/test-maxwell-beamer.tex
           echo "All LaTeX files generated successfully"
 
       - name: Compile Euler LaTeX to PDF
         uses: xu-cheng/latex-action@v4
         with:
-          root_file: test-euler-export.tex
+          root_file: test-euler.tex
           working_directory: test-output
           latexmk_use_lualatex: false
 
@@ -72,8 +70,8 @@ jobs:
         with:
           name: latex-outputs
           path: |
-            test-output/test-euler-export.tex
-            test-output/test-euler-export.pdf
+            test-output/test-euler.tex
+            test-output/test-euler.pdf
             test-output/test-euler-beamer.tex
             test-output/test-euler-beamer.pdf
             test-output/test-maxwell.tex
