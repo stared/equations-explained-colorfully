@@ -1,5 +1,7 @@
 // Parser for interactive math markdown format
 
+import { findMatchingBrace } from './latex-utils';
+
 export interface ParsedContent {
   title?: string; // Optional title from # heading
   latex: string; // LaTeX equation with \htmlClass annotations
@@ -50,19 +52,9 @@ function convertMarkToHtmlClass(line: string, equationTerms: Set<string>, termOr
 
       // Find the matching closing brace
       const contentStart = classEnd + 2; // After ]{
-      let braceCount = 1;
-      let contentEnd = contentStart;
+      const contentEnd = findMatchingBrace(line, contentStart);
 
-      while (contentEnd < line.length && braceCount > 0) {
-        if (line[contentEnd] === '{' && line[contentEnd - 1] !== '\\') {
-          braceCount++;
-        } else if (line[contentEnd] === '}' && line[contentEnd - 1] !== '\\') {
-          braceCount--;
-        }
-        contentEnd++;
-      }
-
-      if (braceCount !== 0) {
+      if (contentEnd === -1) {
         // Unmatched braces, just copy and continue
         result += line.substring(i, contentStart);
         i = contentStart;
@@ -184,50 +176,31 @@ export function parseContent(markdown: string): ParsedContent {
   const errors: string[] = [];
   const warnings: string[] = [];
 
-  // ERROR: Terms used in description but not marked in equation
-  for (const term of descriptionTerms) {
-    if (!equationTerms.has(term)) {
-      errors.push(
-        `Term "${term}" is used in description [text]{.${term}} but not marked in equation with \\mark[${term}]{...}`
-      );
+  // Helper to validate term relationships
+  const validateTerms = (
+    sourceTerms: Iterable<string>,
+    targetTerms: Set<string> | Map<string, string>,
+    getMessage: (term: string) => string,
+    target: string[]
+  ) => {
+    for (const term of sourceTerms) {
+      if (!targetTerms.has(term)) target.push(getMessage(term));
     }
-  }
+  };
 
-  // ERROR: Terms marked in equation but have no definition
-  for (const term of equationTerms) {
-    if (!definitions.has(term)) {
-      errors.push(
-        `Term "${term}" is marked in equation with \\mark[${term}]{...} but has no definition (## .${term})`
-      );
-    }
-  }
+  // Run all validation checks
+  validateTerms(descriptionTerms, equationTerms,
+    term => `Term "${term}" is used in description [text]{.${term}} but not marked in equation with \\mark[${term}]{...}`, errors);
+  validateTerms(equationTerms, definitions,
+    term => `Term "${term}" is marked in equation with \\mark[${term}]{...} but has no definition (## .${term})`, errors);
+  validateTerms(equationTerms, descriptionTerms,
+    term => `Term "${term}" is marked in equation but not used in description`, warnings);
+  validateTerms(definitions.keys(), equationTerms,
+    term => `Definition "## .${term}" exists but term is never marked in equation`, warnings);
 
-  // WARNING: Terms marked in equation but not used in description
-  for (const term of equationTerms) {
-    if (!descriptionTerms.has(term)) {
-      warnings.push(
-        `Term "${term}" is marked in equation but not used in description`
-      );
-    }
-  }
-
-  // WARNING: Definitions exist but term never marked in equation
-  for (const defTerm of definitions.keys()) {
-    if (!equationTerms.has(defTerm)) {
-      warnings.push(
-        `Definition "## .${defTerm}" exists but term is never marked in equation`
-      );
-    }
-  }
-
-  // Return errors and warnings without throwing (allow preview to continue)
-  if (errors.length > 0) {
-    console.error('Content validation errors:', errors);
-  }
-
-  if (warnings.length > 0) {
-    console.warn('Content validation warnings:', warnings);
-  }
+  // Log validation results
+  if (errors.length > 0) console.error('Content validation errors:', errors);
+  if (warnings.length > 0) console.warn('Content validation warnings:', warnings);
 
   return {
     title,
