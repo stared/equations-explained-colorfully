@@ -2,7 +2,7 @@ import '../style.css';
 import { type ParsedContent } from '../parser';
 import { renderEquation, renderDescription, refreshDisplay } from './equation-renderer';
 import { setupHoverEffects } from './hover-effects';
-import { colorSchemes, applyColorScheme, createColorSchemeSwitcher } from './color-scheme-switcher';
+import { colorSchemes, applyColorScheme, createColorSchemeSwitcher } from '../utils/color-schemes';
 import {
   loadEquationsList,
   createEquationSelector,
