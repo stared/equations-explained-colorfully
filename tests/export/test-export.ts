@@ -3,8 +3,8 @@
 
 import { readFileSync } from 'fs';
 import { parseContent } from '../../src/parser.js';
-import { exportToHTML } from '../../src/exporter.js';
-import { vibrantScheme, writeTestFile, runChecks, reportTestResults } from '../test-utils';
+import { exportToHTML } from '../../src/export/index.js';
+import { vibrantScheme, writeTestFile, runChecks, reportTestResults } from '../test-utils.js';
 
 // Load test equation
 const markdown = readFileSync('./public/examples/euler.md', 'utf-8');
