@@ -122,6 +122,24 @@ function renderDescription() {
   staticDescDiv.innerHTML = `<p>${parsedContent.description}</p>`;
 }
 
+function refreshDisplay() {
+  const equationContainer = document.getElementById('equation-container');
+  const descriptionContainer = document.getElementById('static-description');
+  const hoverContainer = document.getElementById('hover-explanation');
+
+  if (equationContainer) equationContainer.innerHTML = '';
+  if (descriptionContainer) descriptionContainer.innerHTML = '';
+  if (hoverContainer) {
+    hoverContainer.innerHTML = '';
+    hoverContainer.classList.remove('visible');
+  }
+
+  renderEquation();
+  renderDescription();
+  applyColorScheme(currentScheme);
+  setupHoverEffects();
+}
+
 function setupHoverEffects() {
   const hoverDiv = document.getElementById('hover-explanation');
   if (!hoverDiv || !parsedContent) return;
@@ -236,26 +254,7 @@ async function loadEquation(equationId: string, updateHash = true) {
   }
 
   // Clear and re-render
-  const equationContainer = document.getElementById('equation-container');
-  const descriptionContainer = document.getElementById('static-description');
-  const hoverContainer = document.getElementById('hover-explanation');
-
-  if (equationContainer) equationContainer.innerHTML = '';
-  if (descriptionContainer) descriptionContainer.innerHTML = '';
-  if (hoverContainer) {
-    hoverContainer.innerHTML = '';
-    hoverContainer.classList.remove('visible');
-  }
-
-  // Render content
-  renderEquation();
-  renderDescription();
-
-  // Apply colors AFTER rendering
-  applyColorScheme(currentScheme);
-
-  // Setup hover effects
-  setupHoverEffects();
+  refreshDisplay();
 
   // Update active button
   const selectorDiv = document.getElementById('equation-selector');
@@ -376,26 +375,7 @@ async function updatePreview() {
     }
 
     // Clear and re-render
-    const equationContainer = document.getElementById('equation-container');
-    const descriptionContainer = document.getElementById('static-description');
-    const hoverContainer = document.getElementById('hover-explanation');
-
-    if (equationContainer) equationContainer.innerHTML = '';
-    if (descriptionContainer) descriptionContainer.innerHTML = '';
-    if (hoverContainer) {
-      hoverContainer.innerHTML = '';
-      hoverContainer.classList.remove('visible');
-    }
-
-    // Render content
-    renderEquation();
-    renderDescription();
-
-    // Apply colors
-    applyColorScheme(currentScheme);
-
-    // Setup hover effects
-    setupHoverEffects();
+    refreshDisplay();
 
     // Update editor highlighting with new colors
     const codeElement = document.querySelector('#editor-container code') as HTMLElement;
