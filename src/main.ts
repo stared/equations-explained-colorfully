@@ -5,7 +5,7 @@ import { CodeJar } from 'codejar';
 import Prism from 'prismjs';
 import './prism-custom';
 import { applyTermColors, markErrors } from './prism-custom';
-import { exportContent, getFileExtension, type ExportFormat, type ColorScheme } from './exporter';
+import { exportContent, getFileExtension, type ExportFormat, type ColorScheme } from './export';
 
 // Equation metadata
 interface EquationInfo {

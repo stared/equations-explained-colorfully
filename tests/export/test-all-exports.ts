@@ -1,6 +1,6 @@
 // Minimal smoke test: verify all export formats run without errors
 import { parseContent } from '../../src/parser';
-import { exportToHTML, exportToLaTeX, exportToBeamer, exportToTypst } from '../../src/exporter';
+import { exportToHTML, exportToLaTeX, exportToBeamer, exportToTypst } from '../../src/export';
 import { vibrantScheme } from '../test-utils';
 import { readFileSync } from 'fs';
 

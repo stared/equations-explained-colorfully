@@ -1,5 +1,5 @@
 // Shared test utilities and fixtures
-import type { ColorScheme } from '../src/exporter';
+import type { ColorScheme } from '../src/export';
 import { writeFileSync, mkdirSync } from 'fs';
 
 // Common color schemes
