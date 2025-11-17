@@ -5,46 +5,8 @@ import type { ParsedContent } from '../parser';
 import type { ColorScheme } from './types';
 import { transformHtmlClass } from '../utils/latex-parser';
 import { convertHtmlDescription } from '../utils/html-converter';
-import { escapePreservingMath } from '../utils/escape';
-
-/**
- * Get color for a term by its class name
- * Maps className ’ color hex via termOrder index
- */
-export function getTermColor(
-  className: string,
-  termOrder: string[],
-  colorScheme: ColorScheme
-): string {
-  const index = termOrder.indexOf(className);
-  if (index === -1) {
-    throw new Error(`Term "${className}" not found in termOrder`);
-  }
-  const color = colorScheme.colors[index];
-  if (!color) {
-    throw new Error(`No color defined for index ${index} in scheme "${colorScheme.name}"`);
-  }
-  return color;
-}
-
-/**
- * Escape LaTeX special characters
- */
-export function escapeLaTeX(text: string): string {
-  const map: Record<string, string> = {
-    '\\': '\\textbackslash{}',
-    '{': '\\{',
-    '}': '\\}',
-    '$': '\\$',
-    '&': '\\&',
-    '%': '\\%',
-    '#': '\\#',
-    '_': '\\_',
-    '~': '\\textasciitilde{}',
-    '^': '\\textasciicircum{}',
-  };
-  return text.replace(/[\\{}$&%#_~^]/g, (char) => map[char]);
-}
+import { escapePreservingMath, escapeLaTeX } from '../utils/escape';
+import { getTermColor } from '../utils/color-utils';
 
 // Escape LaTeX text while preserving inline math ($...$)
 const escapeLatexPreservingMath = (text: string) => escapePreservingMath(text, escapeLaTeX);

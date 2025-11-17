@@ -1,3 +1,36 @@
+/**
+ * Escape HTML special characters
+ */
+export function escapeHTML(text: string): string {
+  const map: Record<string, string> = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#039;',
+  };
+  return text.replace(/[&<>"']/g, (char) => map[char]);
+}
+
+/**
+ * Escape LaTeX special characters
+ */
+export function escapeLaTeX(text: string): string {
+  const map: Record<string, string> = {
+    '\\': '\\textbackslash{}',
+    '{': '\\{',
+    '}': '\\}',
+    '$': '\\$',
+    '&': '\\&',
+    '%': '\\%',
+    '#': '\\#',
+    '_': '\\_',
+    '~': '\\textasciitilde{}',
+    '^': '\\textasciicircum{}',
+  };
+  return text.replace(/[\\{}$&%#_~^]/g, (char) => map[char]);
+}
+
 // Escape text while processing $...$ inline math
 // The mathFormatter callback controls the complete output format (including delimiters if needed)
 export function escapePreservingMath(

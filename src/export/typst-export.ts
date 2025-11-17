@@ -8,26 +8,7 @@ import { tex2typst } from 'tex2typst';
 import { transformHtmlClass } from '../utils/latex-parser';
 import { convertHtmlDescription } from '../utils/html-converter';
 import { escapePreservingMath } from '../utils/escape';
-
-/**
- * Get color for a term by its class name
- * Maps className ’ color hex via termOrder index
- */
-export function getTermColor(
-  className: string,
-  termOrder: string[],
-  colorScheme: ColorScheme
-): string {
-  const index = termOrder.indexOf(className);
-  if (index === -1) {
-    throw new Error(`Term "${className}" not found in termOrder`);
-  }
-  const color = colorScheme.colors[index];
-  if (!color) {
-    throw new Error(`No color defined for index ${index} in scheme "${colorScheme.name}"`);
-  }
-  return color;
-}
+import { getTermColor } from '../utils/color-utils';
 
 /**
  * Escape Typst special characters

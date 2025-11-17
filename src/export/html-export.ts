@@ -5,41 +5,8 @@ import type { ParsedContent } from '../parser';
 import type { ColorScheme } from './types';
 import katex from 'katex';
 import { transformHtmlClass } from '../utils/latex-parser';
-import { escapePreservingMath } from '../utils/escape';
-
-/**
- * Get color for a term by its class name
- * Maps className → color hex via termOrder index
- */
-export function getTermColor(
-  className: string,
-  termOrder: string[],
-  colorScheme: ColorScheme
-): string {
-  const index = termOrder.indexOf(className);
-  if (index === -1) {
-    throw new Error(`Term "${className}" not found in termOrder`);
-  }
-  const color = colorScheme.colors[index];
-  if (!color) {
-    throw new Error(`No color defined for index ${index} in scheme "${colorScheme.name}"`);
-  }
-  return color;
-}
-
-/**
- * Escape HTML special characters
- */
-export function escapeHTML(text: string): string {
-  const map: Record<string, string> = {
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    "'": '&#039;',
-  };
-  return text.replace(/[&<>"']/g, (char) => map[char]);
-}
+import { escapePreservingMath, escapeHTML } from '../utils/escape';
+import { getTermColor } from '../utils/color-utils';
 
 // Inject colors into LaTeX while preserving \htmlClass for interactivity
 function injectColorsIntoLatex(latex: string, termOrder: string[], colorScheme: ColorScheme): string {
