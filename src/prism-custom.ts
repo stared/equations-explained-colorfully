@@ -135,6 +135,22 @@ export function extractEquationTerms(markdown: string): string[] {
   return terms;
 }
 
+// Helper to mark tokens with errors based on a condition
+function markTokensWithError(
+  element: HTMLElement,
+  selector: string,
+  pattern: RegExp,
+  shouldMarkError: (term: string) => boolean
+) {
+  element.querySelectorAll(selector).forEach(el => {
+    const text = el.textContent || '';
+    const match = text.match(pattern);
+    if (match && shouldMarkError(match[1])) {
+      el.classList.add('has-error');
+    }
+  });
+}
+
 // Mark errors in editor with subtle underlines
 export function markErrors(
   element: HTMLElement,
@@ -151,7 +167,6 @@ export function markErrors(
 
   // Track terms with errors
   const termsWithoutDefinitions = new Set<string>();
-  const termsNotInEquation = new Set<string>();
 
   errors.forEach(error => {
     const termMatch = error.match(/Term "([^"]+)"/);
@@ -159,38 +174,33 @@ export function markErrors(
     const term = termMatch[1];
 
     if (error.includes('has no definition')) {
-      // \mark[term]{...} exists but no ## .term
       termsWithoutDefinitions.add(term);
-    } else if (error.includes('not marked in equation')) {
-      // [text]{.term} or ## .term exists but no \mark[term]{...}
-      termsNotInEquation.add(term);
     }
   });
 
-  // Mark \mark[term]{...} that have no definitions
-  element.querySelectorAll('.token.latex-mark').forEach(el => {
-    const text = el.textContent || '';
-    const match = text.match(/\\mark\[([^\]]+)\]/);
-    if (match && termsWithoutDefinitions.has(match[1])) {
-      el.classList.add('has-error');
-    }
-  });
+  // Mark each token type with appropriate error condition
+  markTokensWithError(element, '.token.latex-mark', /\\mark\[([^\]]+)\]/, term => termsWithoutDefinitions.has(term));
+  markTokensWithError(element, '.token.md-ref', /\{\.([^\}]+)\}/, term => !equationTerms.has(term));
+  markTokensWithError(element, '.token.heading-class', /##\s+\.([a-z][a-z0-9-]*)/, term => !equationTerms.has(term));
+}
 
-  // Mark [text]{.term} that are not in equation
-  element.querySelectorAll('.token.md-ref').forEach(el => {
+// Helper to apply colors to tokens matching a pattern
+function applyColorToTokens(
+  element: HTMLElement,
+  selector: string,
+  pattern: RegExp,
+  termOrder: string[],
+  colors: string[]
+) {
+  element.querySelectorAll(selector).forEach(el => {
     const text = el.textContent || '';
-    const match = text.match(/\{\.([^\}]+)\}/);
-    if (match && !equationTerms.has(match[1])) {
-      el.classList.add('has-error');
-    }
-  });
-
-  // Mark ## .term that are not in equation
-  element.querySelectorAll('.token.heading-class').forEach(el => {
-    const text = el.textContent || '';
-    const match = text.match(/##\s+\.([a-z][a-z0-9-]*)/);
-    if (match && !equationTerms.has(match[1])) {
-      el.classList.add('has-error');
+    const match = text.match(pattern);
+    if (match) {
+      const className = match[1];
+      const colorIndex = termOrder.indexOf(className);
+      if (colorIndex >= 0 && colors[colorIndex]) {
+        (el as HTMLElement).style.setProperty('color', colors[colorIndex], 'important');
+      }
     }
   });
 }
@@ -201,52 +211,15 @@ export function applyTermColors(
   markdown: string,
   colors: string[]
 ) {
-  // Extract term order ONLY from equation section
   const termOrder = extractEquationTerms(markdown);
 
-  // First, reset all colors to default
+  // Reset all colors to default
   element.querySelectorAll('.token.latex-mark, .token.md-ref, .token.heading-class').forEach(el => {
     (el as HTMLElement).style.removeProperty('color');
   });
 
-  // Apply colors to entire \mark[classname]{content} elements
-  element.querySelectorAll('.token.latex-mark').forEach(el => {
-    const text = el.textContent || '';
-    const match = text.match(/\\mark\[([^\]]+)\]/);
-    if (match) {
-      const className = match[1];
-      const colorIndex = termOrder.indexOf(className);
-      if (colorIndex >= 0 && colors[colorIndex]) {
-        (el as HTMLElement).style.setProperty('color', colors[colorIndex], 'important');
-      }
-    }
-  });
-
-  // Apply colors to entire [text]{.classname} elements (only if term exists in equation)
-  element.querySelectorAll('.token.md-ref').forEach(el => {
-    const text = el.textContent || '';
-    const match = text.match(/\{\.([^\}]+)\}/);
-    if (match) {
-      const className = match[1];
-      const colorIndex = termOrder.indexOf(className);
-      if (colorIndex >= 0 && colors[colorIndex]) {
-        (el as HTMLElement).style.setProperty('color', colors[colorIndex], 'important');
-      }
-      // If not in termOrder, color stays default (black)
-    }
-  });
-
-  // Apply colors to entire ## .classname headings (only if term exists in equation)
-  element.querySelectorAll('.token.heading-class').forEach(el => {
-    const text = el.textContent || '';
-    const match = text.match(/##\s+\.([a-z][a-z0-9-]*)/);
-    if (match) {
-      const className = match[1];
-      const colorIndex = termOrder.indexOf(className);
-      if (colorIndex >= 0 && colors[colorIndex]) {
-        (el as HTMLElement).style.setProperty('color', colors[colorIndex], 'important');
-      }
-      // If not in termOrder, color stays default (black)
-    }
-  });
+  // Apply colors to each token type
+  applyColorToTokens(element, '.token.latex-mark', /\\mark\[([^\]]+)\]/, termOrder, colors);
+  applyColorToTokens(element, '.token.md-ref', /\{\.([^\}]+)\}/, termOrder, colors);
+  applyColorToTokens(element, '.token.heading-class', /##\s+\.([a-z][a-z0-9-]*)/, termOrder, colors);
 }
