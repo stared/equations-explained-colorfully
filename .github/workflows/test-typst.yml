@@ -27,7 +27,7 @@ jobs:
         run: pnpm install
 
       - name: Generate Typst file
-        run: pnpm tsx test-typst-export.ts
+        run: pnpm tsx tests/export/test-typst-export.ts
 
       - name: Verify generated file exists
         run: |

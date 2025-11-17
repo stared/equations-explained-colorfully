@@ -9,8 +9,8 @@
     "build": "pnpm validate && tsc && vite build",
     "preview": "vite preview",
     "lint": "eslint .",
-    "test": "tsx test-export.ts",
-    "test:interactive": "tsx test-export.ts && playwright test test-html-interactivity.spec.ts",
+    "test": "tsx tests/export/test-export.ts",
+    "test:interactive": "tsx tests/export/test-export.ts && playwright test tests/e2e/test-html-interactivity.spec.ts",
     "test:playwright": "playwright test"
   },
   "keywords": [

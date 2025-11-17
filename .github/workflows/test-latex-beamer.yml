@@ -28,8 +28,8 @@ jobs:
 
       - name: Generate LaTeX files
         run: |
-          pnpm tsx test-latex-exports.ts
-          pnpm tsx test-beamer-exports.ts
+          pnpm tsx tests/export/test-latex-exports.ts
+          pnpm tsx tests/export/test-beamer-exports.ts
 
       - name: Verify generated files exist
         run: |

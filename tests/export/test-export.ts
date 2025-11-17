@@ -2,9 +2,9 @@
 // Test script for HTML export with validation
 
 import { readFileSync } from 'fs';
-import { parseContent } from './src/parser.js';
-import { exportToHTML } from './src/exporter.js';
-import { vibrantScheme, writeTestFile, runChecks, reportTestResults } from './tests/test-utils';
+import { parseContent } from '../../src/parser.js';
+import { exportToHTML } from '../../src/exporter.js';
+import { vibrantScheme, writeTestFile, runChecks, reportTestResults } from '../test-utils';
 
 // Load test equation
 const markdown = readFileSync('./public/examples/euler.md', 'utf-8');

@@ -1,7 +1,7 @@
 // Test HTML export with CSS custom properties
-import { parseContent } from './src/parser';
-import { exportToHTML } from './src/exporter';
-import { vibrantScheme, writeTestFile, runChecks, reportTestResults } from './tests/test-utils';
+import { parseContent } from '../../src/parser';
+import { exportToHTML } from '../../src/exporter';
+import { vibrantScheme, writeTestFile, runChecks, reportTestResults } from '../test-utils';
 import { readFileSync } from 'fs';
 
 async function testHTMLExport() {

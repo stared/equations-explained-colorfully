@@ -1,7 +1,7 @@
 // Test Typst export with tex2typst
-import { parseContent } from './src/parser';
-import { exportToTypst } from './src/exporter';
-import { vibrantScheme, runChecks, reportTestResults } from './tests/test-utils';
+import { parseContent } from '../../src/parser';
+import { exportToTypst } from '../../src/exporter';
+import { vibrantScheme, runChecks, reportTestResults } from '../test-utils';
 import { readFileSync, writeFileSync, mkdirSync } from 'fs';
 
 async function testTypstExport() {
