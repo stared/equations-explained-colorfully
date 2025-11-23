@@ -1,16 +1,15 @@
-import { loadContent, type ParsedContent } from '../parser';
+import { loadContent, type ParsedContent } from "../parser";
 
 // Equation metadata
 export interface EquationInfo {
   id: string;
   title: string;
-  category: string;
   file: string;
 }
 
 // Load equations list
 export async function loadEquationsList(): Promise<EquationInfo[]> {
-  const response = await fetch('./examples/equations.json');
+  const response = await fetch("./examples/equations.json");
   return response.json();
 }
 
@@ -19,9 +18,13 @@ export async function loadEquation(
   equationId: string,
   equations: EquationInfo[],
   updateHash = true,
-  onEquationLoaded?: (parsedContent: ParsedContent, equation: EquationInfo, markdown: string) => void | Promise<void>
+  onEquationLoaded?: (
+    parsedContent: ParsedContent,
+    equation: EquationInfo,
+    markdown: string
+  ) => void | Promise<void>
 ): Promise<ParsedContent | null> {
-  const equation = equations.find(eq => eq.id === equationId);
+  const equation = equations.find((eq) => eq.id === equationId);
   if (!equation) return null;
 
   // Update URL hash
@@ -33,25 +36,27 @@ export async function loadEquation(
   const parsedContent = await loadContent(`./examples/${equation.file}`);
 
   // Update title (prefer title from markdown, fallback to equations.json)
-  const titleElement = document.getElementById('equation-title');
+  const titleElement = document.getElementById("equation-title");
   if (titleElement) {
     titleElement.textContent = parsedContent.title || equation.title;
   }
 
   // Update source link
-  const sourceLink = document.getElementById('source-link') as HTMLAnchorElement;
+  const sourceLink = document.getElementById(
+    "source-link"
+  ) as HTMLAnchorElement;
   if (sourceLink) {
     sourceLink.href = `https://github.com/stared/equations-explained-colorfully/blob/main/public/examples/${equation.file}`;
   }
 
   // Update active button
-  const selectorDiv = document.getElementById('equation-selector');
+  const selectorDiv = document.getElementById("equation-selector");
   if (selectorDiv) {
-    selectorDiv.querySelectorAll('button').forEach(btn => {
+    selectorDiv.querySelectorAll("button").forEach((btn) => {
       if (btn.dataset.equationId === equationId) {
-        btn.classList.add('active');
+        btn.classList.add("active");
       } else {
-        btn.classList.remove('active');
+        btn.classList.remove("active");
       }
     });
   }
@@ -73,16 +78,18 @@ export function createEquationSelector(
   currentEquationId: string,
   onEquationSelected: (equationId: string) => void | Promise<void>
 ) {
-  const selectorDiv = document.getElementById('equation-selector');
+  const selectorDiv = document.getElementById("equation-selector");
   if (!selectorDiv) return;
 
-  equations.forEach(equation => {
-    const button = document.createElement('button');
+  selectorDiv.innerHTML = ""; // Clear existing content
+
+  equations.forEach((equation) => {
+    const button = document.createElement("button");
     button.textContent = equation.title;
     button.dataset.equationId = equation.id;
-    button.className = equation.id === currentEquationId ? 'active' : '';
+    button.className = equation.id === currentEquationId ? "active" : "";
 
-    button.addEventListener('click', async () => {
+    button.addEventListener("click", async () => {
       await onEquationSelected(equation.id);
     });
 
