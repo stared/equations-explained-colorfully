@@ -102,19 +102,38 @@ async function handleEquationSelected(equationId: string) {
 // Handle preview update from editor
 async function handlePreviewUpdate(code: string) {
   const content = await updatePreview(code, async (parsed) => {
-    parsedContent = parsed;
-    doRefreshDisplay();
+    try {
+      parsedContent = parsed;
+      doRefreshDisplay();
 
-    // Update editor highlighting
-    if (editorState.editor) {
-        // Only update if the content hasn't changed since we started parsing
-        // This prevents reverting user typing that happened during the async parse
-        const currentCode = editorState.editor.toString();
-        if (currentCode === code) {
-             const pos = editorState.editor.save();
-             editorState.editor.updateCode(code);
-             editorState.editor.restore(pos);
-        }
+      // Update editor highlighting
+      if (editorState.editor) {
+          // Only update if the content hasn't changed since we started parsing
+          // This prevents reverting user typing that happened during the async parse
+          const currentCode = editorState.editor.toString();
+          if (currentCode === code) {
+               const pos = editorState.editor.save();
+               
+               // Manually update highlighting instead of calling updateCode
+               // This bypasses CodeJar's updateCode which seems to be failing with "error1"
+               const codeElement = document.querySelector('#editor-container code') as HTMLElement;
+               if (codeElement) {
+                   updateEditorHighlighting(
+                      codeElement,
+                      code,
+                      colorSchemes[currentScheme].colors,
+                      parsedContent
+                   );
+                   editorState.editor.restore(pos);
+               }
+          }
+      }
+    } catch (e) {
+      console.error('Error during UI update after parse:', e);
+      if (e instanceof Error) {
+        console.error('UI Update Stack Trace:', e.stack);
+      }
+      throw e; // Propagate to updatePreview catch block
     }
   });
 
@@ -143,6 +162,7 @@ export async function initializeApp() {
     createColorSchemeSwitcher(currentScheme, handleSchemeChange);
 
     // Initialize editor
+    // Note: We must initialize editor BEFORE loading the equation so that loadEquation can populate it
     initializeEditor(
       editorState,
       colorSchemes[currentScheme].colors,
@@ -173,7 +193,11 @@ export async function initializeApp() {
 
     // Load equation from URL hash or default
     const initialEquation = getEquationFromHash(currentEquationId);
-    await handleEquationSelected(initialEquation);
+    // If the initial equation from hash doesn't exist (e.g. we deleted it or it's invalid), fallback to the first available one
+    const equationExists = equations.some(eq => eq.id === initialEquation);
+    const equationToLoad = equationExists ? initialEquation : (equations.length > 0 ? equations[0].id : currentEquationId);
+    
+    await handleEquationSelected(equationToLoad);
 
     // Expose test helpers for automated testing
     (window as any).__testHelpers = {
