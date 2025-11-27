@@ -105,15 +105,16 @@ async function handlePreviewUpdate(code: string) {
     parsedContent = parsed;
     doRefreshDisplay();
 
-    // Update editor highlighting with new colors
-    const codeElement = document.querySelector('#editor-container code') as HTMLElement;
-    if (codeElement) {
-      updateEditorHighlighting(
-        codeElement,
-        code,
-        colorSchemes[currentScheme].colors,
-        parsedContent
-      );
+    // Update editor highlighting
+    if (editorState.editor) {
+        // Only update if the content hasn't changed since we started parsing
+        // This prevents reverting user typing that happened during the async parse
+        const currentCode = editorState.editor.toString();
+        if (currentCode === code) {
+             const pos = editorState.editor.save();
+             editorState.editor.updateCode(code);
+             editorState.editor.restore(pos);
+        }
     }
   });
 
