@@ -64,16 +64,15 @@
             <span class="icon">◀</span>
           </button>
           <div class="export-controls">
-            <select id="export-format" class="toolbar-select" title="Export Format">
+            <select id="export-format" class="toolbar-select" title="Export as...">
+              <option value="" disabled selected>Export as...</option>
               <option value="html">HTML</option>
               <option value="latex">LaTeX</option>
               <option value="beamer">Beamer</option>
               <option value="typst">Typst</option>
             </select>
-            <button id="export-btn" class="toolbar-btn" title="Export">Export</button>
           </div>
           <button id="copy-btn" class="toolbar-btn" title="Copy to clipboard">Copy</button>
-          <button id="download-btn" class="toolbar-btn" title="Download file">Download</button>
           <a href="https://github.com/stared/equations-explained-colorfully" class="toolbar-link" target="_blank" rel="noopener">Contribute</a>
         </div>
         <div id="editor-container" class="editor-container"></div>
