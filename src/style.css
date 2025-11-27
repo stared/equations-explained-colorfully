@@ -392,24 +392,34 @@ h1 {
   outline: none;
 }
 
-/* Export Menu */
-.export-menu {
+/* Export Controls */
+.export-controls {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.toolbar-select {
   font-family: var(--font-ui);
-  border-radius: 0.375rem;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  border: 1px solid var(--border-color);
-  padding: 0.25rem;
-  overflow: hidden;
-}
-
-.export-option {
-  border-radius: 0.25rem;
   font-size: 0.8125rem;
+  padding: 0.25rem 0.5rem;
+  border: 1px solid transparent;
+  border-radius: 0.25rem;
+  background-color: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  outline: none;
+  transition: all 0.2s ease;
 }
 
-.export-option:hover {
-  background-color: var(--bg-secondary);
-  color: var(--accent-color);
+.toolbar-select:hover {
+  background-color: rgba(0,0,0,0.05);
+  color: var(--text-primary);
+}
+
+.toolbar-select:focus {
+  border-color: var(--border-color);
+  background-color: #fff;
 }
 
 /* Responsive */
