@@ -1,10 +1,10 @@
 <template>
   <div class="color-scheme-switcher">
     <button
-      v-for="(scheme, key) in schemes"
+      v-for="(scheme, key) in colorSchemes"
       :key="key"
-      :class="{ active: key === currentScheme }"
-      @click="$emit('change', key)"
+      :class="{ active: key === currentKey }"
+      @click="selectScheme(key)"
     >
       {{ scheme.name }}
     </button>
@@ -12,16 +12,27 @@
 </template>
 
 <script setup lang="ts">
+import { ref, onMounted } from 'vue'
+import { colorSchemes, defaultScheme } from '../../utils/colorSchemes'
 import type { ColorScheme } from '../../export'
 
-defineProps<{
-  currentScheme: string
-  schemes: Record<string, ColorScheme>
+const emit = defineEmits<{
+  change: [scheme: ColorScheme]
 }>()
 
-defineEmits<{
-  change: [schemeName: string]
-}>()
+const currentKey = ref('vibrant')
+
+function selectScheme(key: string) {
+  if (colorSchemes[key]) {
+    currentKey.value = key
+    emit('change', colorSchemes[key])
+  }
+}
+
+// Emit initial scheme on mount
+onMounted(() => {
+  emit('change', defaultScheme)
+})
 </script>
 
 <style scoped>

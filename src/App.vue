@@ -3,11 +3,7 @@
     <!-- Left Sidebar -->
     <aside class="sidebar">
       <h2>Equations</h2>
-      <EquationSelector
-        :equations="equations"
-        :current-id="currentEquationId"
-        @select="selectEquation"
-      />
+      <EquationSelector @change="markdown = $event" />
       <footer class="sidebar-footer">
         <p>Demo by <a href="https://p.migdal.pl" target="_blank" rel="noopener">Piotr Migdał</a></p>
         <p>Source: <a href="https://github.com/stared/equations-explained-colorfully" target="_blank" rel="noopener">github.com/stared/equations-explained-colorfully</a></p>
@@ -17,38 +13,8 @@
 
     <!-- Main Content -->
     <main class="main-content">
-      <h1>{{ parsedContent?.title || 'Interactive Equations' }}</h1>
-      <p class="subtitle">Hover over colored terms to explore their meaning</p>
-
-      <ColorSchemeSwitcher
-        :current-scheme="currentSchemeName"
-        :schemes="colorSchemes"
-        @change="setScheme"
-      />
-
-      <EquationDisplay
-        :latex="parsedContent?.latex || ''"
-        :term-order="termOrder"
-        :active-term="activeTerm"
-        :get-term-color="getTermColor"
-        @hover="setHover"
-        @click="handleTermClick"
-      />
-
-      <DescriptionPanel
-        :description="parsedContent?.description || ''"
-        :term-order="termOrder"
-        :active-term="activeTerm"
-        :get-term-color="getTermColor"
-        @hover="setHover"
-        @click="handleTermClick"
-      />
-
-      <DefinitionPopup
-        :definition="activeDefinition"
-        :color="activeColor"
-        :visible="!!activeTerm"
-      />
+      <ColorSchemeSwitcher @change="colorScheme = $event" />
+      <CentralPanel v-if="parsedContent" :content="parsedContent" :colors="colorScheme" />
     </main>
 
     <!-- Editor Sidebar -->
@@ -57,93 +23,52 @@
         <button class="toolbar-btn" title="Show/hide editor" @click="editorCollapsed = !editorCollapsed">
           <span class="icon">{{ editorCollapsed ? '▶' : '◀' }}</span>
         </button>
-        <ExportControls
-          :parsed-content="parsedContent"
-          :color-scheme="currentScheme"
-        />
+        <ExportControls :markdown="markdown" :colors="colorScheme" />
         <a href="https://github.com/stared/equations-explained-colorfully" class="toolbar-link" target="_blank" rel="noopener">Contribute</a>
       </div>
       <div class="editor-container">
-        <MarkdownEditor
-          v-model="editorMarkdown"
-          :colors="colors"
-          :parsed-content="parsedContent"
-        />
+        <MarkdownEditor v-model="markdown" :colors="colorScheme" />
       </div>
     </aside>
   </div>
 </template>
 
 <script setup lang="ts">
-import { watch } from 'vue'
-import { loadContent } from './parser'
-import { useEquationApp, colorSchemes } from './composables/useEquationApp'
+import { ref, computed } from 'vue'
+import type { ColorScheme } from './export'
+import { defaultScheme } from './utils/colorSchemes'
+import { parseContent } from './parser'
 
 // Components
-import EquationDisplay from './components/equation/EquationDisplay.vue'
-import DescriptionPanel from './components/equation/DescriptionPanel.vue'
-import DefinitionPopup from './components/equation/DefinitionPopup.vue'
+import CentralPanel from './components/CentralPanel.vue'
 import EquationSelector from './components/controls/EquationSelector.vue'
 import ColorSchemeSwitcher from './components/controls/ColorSchemeSwitcher.vue'
 import ExportControls from './components/controls/ExportControls.vue'
-import MarkdownEditor from './components/editor/MarkdownEditor.vue'
-import { ref } from 'vue'
+import MarkdownEditor from './components/MarkdownEditor.vue'
 
+// Core state
+const markdown = ref('')
+const colorScheme = ref<ColorScheme>(defaultScheme)
 const editorCollapsed = ref(false)
 
-const {
-  equations,
-  currentEquationId,
-  currentEquation,
-  selectEquation,
-  parsedContent,
-  editorMarkdown,
-  termOrder,
-  currentSchemeName,
-  currentScheme,
-  colors,
-  getTermColor,
-  setScheme,
-  activeTerm,
-  activeDefinition,
-  activeColor,
-  setHover,
-  handleTermClick,
-  clearClick,
-} = useEquationApp()
-
-// Parse content when equation changes
-watch(currentEquation, async (equation) => {
-  if (!equation) return
+// Parsed content derived from markdown
+const parsedContent = computed(() => {
+  if (!markdown.value.trim()) return null
   try {
-    const content = await loadContent(equation.content, true)
-    parsedContent.value = content
-    editorMarkdown.value = equation.content
-    clearClick()
-  } catch (error) {
-    console.error('Failed to parse equation:', error)
-  }
-}, { immediate: true })
-
-// Parse content when editor changes
-watch(editorMarkdown, async (markdown) => {
-  if (!markdown.trim()) return
-  try {
-    const content = await loadContent(markdown, true)
-    parsedContent.value = content
-  } catch (error) {
-    console.error('Failed to parse markdown:', error)
+    return parseContent(markdown.value)
+  } catch {
+    return null
   }
 })
 
-// Test helpers
+// Test helpers for Playwright
 if (typeof window !== 'undefined') {
   (window as any).__testHelpers = {
     parsedContent: () => parsedContent.value,
     generateExport: async (format: any) => {
       const { exportContent } = await import('./export')
-      if (!parsedContent.value) throw new Error('No content loaded')
-      return exportContent(format, parsedContent.value, currentScheme.value)
+      if (!parsedContent.value) return ''
+      return exportContent(format, parsedContent.value, colorScheme.value)
     },
   }
 }
@@ -235,25 +160,6 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-}
-
-.main-content h1 {
-  font-family: var(--font-math);
-  font-size: 2.5rem;
-  font-weight: 400;
-  color: var(--text-primary);
-  margin-bottom: 0.5rem;
-  text-align: center;
-  letter-spacing: -0.02em;
-}
-
-.subtitle {
-  font-family: var(--font-ui);
-  font-size: 1rem;
-  color: var(--text-secondary);
-  margin-bottom: 2.5rem;
-  text-align: center;
-  opacity: 0.8;
 }
 
 /* Editor Sidebar */

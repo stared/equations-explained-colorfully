@@ -1,28 +1,39 @@
-import { type ColorScheme } from '../export'
+import type { ColorScheme } from '../export'
 
-// Export/test color schemes (used for static exports and testing)
-export const vibrantScheme: ColorScheme = {
-  name: 'vibrant',
-  colors: ['#e6194B', '#3cb44b', '#ffe119', '#4363d8', '#f58231'],
+// App color schemes (used by ColorSchemeSwitcher)
+export const colorSchemes: Record<string, ColorScheme> = {
+  vibrant: {
+    name: 'Vibrant',
+    colors: [
+      '#8b5cf6', '#10b981', '#ec4899', '#3b82f6', '#ef4444', '#06b6d4', '#f59e0b',
+      '#a855f7', '#14b8a6', '#84cc16', '#6366f1', '#f97316',
+    ],
+  },
+  accessible: {
+    name: 'Accessible',
+    colors: [
+      '#0072B2', '#D55E00', '#009E73', '#882255', '#E69F00', '#56B4E9', '#F0E442',
+      '#000000', '#999999', '#4B0082', '#8B4513', '#2F4F4F',
+    ],
+  },
+  contrast: {
+    name: 'High Contrast',
+    colors: [
+      '#0066CC', '#CC3300', '#00AA88', '#9933CC', '#CC0066', '#CCAA00', '#FF6600',
+      '#006600', '#660099', '#996633', '#336699', '#663366',
+    ],
+  },
+  nocolor: {
+    name: 'No color',
+    colors: Array(12).fill('#000000'),
+  },
 }
 
-export const vibrant10Scheme: ColorScheme = {
-  name: 'vibrant',
-  colors: [
-    '#e6194B', '#3cb44b', '#ffe119', '#4363d8', '#f58231',
-    '#911eb4', '#46f0f0', '#f032e6', '#bcf60c', '#fabebe',
-  ],
-}
+// Default scheme
+export const defaultScheme = colorSchemes.vibrant
 
-export const viridisScheme: ColorScheme = {
-  name: 'viridis',
-  colors: ['#440154', '#31688e', '#35b779', '#fde724', '#20908d', '#5ec962', '#3b528b'],
-}
-
-export const viridis10Scheme: ColorScheme = {
-  name: 'viridis',
-  colors: [
-    '#440154', '#31688e', '#35b779', '#fde724', '#20908d',
-    '#5ec962', '#3b528b', '#29af7f', '#2c728e', '#482173',
-  ],
+// Helper to get term color from scheme + termOrder
+export function getTermColor(term: string, termOrder: string[], scheme: ColorScheme): string {
+  const index = termOrder.indexOf(term)
+  return scheme.colors[index] ?? '#000000'
 }

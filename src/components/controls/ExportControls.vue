@@ -19,23 +19,33 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import type { ParsedContent } from '../../parser'
+import { ref, computed } from 'vue'
+import { parseContent } from '../../parser'
 import type { ColorScheme, ExportFormat } from '../../export'
 
 const props = defineProps<{
-  parsedContent: ParsedContent | null
-  colorScheme: ColorScheme
+  markdown: string
+  colors: ColorScheme
 }>()
 
 const selectedFormat = ref('')
 
+// Parse markdown internally when needed
+const parsedContent = computed(() => {
+  if (!props.markdown.trim()) return null
+  try {
+    return parseContent(props.markdown)
+  } catch {
+    return null
+  }
+})
+
 async function handleExport() {
-  if (!selectedFormat.value || !props.parsedContent) return
+  if (!selectedFormat.value || !parsedContent.value) return
 
   const { exportContent, getFileExtension } = await import('../../export')
   const format = selectedFormat.value as ExportFormat
-  const content = exportContent(format, props.parsedContent, props.colorScheme)
+  const content = exportContent(format, parsedContent.value, props.colors)
   const extension = getFileExtension(format)
 
   // Download file
@@ -52,10 +62,10 @@ async function handleExport() {
 }
 
 async function handleCopy() {
-  if (!props.parsedContent) return
+  if (!parsedContent.value) return
 
   const { exportContent } = await import('../../export')
-  const content = exportContent('html', props.parsedContent, props.colorScheme)
+  const content = exportContent('html', parsedContent.value, props.colors)
 
   try {
     await navigator.clipboard.writeText(content)

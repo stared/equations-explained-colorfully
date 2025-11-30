@@ -3,17 +3,17 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted, onUnmounted } from 'vue'
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import { CodeJar } from 'codejar'
 import Prism from 'prismjs'
-import '../../prismCustom'
-import { applyTermColors, markErrors } from '../../prismCustom'
-import type { ParsedContent } from '../../parser'
+import '../prismCustom'
+import { applyTermColors, markErrors } from '../prismCustom'
+import { parseContent } from '../parser'
+import type { ColorScheme } from '../export'
 
 const props = defineProps<{
   modelValue: string
-  colors: string[]
-  parsedContent: ParsedContent | null
+  colors: ColorScheme
 }>()
 
 const emit = defineEmits<{
@@ -25,21 +25,33 @@ let jar: CodeJar | null = null
 let isInternalUpdate = false
 let debounceTimeout: number | null = null
 
+// Parse markdown internally for error detection
+const parsedContent = computed(() => {
+  if (!props.modelValue.trim()) return null
+  try {
+    return parseContent(props.modelValue)
+  } catch {
+    return null
+  }
+})
+
+const colorArray = computed(() => props.colors.colors)
+
 function highlight(el: HTMLElement) {
   const code = el.textContent || ''
   el.innerHTML = Prism.highlight(code, Prism.languages.eqmd, 'eqmd')
 
   // Apply term colors
-  applyTermColors(el, code, props.colors)
+  applyTermColors(el, code, colorArray.value)
 
   // Re-apply after a short delay for browser DOM normalization
   setTimeout(() => {
-    applyTermColors(el, code, props.colors)
+    applyTermColors(el, code, colorArray.value)
   }, 50)
 
   // Mark errors if any
-  if (props.parsedContent && props.parsedContent.errors.length > 0) {
-    markErrors(el, code, props.parsedContent.errors)
+  if (parsedContent.value && parsedContent.value.errors.length > 0) {
+    markErrors(el, code, parsedContent.value.errors)
   }
 }
 
@@ -80,14 +92,14 @@ watch(() => props.modelValue, (newVal) => {
 })
 
 // Re-highlight when colors change
-watch(() => props.colors, () => {
+watch(colorArray, () => {
   if (codeRef.value) {
     highlight(codeRef.value)
   }
 }, { deep: true })
 
 // Re-highlight when parsed content changes (for error marking)
-watch(() => props.parsedContent, () => {
+watch(parsedContent, () => {
   if (codeRef.value) {
     highlight(codeRef.value)
   }

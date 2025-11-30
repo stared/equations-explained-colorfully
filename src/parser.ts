@@ -3,7 +3,7 @@
 import { findMatchingBrace } from './latexUtils';
 
 export interface ParsedContent {
-  title?: string; // Optional title from # heading
+  title: string; // Title from # heading
   latex: string; // LaTeX equation with \htmlClass annotations
   description: string; // HTML description with term spans
   definitions: Map<string, string>; // class -> definition HTML
@@ -87,7 +87,7 @@ function convertMarkToHtmlClass(line: string, equationTerms: Set<string>, termOr
 export function parseContent(markdown: string): ParsedContent {
   try {
     const lines = markdown.split('\n');
-    let title: string | undefined = undefined;
+    let title = 'Untitled';
     let latex = '';
     let description = '';
     const definitions = new Map<string, string>();
@@ -105,7 +105,7 @@ export function parseContent(markdown: string): ParsedContent {
       const line = lines[i];
 
       // Parse title from # heading (only first one)
-      if (!title && line.match(/^#\s+[^#]/)) {
+      if (title === 'Untitled' && line.match(/^#\s+[^#]/)) {
         title = line.substring(2).trim(); // Remove "# "
         continue;
       }
