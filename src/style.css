@@ -276,9 +276,19 @@ h1 {
   font-size: 1rem;
   line-height: 1.6;
   color: var(--text-secondary);
-  text-align: center;
+  text-align: left; /* Left aligned */
   font-family: var(--font-ui);
-  margin-top: 1rem;
+  margin: 1rem auto 0 auto;
+
+  /* Frame style */
+  border: 1px solid var(--accent-color); /* Relevant color */
+  background-color: #fff;
+  padding: 1rem;
+  border-radius: 4px;
+
+  /* Full width of text column */
+  width: 100%;
+  max-width: 700px; /* Match static-description max-width */
 }
 
 .hover-explanation.visible {

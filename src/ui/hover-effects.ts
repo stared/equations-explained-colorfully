@@ -41,9 +41,14 @@ export function setupHoverEffects(parsedContent: ParsedContent) {
     }
   };
 
-  const showDefinition = (definition: string) => {
+  const showDefinition = (definition: string, color: string = '') => {
     hoverDiv.innerHTML = renderLatexInText(definition);
     hoverDiv.classList.add("visible");
+    if (color) {
+        hoverDiv.style.borderColor = color;
+    } else {
+        hoverDiv.style.borderColor = 'var(--border-color)'; // Fallback
+    }
   };
 
   document.querySelectorAll('[class*="term-"]').forEach((element) => {
@@ -55,7 +60,10 @@ export function setupHoverEffects(parsedContent: ParsedContent) {
     const definition = parsedContent.definitions.get(
       termClass.replace("term-", "")
     );
-    // if (!definition) return; // Description might not have definition map if logic differs, but usually it matches
+    
+    // Pre-calculate color
+    const computedStyle = window.getComputedStyle(element);
+    const termColor = computedStyle.color;
 
     (element as HTMLElement).style.cursor = "pointer";
 
@@ -68,7 +76,7 @@ export function setupHoverEffects(parsedContent: ParsedContent) {
         // If clicked from description, we need to find a definition if possible or just highlight
         if (definition) {
           clicked = { element: element as HTMLElement, termClass, definition };
-          showDefinition(definition);
+          showDefinition(definition, termColor);
         } else {
           // Just highlight for visual feedback if no definition?
           // Assuming definitions exist for all valid term classes
@@ -92,7 +100,7 @@ export function setupHoverEffects(parsedContent: ParsedContent) {
         .querySelectorAll(`.static-description .${termClass}`)
         .forEach((el) => el.classList.add("active"));
 
-      if (definition) showDefinition(definition);
+      if (definition) showDefinition(definition, termColor);
     });
 
     element.addEventListener("mouseleave", () => {
@@ -102,9 +110,14 @@ export function setupHoverEffects(parsedContent: ParsedContent) {
         .forEach((el) => el.classList.remove("active"));
 
       updateOverlay(); // Restore clicked state or clear
-      clicked
-        ? showDefinition(clicked.definition)
-        : hoverDiv.classList.remove("visible");
+      if (clicked) {
+          // Re-apply color for clicked element
+          const clickedEl = document.querySelector(`.${clicked.termClass}`);
+          const clickedColor = clickedEl ? window.getComputedStyle(clickedEl).color : '';
+          showDefinition(clicked.definition, clickedColor);
+      } else {
+          hoverDiv.classList.remove("visible");
+      }
     });
   });
 }
