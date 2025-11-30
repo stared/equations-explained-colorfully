@@ -16,7 +16,8 @@ A minimal framework for creating interactive mathematical explanations with colo
 - **Markdown-based**: Write equations in simple markdown format
 - **Interactive**: Hover over colored terms to see definitions
 - **Accessible**: Multiple color schemes including color-blind friendly options
-- **Minimal**: Built with KaTeX, CodeJar, and Prism (~10KB total)
+- **Minimal**: Built with Vue 3, KaTeX, CodeJar, and Prism
+- **Export**: Generate standalone HTML, LaTeX, Beamer, or Typst output
 - **Editable**: Real-time editor for creating and modifying equations
 
 ## Content Format
@@ -113,10 +114,15 @@ public/examples/          # Equation markdown files
   ├── equations.json      # List of available equations
   └── *.md               # Individual equation files
 src/
-  ├── main.ts            # Main app logic & editor
-  ├── parser.ts          # Markdown → KaTeX/HTML parser
-  ├── prism-custom.ts    # Syntax highlighting for editor
-  └── style.css          # Tufte-inspired minimal styles
+  ├── main.ts            # Vue app entry point
+  ├── App.vue            # Main app layout with three-panel design
+  ├── components/
+  │   ├── CentralPanel.vue       # Equation display with hover interactions
+  │   ├── MarkdownEditor.vue     # CodeJar editor with Prism highlighting
+  │   ├── controls/              # EquationSelector, ColorSchemeSwitcher, ExportControls
+  │   └── equation/              # EquationDisplay, DescriptionPanel, DefinitionPopup
+  ├── export/            # Export formats (HTML, LaTeX, Beamer, Typst)
+  └── utils/             # parser.ts, colorSchemes.ts, termDom.ts
 ```
 
 ## Author

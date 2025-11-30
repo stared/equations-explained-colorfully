@@ -55,11 +55,11 @@
 
 ## Technical Approach
 
-**Minimal Dependencies**
+**Stack**
+- Vue 3 with Composition API
 - KaTeX for math rendering
-- Simple markdown parser
-- No heavy frameworks (React, etc.) unless needed
-- Plain TypeScript + Vite
+- CodeJar + Prism for editor
+- Vite for build tooling
 
 **Data-Driven**
 - No hardcoded content in JavaScript
