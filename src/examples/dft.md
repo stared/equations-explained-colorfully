@@ -3,40 +3,45 @@
 ## Equation
 
 $$
-\mark[frequency]{X_k} = \mark[average]{\frac{1}{N}} \mark[sum]{\sum_{n=0}^{N-1}} \mark[signal]{x_n} \mark[spin]{e^{-i2\pi k \frac{n}{N}}}
+\mark[energy]{X}_{\mark[freq]{k}} = \mark[average]{\frac{1}{N}} \mark[average]{\sum_{n=0}^{N-1}} \mark[signal]{x_n} \mark[spin]{e}^{\mark[spin]{i} \mark[circle]{2\pi} \mark[freq]{k} \mark[average]{\frac{n}{N}}}
 $$
 
 ## Description
 
-To find [the energy at a particular frequency]{.frequency}, [spin]{.spin} [your signal]{.signal} [around a circle at that frequency]{.spin}, and [average]{.average} [a bunch of points along that path]{.sum}.
+To find [the energy]{.energy} [at a particular frequency]{.freq}, [spin]{.spin} [your signal]{.signal} [around a circle]{.circle} [at that frequency]{.freq}, and [average a bunch of points along that path]{.average}.
 
-## .frequency
+## .energy
 
-The frequency domain representation ($X_k$).
+The transform output $X_k$.
 
-This value represents how much of the original signal is composed of frequency $k$. If the magnitude $|X_k|$ is large, it means that frequency is a dominant part of the signal (like a strong bass note in a song).
+Represents the amount of energy or strength of the signal at a specific frequency.
+
+## .freq
+
+The frequency index $k$.
+
+Determines which frequency we are analyzing. It appears both in the output index (which bin?) and in the rotation term (how fast do we spin?).
 
 ## .average
 
-Normalization factor ($1/N$).
+The averaging operation.
 
-Just like calculating a mean, we divide by the number of samples $N$ to keep the scale consistent. This turns the sum into an average.
-
-## .sum
-
-Summation over time.
-
-We add up the contribution of every point in the signal. This step accumulates the "matching" between the signal and the rotating frequency.
+Combines the summation ($\sum$) and the division by $N$ (and the time index term $\frac{n}{N}$). It turns the sum into an average value over the signal's duration.
 
 ## .signal
 
-The input signal ($x_n$).
+The input signal $x_n$.
 
-This is your data over time—like an audio recording or a stock price history. It is a sequence of $N$ discrete points, indexed by $n$.
+Your raw data points (audio, image, stock prices) sampled over time.
 
 ## .spin
 
-Complex rotation ($e^{-i\theta}$).
+The exponential term $e^i$.
 
-This term wraps the signal around the complex plane. As $n$ increases, the angle rotates. If the rotation speed ($k$) matches a pattern in the signal ($x_n$), the points line up and add constructively; otherwise, they cancel out.
+This is the rotation operator basis.
 
+## .circle
+
+The full circle constant $2\pi$.
+
+Represents one full rotation in radians.
