@@ -295,30 +295,30 @@ h1 {
   opacity: 1;
 }
 
-/* Footer */
-.footer {
-  margin-top: auto; /* Push to bottom */
-  padding-top: 3rem;
+/* Sidebar Footer */
+.sidebar-footer {
+  margin-top: auto;
+  padding-top: 2rem;
   font-family: var(--font-ui);
   font-size: 0.8125rem;
-  color: var(--text-tertiary);
-  text-align: center;
+  color: var(--text-secondary); /* Darker text */
+  /* text-align: center; */
 }
 
-.footer p {
+.sidebar-footer p {
   margin: 0.5rem 0;
+  line-height: 1.5;
 }
 
-.footer a {
-  color: var(--text-secondary);
+.sidebar-footer a {
+  color: var(--accent-color);
   text-decoration: none;
-  border-bottom: 1px dotted var(--border-color);
+  border-bottom: none;
   transition: all 0.2s ease;
 }
 
-.footer a:hover {
-  color: var(--accent-color);
-  border-bottom-color: var(--accent-color);
+.sidebar-footer a:hover {
+  text-decoration: underline;
 }
 
 /* Editor Sidebar */
