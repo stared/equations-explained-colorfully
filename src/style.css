@@ -392,6 +392,56 @@ h1 {
   outline: none;
 }
 
+.token.heading {
+  font-weight: 600;
+  color: var(--accent-color);
+}
+
+.token.bold {
+  font-weight: 600;
+}
+
+.token.italic {
+  font-style: italic;
+}
+
+.token.punctuation {
+  color: var(--text-tertiary);
+}
+
+.token.latex-mark {
+  /* Base color handled by JS, but ensuring visibility */
+}
+
+.token.keyword {
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.token.md-ref {
+  /* Base color handled by JS */
+}
+
+/* Child tokens inside colored parents should inherit the color */
+.token.latex-mark .token.keyword,
+.token.latex-mark .token.punctuation,
+.token.latex-mark .token.mark-class,
+.token.latex-mark .token.mark-content,
+.token.md-ref .token.ref-text,
+.token.md-ref .token.ref-class,
+.token.md-ref .token.punctuation,
+.token.heading-class .token.punctuation,
+.token.heading-class .token.class-name {
+  color: inherit;
+}
+
+/* Error highlighting - subtle, only in editor */
+.token.has-error {
+  text-decoration: underline dotted var(--danger);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
 /* Export Controls */
 .export-controls {
   display: flex;
