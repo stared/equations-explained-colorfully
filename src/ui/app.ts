@@ -102,18 +102,34 @@ async function handleEquationSelected(equationId: string) {
 // Handle preview update from editor
 async function handlePreviewUpdate(code: string) {
   const content = await updatePreview(code, async (parsed) => {
-    parsedContent = parsed;
-    doRefreshDisplay();
+    try {
+      parsedContent = parsed;
+      doRefreshDisplay();
 
-    // Update editor highlighting with new colors
-    const codeElement = document.querySelector('#editor-container code') as HTMLElement;
-    if (codeElement) {
-      updateEditorHighlighting(
-        codeElement,
-        code,
-        colorSchemes[currentScheme].colors,
-        parsedContent
-      );
+      // Update editor highlighting
+      // We DON'T call updateCode here anymore because it causes crashes (error1) when recursive.
+      // Instead, we rely on CodeJar's natural input event to trigger highlighting.
+      //
+      // BUT, if we need to show *new* errors/colors immediately after parsing, we can
+      // manually trigger highlighting if we are sure it's safe.
+      // The safest way is to do NOTHING here and let the user keep typing.
+      // The colors will update on the NEXT keystroke.
+      //
+      // However, if we want immediate feedback, we can try to manually update the class names
+      // on the EXISTING DOM nodes without touching innerHTML or restore().
+      //
+      // Let's just update the parsedContent reference (done above).
+      // The highlightEditor callback inside editor.ts calls getParsedContent().
+      // So the NEXT time highlightEditor runs, it will see the new content.
+      //
+      // Can we trigger highlightEditor manually?
+      // editor.ts exports updateEditorHighlighting.
+      //
+      // Let's try to NOT update the editor at all here.
+      // This is the "Rewrite" strategy: stop fighting CodeJar.
+      
+    } catch (e) {
+      console.error('Error during UI update after parse:', e);
     }
   });
 
@@ -142,9 +158,10 @@ export async function initializeApp() {
     createColorSchemeSwitcher(currentScheme, handleSchemeChange);
 
     // Initialize editor
+    // Note: We must initialize editor BEFORE loading the equation so that loadEquation can populate it
     initializeEditor(
       editorState,
-      colorSchemes[currentScheme].colors,
+      () => colorSchemes[currentScheme].colors,
       () => parsedContent,
       handlePreviewUpdate
     );
@@ -172,7 +189,11 @@ export async function initializeApp() {
 
     // Load equation from URL hash or default
     const initialEquation = getEquationFromHash(currentEquationId);
-    await handleEquationSelected(initialEquation);
+    // If the initial equation from hash doesn't exist (e.g. we deleted it or it's invalid), fallback to the first available one
+    const equationExists = equations.some(eq => eq.id === initialEquation);
+    const equationToLoad = equationExists ? initialEquation : (equations.length > 0 ? equations[0].id : currentEquationId);
+    
+    await handleEquationSelected(equationToLoad);
 
     // Expose test helpers for automated testing
     (window as any).__testHelpers = {

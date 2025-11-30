@@ -40,13 +40,13 @@ Speed of light in vacuum ($c \\approx 3 \\times 10^8$ m/s)
   },
   {
     name: "Euler's Identity",
-    markdown: () => readFileSync('./public/examples/euler.md', 'utf-8'),
+    markdown: () => readFileSync('./src/examples/euler.md', 'utf-8'),
     colorScheme: viridisScheme,
     outputFile: './test-output/test-euler.tex',
   },
   {
     name: "Maxwell's Equations",
-    markdown: () => readFileSync('./public/examples/maxwell.md', 'utf-8'),
+    markdown: () => readFileSync('./src/examples/maxwell.md', 'utf-8'),
     colorScheme: viridis10Scheme,
     outputFile: './test-output/test-maxwell.tex',
   },

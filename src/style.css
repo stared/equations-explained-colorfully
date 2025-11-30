@@ -1,8 +1,36 @@
 :root {
-  /* Layout and theme colors */
-  --bg-color: #ffffff;
-  --text-color: #1f2937;
-  --border-color: #d1d5db;
+  /* Modern Color Palette */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f3f4f6; /* Light gray for sidebars/backgrounds */
+  --bg-tertiary: #e5e7eb;
+
+  --text-primary: #111827;
+  --text-secondary: #4b5563;
+  --text-tertiary: #9ca3af;
+
+  --accent-color: #2563eb; /* Royal Blue */
+  --accent-hover: #1d4ed8;
+  --accent-light: #eff6ff;
+
+  --border-color: #e5e7eb;
+  --border-hover: #d1d5db;
+
+  --success: #10b981;
+  --danger: #ef4444;
+
+  /* Typography */
+  --font-ui: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
+    "Segoe UI Symbol";
+  --font-math: "Crimson Pro", "ETBembo", "Palatino Linotype", "Book Antiqua",
+    Palatino, Georgia, serif;
+  --font-mono: "Menlo", "Monaco", "Consolas", "Liberation Mono", "Courier New",
+    monospace;
+
+  /* Spacing */
+  --sidebar-width: 280px;
+  --editor-width: 500px;
+  --header-height: 60px;
 }
 
 * {
@@ -12,75 +40,195 @@
 }
 
 body {
-  font-family: 'ETBembo', Palatino, 'Palatino Linotype', 'Book Antiqua', Georgia, serif;
-  background-color: var(--bg-color);
-  color: var(--text-color);
+  font-family: var(--font-math);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
   line-height: 1.6;
-  margin: 0;
-  padding: 0;
+  -webkit-font-smoothing: antialiased;
+  height: 100vh;
+  overflow: hidden;
 }
 
 #app {
   display: flex;
-  min-height: 100vh;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
 }
 
-/* Sidebar */
+/* Sidebar Navigation */
 .sidebar {
-  width: 250px;
-  min-width: 250px;
-  background-color: #f9fafb;
+  width: var(--sidebar-width);
+  min-width: var(--sidebar-width);
+  background-color: var(--bg-secondary);
   border-right: 1px solid var(--border-color);
-  padding: 2rem 1.5rem;
+  padding: 2rem 1rem;
   overflow-y: auto;
+  display: flex;
+  flex-direction: column;
 }
 
 .sidebar h2 {
-  font-size: 1.25rem;
-  font-weight: 400;
-  margin-bottom: 1.5rem;
-  color: var(--text-color);
+  font-family: var(--font-ui);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+  color: var(--text-tertiary);
+  margin-bottom: 1rem;
+  padding-left: 0.75rem;
 }
 
-/* Main content */
+/* Equation Selector Buttons */
+.equation-selector {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.equation-selector button {
+  font-family: var(--font-ui);
+  padding: 0.625rem 0.75rem;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 0.9375rem;
+  cursor: pointer;
+  text-align: left;
+  border-radius: 0.375rem;
+  transition: all 0.2s ease;
+  font-weight: 500;
+}
+
+.equation-selector button:hover {
+  background-color: rgba(0, 0, 0, 0.03);
+  color: var(--text-primary);
+}
+
+.equation-selector button.active {
+  background-color: #fff;
+  color: var(--accent-color);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  font-weight: 600;
+}
+
+.equation-selector button.new-equation {
+  margin-bottom: 0.5rem;
+  border: 1px dashed var(--border-color);
+  color: var(--text-secondary);
+}
+
+.equation-selector button.new-equation:hover {
+  border-color: var(--accent-color);
+  color: var(--accent-color);
+  background-color: var(--accent-light);
+}
+
+.equation-selector button.new-equation.active {
+  border-style: solid;
+  border-color: transparent;
+}
+
+/* Main Content */
 .main-content {
   flex: 1;
-  padding: 2rem;
-  max-width: 900px;
-  margin: 0 auto;
+  padding: 3rem 4rem;
+  max-width: 100%;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Center content */
+}
+
+.content-wrapper {
+  width: 100%;
+  max-width: 800px;
 }
 
 h1 {
-  font-size: 2rem;
+  font-family: var(--font-math);
+  font-size: 2.5rem;
   font-weight: 400;
-  color: var(--text-color);
-  margin: 0;
+  color: var(--text-primary);
   margin-bottom: 0.5rem;
+  text-align: center;
+  letter-spacing: -0.02em;
 }
 
 .subtitle {
+  font-family: var(--font-ui);
   font-size: 1rem;
-  color: #6b7280;
-  margin-bottom: 2rem;
+  color: var(--text-secondary);
+  margin-bottom: 2.5rem;
+  text-align: center;
+  opacity: 0.8;
 }
 
+/* Color Scheme Switcher */
+.color-scheme-switcher {
+  display: flex;
+  justify-content: center;
+  background-color: var(--bg-secondary);
+  padding: 0.25rem;
+  border-radius: 0.5rem;
+  margin: 0 auto 3rem auto; /* Center it */
+  width: fit-content;
+}
+
+.color-scheme-switcher button {
+  font-family: var(--font-ui);
+  padding: 0.375rem 1rem;
+  border: none;
+  background-color: transparent;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  cursor: pointer;
+  border-radius: 0.375rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.color-scheme-switcher button:hover {
+  color: var(--text-primary);
+}
+
+.color-scheme-switcher button.active {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  font-weight: 600;
+}
+
+/* Equation Display */
 #equation-container {
-  padding: 2rem 0;
-  margin-bottom: 2rem;
+  padding: 3rem 2rem;
+  margin-bottom: 2.5rem;
   display: flex;
   justify-content: center;
   align-items: center;
   position: relative;
   z-index: 10;
+  background: var(--bg-primary);
+  /* Optional: subtle card look */
+  /* border: 1px solid var(--border-color); */
+  /* border-radius: 1rem; */
 }
 
 #equation-container .katex {
-  font-size: 1.6rem;
+  font-size: 2rem; /* Larger equation */
+  line-height: 1.2;
+  position: relative;
+  z-index: 1;
 }
 
-/* Color-coded terms - generic for any class name */
+/* Removed old .selection-rect style as it's now inline in SVG */
+
+/* Term Interaction */
 [class*="term-"] {
-  transition: opacity 0.2s ease;
+  transition: all 0.2s ease;
+  border-radius: 4px;
+  cursor: pointer;
+  position: relative;
 }
 
 /* Ensure child elements don't block hover events */
@@ -88,238 +236,186 @@ h1 {
   pointer-events: none !important;
 }
 
-/* Hover effects - generic for all term classes */
-[class*="term-"]:hover,
-.term-active {
-  opacity: 0.6;
-  cursor: pointer;
-}
-
-/* Equation selector */
-.equation-selector {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.equation-selector button {
-  padding: 0.5rem 0;
-  border: none;
-  background: none;
-  color: #6b7280;
-  font-size: 0.9375rem;
-  cursor: pointer;
-  font-family: inherit;
-  text-align: left;
-  transition: color 0.2s ease;
-}
-
-.equation-selector button:hover {
-  color: var(--text-color);
-}
-
-.equation-selector button.active {
-  color: var(--text-color);
-  font-weight: 500;
-}
-
-/* Color scheme switcher */
-.color-scheme-switcher {
-  display: flex;
-  gap: 1rem;
-  margin-bottom: 2rem;
-  justify-content: flex-start;
-}
-
-.color-scheme-switcher button {
-  padding: 0.25rem 0.75rem;
-  border: 1px solid var(--border-color);
-  background-color: transparent;
-  color: var(--text-color);
-  font-size: 0.875rem;
-  cursor: pointer;
-  font-family: inherit;
-}
-
-.color-scheme-switcher button.active {
-  background-color: var(--text-color);
-  color: var(--bg-color);
-}
-
-/* Static description with colored terms */
+/* Description Text */
 .static-description {
   border-top: 1px solid var(--border-color);
-  padding-top: 1.5rem;
-  margin-bottom: 1rem;
-  font-size: 1rem;
-  line-height: 1.6;
+  padding-top: 2rem;
+  margin-bottom: 1.5rem;
+  font-size: 1.125rem;
+  line-height: 1.7;
   position: relative;
   z-index: 1;
+  text-align: left; /* Keep text left-aligned for readability */
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .static-description p {
   margin: 0;
-  color: var(--text-color);
+  color: var(--text-primary);
 }
 
 .static-description span {
   font-weight: 600;
+  padding: 0 2px;
+  border-radius: 3px;
+  transition: background-color 0.2s;
 }
 
-/* Hover explanation */
+.static-description span.active {
+  background-color: var(--accent-light);
+  color: var(--accent-color);
+}
+
+/* Hover Explanation (Dynamic) */
 .hover-explanation {
-  border-top: 1px solid var(--border-color);
-  padding-top: 1rem;
   min-height: 3rem;
   opacity: 0;
-  pointer-events: none;
+  transition: opacity 0.3s ease;
   font-size: 1rem;
   line-height: 1.6;
-  color: var(--text-color);
+  color: var(--text-secondary);
+  text-align: left; /* Left aligned */
+  font-family: var(--font-ui);
+  margin: 1rem auto 0 auto;
+
+  /* Frame style */
+  border: 1px solid var(--accent-color); /* Relevant color */
+  background-color: #fff;
+  padding: 1rem;
+  border-radius: 4px;
+
+  /* Full width of text column */
+  width: 100%;
+  max-width: 700px; /* Match static-description max-width */
 }
 
 .hover-explanation.visible {
   opacity: 1;
 }
 
-/* Clicked/selected term indication */
-.term-clicked {
-  opacity: 0.6;
-  outline: 2px solid currentColor;
-  outline-offset: 2px;
-}
-
-/* Footer */
-.footer {
-  margin-top: 3rem;
+/* Sidebar Footer */
+.sidebar-footer {
+  margin-top: auto;
   padding-top: 2rem;
-  border-top: 1px solid var(--border-color);
-  font-size: 0.875rem;
-  color: #6b7280;
-  text-align: center;
+  font-family: var(--font-ui);
+  font-size: 0.8125rem;
+  color: var(--text-secondary); /* Darker text */
+  /* text-align: center; */
 }
 
-.footer p {
+.sidebar-footer p {
   margin: 0.5rem 0;
+  line-height: 1.5;
 }
 
-.footer a {
-  color: #6b7280;
+.sidebar-footer a {
+  color: var(--accent-color);
   text-decoration: none;
-  border-bottom: 1px solid transparent;
-  transition: border-color 0.2s ease;
+  border-bottom: none;
+  transition: all 0.2s ease;
 }
 
-.footer a:hover {
-  border-bottom-color: #6b7280;
+.sidebar-footer a:hover {
+  text-decoration: underline;
 }
 
-/* Editor sidebar */
+/* Editor Sidebar */
 .editor-sidebar {
-  width: 500px;
-  min-width: 500px;
-  background-color: #f9fafb;
+  width: var(--editor-width);
+  min-width: var(--editor-width);
+  background-color: var(--bg-primary);
   border-left: 1px solid var(--border-color);
   display: flex;
   flex-direction: column;
-  transition: transform 0.3s ease, width 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   overflow: hidden;
+  box-shadow: -4px 0 15px rgba(0, 0, 0, 0.03);
+  z-index: 20;
 }
 
 .editor-sidebar.collapsed {
-  width: 50px;
-  min-width: 50px;
+  width: 48px; /* Narrower collapsed state */
+  min-width: 48px;
 }
 
 .editor-toolbar {
   display: flex;
-  gap: 1rem;
-  padding: 1rem;
+  gap: 0.75rem;
+  padding: 0.75rem;
   border-bottom: 1px solid var(--border-color);
-  background-color: #f9fafb;
-  flex-shrink: 0;
+  background-color: var(--bg-secondary);
   align-items: center;
+  height: 48px;
 }
 
 .editor-sidebar.collapsed .editor-toolbar {
   flex-direction: column;
-  gap: 0.5rem;
-  padding: 0.5rem 0.25rem;
+  padding: 0.75rem 0;
+  height: 100%;
+  gap: 1rem;
 }
 
 .toolbar-btn {
-  padding: 0;
+  font-family: var(--font-ui);
+  padding: 0.25rem 0.5rem;
   border: none;
-  background: none;
-  color: #6b7280;
-  font-size: 0.875rem;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 0.8125rem;
   cursor: pointer;
-  font-family: inherit;
-  transition: color 0.2s ease;
-  white-space: nowrap;
+  border-radius: 0.25rem;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .toolbar-btn:hover {
-  color: var(--text-color);
+  background-color: rgba(0, 0, 0, 0.05);
+  color: var(--text-primary);
 }
 
 .toolbar-link {
-  font-size: 0.875rem;
-  color: #6b7280;
+  font-family: var(--font-ui);
+  font-size: 0.8125rem;
+  color: var(--text-secondary);
   text-decoration: none;
-  border-bottom: 1px solid transparent;
-  transition: color 0.2s ease, border-color 0.2s ease;
-  white-space: nowrap;
+  padding: 0.25rem 0.5rem;
 }
 
-.toolbar-link:hover {
-  color: var(--text-color);
-  border-bottom-color: #6b7280;
-}
-
-.editor-sidebar.collapsed .toolbar-btn,
+.editor-sidebar.collapsed .toolbar-btn span:not(.icon),
 .editor-sidebar.collapsed .toolbar-link {
-  writing-mode: vertical-rl;
-  text-orientation: mixed;
-  font-size: 0.875rem;
+  display: none;
 }
 
 #toggle-editor-btn .icon {
-  display: inline-block;
-  transition: transform 0.3s ease;
-}
-
-.editor-sidebar.collapsed #toggle-editor-btn .icon {
-  transform: rotate(180deg);
+  font-size: 0.75rem;
 }
 
 .editor-container {
   flex: 1;
   overflow: auto;
-  padding: 1rem;
-  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', monospace;
+  padding: 1.5rem;
+  font-family: var(--font-mono);
   font-size: 0.875rem;
   line-height: 1.6;
+  background-color: var(--bg-primary);
 }
 
-.editor-sidebar.collapsed .editor-container {
-  display: none;
-}
-
-/* Prism.js syntax highlighting styles */
+/* Prism Customization */
 .editor-container code {
   display: block;
   white-space: pre-wrap;
   word-wrap: break-word;
-  color: var(--text-color);
+  color: var(--text-primary);
   outline: none;
-  padding: 0;
-  margin: 0;
 }
 
-/* Syntax highlighting - minimal, term colors applied via JS */
 .token.heading {
   font-weight: 600;
+  color: var(--accent-color);
 }
 
 .token.bold {
@@ -331,69 +427,110 @@ h1 {
 }
 
 .token.punctuation {
-  color: #6a737d;
+  color: var(--text-tertiary);
+}
+
+.token.latex-mark {
+  /* Base color handled by JS, but ensuring visibility */
+  color: inherit;
+}
+
+.token.keyword {
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.token.md-ref {
+  /* Base color handled by JS */
+  color: inherit;
+}
+
+/* Child tokens inside colored parents should inherit the color */
+.token.latex-mark .token.keyword,
+.token.latex-mark .token.punctuation,
+.token.latex-mark .token.mark-class,
+.token.latex-mark .token.mark-content,
+.token.md-ref .token.ref-text,
+.token.md-ref .token.ref-class,
+.token.md-ref .token.punctuation,
+.token.heading-class .token.punctuation,
+.token.heading-class .token.class-name {
+  color: inherit;
 }
 
 /* Error highlighting - subtle, only in editor */
 .token.has-error {
-  text-decoration: underline dotted rgba(239, 68, 68, 0.4);
+  text-decoration: underline dotted var(--danger);
   text-decoration-thickness: 1px;
   text-underline-offset: 3px;
 }
 
-/* Export dropdown */
-.export-dropdown {
-  position: relative;
-  display: inline-block;
+/* Export Controls */
+.export-controls {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
 }
 
-.export-menu {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  background-color: #ffffff;
-  border: 1px solid var(--border-color);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  z-index: 1000;
-  min-width: 120px;
-  margin-top: 0.25rem;
-}
-
-.export-option {
-  display: block;
-  width: 100%;
-  padding: 0.5rem 1rem;
-  border: none;
-  background: none;
-  color: var(--text-color);
-  font-size: 0.875rem;
+.toolbar-select {
+  font-family: var(--font-ui);
+  font-size: 0.8125rem;
+  padding: 0.25rem 0.5rem;
+  border: 1px solid transparent;
+  border-radius: 0.25rem;
+  background-color: transparent;
+  color: var(--text-secondary);
   cursor: pointer;
-  font-family: inherit;
-  text-align: left;
-  transition: background-color 0.2s ease;
+  outline: none;
+  transition: all 0.2s ease;
 }
 
-.export-option:hover {
-  background-color: #f9fafb;
+.toolbar-select:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+  color: var(--text-primary);
 }
 
-/* Editor in export mode */
-.editor-container.export-mode code {
-  color: #6a737d;
-  font-size: 0.75rem;
+.toolbar-select:focus {
+  border-color: var(--border-color);
+  background-color: #fff;
 }
 
-/* Responsive design */
-@media (max-width: 1200px) {
+/* Responsive */
+@media (max-width: 1024px) {
   .editor-sidebar {
-    width: 400px;
-    min-width: 400px;
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+    max-width: 500px;
+    transform: translateX(100%);
+  }
+
+  .editor-sidebar:not(.collapsed) {
+    transform: translateX(0);
+  }
+
+  .editor-sidebar.collapsed {
+    width: 48px;
+    min-width: 48px;
+    transform: translateX(0);
+    background: transparent;
+    border: none;
+    box-shadow: none;
+  }
+
+  .editor-sidebar.collapsed .editor-toolbar {
+    background: transparent;
+    border: none;
   }
 }
 
 @media (max-width: 768px) {
   #app {
     flex-direction: column;
+    height: auto;
+    overflow-y: auto;
   }
 
   .sidebar {
@@ -401,40 +538,26 @@ h1 {
     min-width: 100%;
     border-right: none;
     border-bottom: 1px solid var(--border-color);
-    padding: 1.5rem 1rem;
+    height: auto;
+    max-height: 200px;
   }
 
   .main-content {
-    padding: 1.5rem 1rem;
-  }
-
-  h1 {
-    font-size: 1.5rem;
-  }
-
-  #equation-container .katex {
-    font-size: 1.2rem;
+    padding: 2rem 1rem;
+    overflow: visible;
   }
 
   .editor-sidebar {
+    position: relative;
     width: 100%;
-    min-width: 100%;
-    border-left: none;
-    border-top: 1px solid var(--border-color);
-    max-height: 50vh;
+    max-width: 100%;
+    height: 500px;
+    transform: none;
   }
 
   .editor-sidebar.collapsed {
+    height: 50px;
     width: 100%;
     min-width: 100%;
-    max-height: 50px;
-  }
-
-  .editor-sidebar.collapsed .editor-toolbar {
-    flex-direction: row;
-  }
-
-  .editor-sidebar.collapsed .toolbar-btn {
-    writing-mode: horizontal-tb;
   }
 }

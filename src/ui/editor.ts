@@ -1,8 +1,8 @@
-import { CodeJar } from 'codejar';
-import Prism from 'prismjs';
-import '../prism-custom';
-import { applyTermColors, markErrors } from '../prism-custom';
-import { loadContent, type ParsedContent } from '../parser';
+import { CodeJar } from "codejar";
+import Prism from "prismjs";
+import "../prism-custom";
+import { applyTermColors, markErrors } from "../prism-custom";
+import { loadContent, type ParsedContent } from "../parser";
 
 export interface EditorState {
   editor: CodeJar | null;
@@ -14,7 +14,7 @@ export interface EditorState {
 export function createEditorState(): EditorState {
   return {
     editor: null,
-    currentMarkdown: '',
+    currentMarkdown: "",
     previewTimeout: null,
     isExportMode: false,
   };
@@ -30,11 +30,18 @@ function highlightEditor(
   editorElement.innerHTML = Prism.highlight(
     markdown,
     Prism.languages.eqmd,
-    'eqmd'
+    "eqmd"
   );
 
   // Apply term colors dynamically based on current markdown
   applyTermColors(editorElement, markdown, colors);
+
+  // Re-apply colors after a short delay to handle browser/CodeJar DOM normalization
+  // On initial page load, the browser may re-render the contenteditable element,
+  // which strips our inline styles. This ensures colors persist.
+  setTimeout(() => {
+    applyTermColors(editorElement, markdown, colors);
+  }, 50);
 
   // Mark errors with red underlines if parsed content has errors
   if (parsedContent && parsedContent.errors.length > 0) {
@@ -44,24 +51,26 @@ function highlightEditor(
 
 export function initializeEditor(
   state: EditorState,
-  colors: string[],
+  getColors: () => string[],
   getParsedContent: () => ParsedContent | null,
   onUpdate: (code: string) => void
 ) {
-  const editorContainer = document.getElementById('editor-container');
+  const editorContainer = document.getElementById("editor-container");
   if (!editorContainer) return;
 
   // Create code element for CodeJar
-  const codeElement = document.createElement('code');
-  codeElement.className = 'language-eqmd';
+  const codeElement = document.createElement("code");
+  codeElement.className = "language-eqmd";
   editorContainer.appendChild(codeElement);
 
   // Initialize CodeJar with Prism highlighting
+  // Note: getColors() is called each time to get current colors (not stale closure)
   state.editor = CodeJar(
     codeElement,
-    (el) => highlightEditor(el, el.textContent || '', colors, getParsedContent()),
+    (el) =>
+      highlightEditor(el, el.textContent || "", getColors(), getParsedContent()),
     {
-      tab: '  ', // 2 spaces for tab
+      tab: "  ", // 2 spaces for tab
       indentOn: /[({[]$/,
     }
   );
@@ -99,7 +108,7 @@ export async function updatePreview(
 
     // Update title if present in markdown
     if (parsedContent.title) {
-      const titleElement = document.getElementById('equation-title');
+      const titleElement = document.getElementById("equation-title");
       if (titleElement) {
         titleElement.textContent = parsedContent.title;
       }
@@ -109,7 +118,11 @@ export async function updatePreview(
 
     return parsedContent;
   } catch (error) {
-    console.error('Failed to parse markdown:', error);
+    console.error("Failed to parse markdown or update UI:", error);
+    if (error instanceof Error) {
+      console.error("Stack trace:", error.stack);
+    }
+    // Don't leave the error unhandled, return null so the caller knows parsing failed
     return null;
   }
 }
@@ -125,12 +138,12 @@ export function updateEditorHighlighting(
 
 export function setupEditorControls() {
   // Toggle editor collapse/expand
-  const toggleBtn = document.getElementById('toggle-editor-btn');
-  const editorSidebar = document.getElementById('editor-sidebar');
+  const toggleBtn = document.getElementById("toggle-editor-btn");
+  const editorSidebar = document.getElementById("editor-sidebar");
 
   if (toggleBtn && editorSidebar) {
-    toggleBtn.addEventListener('click', () => {
-      editorSidebar.classList.toggle('collapsed');
+    toggleBtn.addEventListener("click", () => {
+      editorSidebar.classList.toggle("collapsed");
     });
   }
 }
