@@ -1,15 +1,18 @@
-// Export module dispatcher and re-exports
-// Main entry point for all export functionality
+// Export module - types, dispatcher, and re-exports
 
 import type { ParsedContent } from '../parser';
-import type { ColorScheme, ExportFormat } from './types';
 import { exportToHTML } from './htmlExport';
 import { exportToLaTeX } from './latexExport';
 import { exportToBeamer } from './beamerExport';
 import { exportToTypst } from './typstExport';
 
-// Re-export types
-export type { ColorScheme, ExportFormat } from './types';
+// Types
+export interface ColorScheme {
+  name: string;
+  colors: string[];
+}
+
+export type ExportFormat = 'html' | 'latex' | 'beamer' | 'typst';
 
 // Re-export individual export functions
 export { exportToHTML } from './htmlExport';

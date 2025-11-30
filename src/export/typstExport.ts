@@ -3,12 +3,12 @@
 // Defines colors as variables at the top, references them throughout
 
 import type { ParsedContent } from '../parser';
-import type { ColorScheme } from './types';
+import type { ColorScheme } from '.';
 import { tex2typst } from 'tex2typst';
-import { transformHtmlClass } from '../utils/latexParser';
-import { convertHtmlDescription } from '../utils/htmlConverter';
-import { escapePreservingMath } from '../utils/escape';
-import { getTermColor } from '../utils/colorUtils';
+import { transformHtmlClass } from '../utils/latex';
+import { convertHtmlDescription } from './htmlConverter';
+import { escapePreservingMath } from './escape';
+import { getTermColor } from '../utils/colorSchemes';
 
 /**
  * Escape Typst special characters

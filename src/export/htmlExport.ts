@@ -2,11 +2,11 @@
 // Exports standalone HTML documents with internal CSS and interactive hover
 
 import type { ParsedContent } from '../parser';
-import type { ColorScheme } from './types';
+import type { ColorScheme } from '.';
 import katex from 'katex';
-import { transformHtmlClass } from '../utils/latexParser';
-import { escapePreservingMath, escapeHTML } from '../utils/escape';
-import { getTermColor } from '../utils/colorUtils';
+import { transformHtmlClass } from '../utils/latex';
+import { escapePreservingMath, escapeHTML } from './escape';
+import { getTermColor } from '../utils/colorSchemes';
 
 // Inject colors into LaTeX while preserving \htmlClass for interactivity
 function injectColorsIntoLatex(latex: string, termOrder: string[], colorScheme: ColorScheme): string {

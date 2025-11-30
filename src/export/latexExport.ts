@@ -2,11 +2,11 @@
 // Non-interactive: colors defined in preamble, applied with \textcolor
 
 import type { ParsedContent } from '../parser';
-import type { ColorScheme } from './types';
-import { transformHtmlClass } from '../utils/latexParser';
-import { convertHtmlDescription } from '../utils/htmlConverter';
-import { escapePreservingMath, escapeLaTeX } from '../utils/escape';
-import { getTermColor } from '../utils/colorUtils';
+import type { ColorScheme } from '.';
+import { transformHtmlClass } from '../utils/latex';
+import { convertHtmlDescription } from './htmlConverter';
+import { escapePreservingMath, escapeLaTeX } from './escape';
+import { getTermColor } from '../utils/colorSchemes';
 
 // Escape LaTeX text while preserving inline math ($...$)
 const escapeLatexPreservingMath = (text: string) => escapePreservingMath(text, escapeLaTeX);

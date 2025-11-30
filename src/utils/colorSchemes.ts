@@ -1,6 +1,6 @@
 import type { ColorScheme } from '../export'
 
-// App color schemes (used by ColorSchemeSwitcher)
+// App color schemes
 export const colorSchemes: Record<string, ColorScheme> = {
   vibrant: {
     name: 'Vibrant',
@@ -29,11 +29,11 @@ export const colorSchemes: Record<string, ColorScheme> = {
   },
 }
 
-// Default scheme
 export const defaultScheme = colorSchemes.vibrant
 
-// Helper to get term color from scheme + termOrder
+// Get color for a term - returns fallback if not found
 export function getTermColor(term: string, termOrder: string[], scheme: ColorScheme): string {
   const index = termOrder.indexOf(term)
+  if (index === -1) return '#000000'
   return scheme.colors[index] ?? '#000000'
 }
