@@ -7,7 +7,7 @@ import { exportToHTML } from '../../src/export/index.js';
 import { vibrantScheme, writeTestFile, runChecks, reportTestResults } from '../test-utils.js';
 
 // Load test equation
-const markdown = readFileSync('./public/examples/euler.md', 'utf-8');
+const markdown = readFileSync('./src/examples/euler.md', 'utf-8');
 const parsed = parseContent(markdown);
 
 console.log('Parsed content:');

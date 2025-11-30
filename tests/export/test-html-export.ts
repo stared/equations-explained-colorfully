@@ -7,7 +7,7 @@ import { readFileSync } from 'fs';
 async function testHTMLExport() {
   console.log('Testing HTML export with CSS custom properties...\n');
 
-  const markdown = readFileSync('./public/examples/euler.md', 'utf-8');
+  const markdown = readFileSync('./src/examples/euler.md', 'utf-8');
   const parsed = await parseContent(markdown);
 
   const html = exportToHTML(parsed, vibrantScheme);

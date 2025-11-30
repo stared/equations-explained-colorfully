@@ -7,19 +7,31 @@ console.log('Validating equation files...');
 
 let hasErrors = false;
 
-// Load equations list
-const equationsJson = readFileSync('./public/examples/equations.json', 'utf-8');
-const equations = JSON.parse(equationsJson);
+// Scan src/examples directory for markdown files
+const examplesDir = './src/examples';
+const files = readdirSync(examplesDir).filter(f => f.endsWith('.md'));
+
+console.log(`Found ${files.length} equation files`);
 
 // Validate each equation file
-for (const equation of equations) {
-  const filePath = `./public/examples/${equation.file}`;
-  console.log(`\nChecking ${equation.title} (${equation.file})...`);
+for (const file of files) {
+  const filePath = `${examplesDir}/${file}`;
+  console.log(`\nChecking ${file}...`);
 
   try {
     const content = readFileSync(filePath, 'utf-8');
     const parsed = parseContent(content);
+    console.log(`  ✓ Title: ${parsed.title || '(no title)'}`);
     console.log(`  ✓ ${parsed.termOrder.length} terms found`);
+
+    if (parsed.errors.length > 0) {
+      console.error(`  ✗ Validation errors:`);
+      parsed.errors.forEach(err => console.error(`    - ${err}`));
+      hasErrors = true;
+    }
+    if (parsed.warnings.length > 0) {
+      parsed.warnings.forEach(warn => console.warn(`  ⚠ ${warn}`));
+    }
   } catch (error) {
     console.error(`  ✗ Validation failed:`);
     if (error instanceof Error) {

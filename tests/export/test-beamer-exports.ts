@@ -16,13 +16,13 @@ interface BeamerTestFixture {
 const fixtures: BeamerTestFixture[] = [
   {
     name: "Euler's Identity",
-    file: './public/examples/euler.md',
+    file: './src/examples/euler.md',
     colorScheme: vibrantScheme,
     outputFile: './test-output/test-euler-beamer.tex',
   },
   {
     name: "Maxwell's Equations",
-    file: './public/examples/maxwell.md',
+    file: './src/examples/maxwell.md',
     colorScheme: vibrant10Scheme,
     outputFile: './test-output/test-maxwell-beamer.tex',
   },

@@ -7,7 +7,7 @@ import { readFileSync } from 'fs';
 async function smokeTest() {
   console.log('Quick smoke test: All export formats...\n');
 
-  const markdown = readFileSync('./public/examples/euler.md', 'utf-8');
+  const markdown = readFileSync('./src/examples/euler.md', 'utf-8');
   const parsed = await parseContent(markdown);
 
   const exports = {

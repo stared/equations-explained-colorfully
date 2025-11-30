@@ -8,7 +8,7 @@ async function testTypstExport() {
   console.log('Testing Typst export with tex2typst...\n');
 
   // Load Euler's identity equation
-  const markdown = readFileSync('./public/examples/euler.md', 'utf-8');
+  const markdown = readFileSync('./src/examples/euler.md', 'utf-8');
   const parsed = await parseContent(markdown);
   console.log('✓ Content loaded successfully');
   console.log(`  Title: ${parsed.title}`);
