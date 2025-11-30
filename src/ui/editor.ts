@@ -36,6 +36,13 @@ function highlightEditor(
   // Apply term colors dynamically based on current markdown
   applyTermColors(editorElement, markdown, colors);
 
+  // Re-apply colors after a short delay to handle browser/CodeJar DOM normalization
+  // On initial page load, the browser may re-render the contenteditable element,
+  // which strips our inline styles. This ensures colors persist.
+  setTimeout(() => {
+    applyTermColors(editorElement, markdown, colors);
+  }, 50);
+
   // Mark errors with red underlines if parsed content has errors
   if (parsedContent && parsedContent.errors.length > 0) {
     markErrors(editorElement, markdown, parsedContent.errors);
@@ -44,7 +51,7 @@ function highlightEditor(
 
 export function initializeEditor(
   state: EditorState,
-  colors: string[],
+  getColors: () => string[],
   getParsedContent: () => ParsedContent | null,
   onUpdate: (code: string) => void
 ) {
@@ -57,10 +64,11 @@ export function initializeEditor(
   editorContainer.appendChild(codeElement);
 
   // Initialize CodeJar with Prism highlighting
+  // Note: getColors() is called each time to get current colors (not stale closure)
   state.editor = CodeJar(
     codeElement,
     (el) =>
-      highlightEditor(el, el.textContent || "", colors, getParsedContent()),
+      highlightEditor(el, el.textContent || "", getColors(), getParsedContent()),
     {
       tab: "  ", // 2 spaces for tab
       indentOn: /[({[]$/,

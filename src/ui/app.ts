@@ -161,7 +161,7 @@ export async function initializeApp() {
     // Note: We must initialize editor BEFORE loading the equation so that loadEquation can populate it
     initializeEditor(
       editorState,
-      colorSchemes[currentScheme].colors,
+      () => colorSchemes[currentScheme].colors,
       () => parsedContent,
       handlePreviewUpdate
     );
