@@ -37,3 +37,10 @@ export function getTermColor(term: string, termOrder: string[], scheme: ColorSch
   if (index === -1) return '#000000'
   return scheme.colors[index] ?? '#000000'
 }
+
+// Build term→color map for O(1) lookups (use in computed properties)
+export function buildTermColorMap(termOrder: string[], scheme: ColorScheme): Map<string, string> {
+  return new Map(
+    termOrder.map((term, i) => [term, scheme.colors[i] ?? '#000000'])
+  )
+}

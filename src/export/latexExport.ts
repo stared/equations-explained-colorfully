@@ -4,7 +4,7 @@
 import type { ParsedContent } from '../utils/parser';
 import type { ColorScheme } from '.';
 import { transformHtmlClass } from '../utils/latex';
-import { convertHtmlDescription } from './htmlConverter';
+import { convertDescriptionToLatex } from './htmlConverter';
 import { escapePreservingMath, escapeLaTeX } from './escape';
 import { getTermColor } from '../utils/colorSchemes';
 
@@ -15,15 +15,6 @@ const escapeLatexPreservingMath = (text: string) => escapePreservingMath(text, e
 function stripHtmlClassForLatex(latex: string): string {
   return transformHtmlClass(latex, (className, content) =>
     `\\textcolor{term${className}}{${content}}`
-  );
-}
-
-// Convert HTML description to LaTeX text
-function convertDescriptionToLatex(html: string): string {
-  return convertHtmlDescription(
-    html,
-    escapeLaTeX,
-    (className, content) => `\\textcolor{term${className}}{${escapeLaTeX(content)}}`
   );
 }
 

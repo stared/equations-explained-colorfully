@@ -1,3 +1,5 @@
+import { escapeLaTeX } from './escape';
+
 // Transform HTML <span class="term-X">content</span> to custom format
 export function convertHtmlDescription(
   html: string,
@@ -53,4 +55,13 @@ export function convertHtmlDescription(
   }
 
   return result.trim();
+}
+
+// Convert HTML description to LaTeX with \textcolor (shared by latexExport and beamerExport)
+export function convertDescriptionToLatex(html: string): string {
+  return convertHtmlDescription(
+    html,
+    escapeLaTeX,
+    (className, content) => `\\textcolor{term${className}}{${escapeLaTeX(content)}}`
+  );
 }

@@ -39,14 +39,11 @@ export function setupTermListeners(
   }
 }
 
-/** Set pointer-events on term elements (needed for KaTeX) */
+/** Set pointer-events on term elements (needed for KaTeX which nests many spans) */
 export function enableTermPointerEvents(container: HTMLElement): void {
-  container.querySelectorAll('*').forEach((el) => {
+  container.querySelectorAll('[class*="term-"]').forEach((el) => {
     const htmlEl = el as HTMLElement
-    const hasTermClass = Array.from(el.classList).some(c => c.startsWith('term-'))
-    htmlEl.style.pointerEvents = hasTermClass ? 'auto' : 'none'
-    if (hasTermClass) {
-      htmlEl.style.cursor = 'pointer'
-    }
+    htmlEl.style.pointerEvents = 'auto'
+    htmlEl.style.cursor = 'pointer'
   })
 }

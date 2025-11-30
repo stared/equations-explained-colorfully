@@ -35,7 +35,7 @@
 import { ref, computed, watch } from 'vue'
 import type { ParsedContent } from '../utils/parser'
 import type { ColorScheme } from '../export'
-import { getTermColor as getColor } from '../utils/colorSchemes'
+import { buildTermColorMap } from '../utils/colorSchemes'
 
 import EquationDisplay from './equation/EquationDisplay.vue'
 import DescriptionPanel from './equation/DescriptionPanel.vue'
@@ -48,9 +48,11 @@ const props = defineProps<{
 
 const termOrder = computed(() => props.content.termOrder)
 
-// Color helper
+// Build color map once (O(1) lookups instead of O(n) indexOf)
+const termColorMap = computed(() => buildTermColorMap(termOrder.value, props.colors))
+
 function getTermColor(term: string): string {
-  return getColor(term, termOrder.value, props.colors)
+  return termColorMap.value.get(term) ?? '#000000'
 }
 
 // Hover/click state (owned internally)

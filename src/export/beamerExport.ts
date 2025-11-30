@@ -4,7 +4,7 @@
 import type { ParsedContent } from '../utils/parser';
 import type { ColorScheme } from '.';
 import { transformHtmlClass } from '../utils/latex';
-import { convertHtmlDescription } from './htmlConverter';
+import { convertDescriptionToLatex } from './htmlConverter';
 import { escapePreservingMath, escapeLaTeX } from './escape';
 import { getTermColor } from '../utils/colorSchemes';
 
@@ -19,15 +19,6 @@ function injectTikzNodesInLatex(latex: string): { latex: string; nodeCount: numb
     return `\\textcolor{term${className}}{${content}}\\tikz[baseline,remember picture,overlay] \\coordinate (n${index});`;
   });
   return { latex: result, nodeCount };
-}
-
-// Convert HTML description to LaTeX text
-function convertDescriptionToLatex(html: string): string {
-  return convertHtmlDescription(
-    html,
-    escapeLaTeX,
-    (className, content) => `\\textcolor{term${className}}{${escapeLaTeX(content)}}`
-  );
 }
 
 /**

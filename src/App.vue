@@ -23,7 +23,7 @@
         <button class="toolbar-btn" title="Show/hide editor" @click="editorCollapsed = !editorCollapsed">
           <span class="icon">{{ editorCollapsed ? '▶' : '◀' }}</span>
         </button>
-        <ExportControls :markdown="markdown" :colors="colorScheme" />
+        <ExportControls :parsed-content="parsedContent" :colors="colorScheme" />
         <a href="https://github.com/stared/equations-explained-colorfully" class="toolbar-link" target="_blank" rel="noopener">Contribute</a>
       </div>
       <div class="editor-container">

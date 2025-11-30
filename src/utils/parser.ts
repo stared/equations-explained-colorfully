@@ -2,6 +2,23 @@
 
 import { findMatchingBrace } from './latex';
 
+/**
+ * Extract term names from \mark[term] patterns in equation content (for color ordering)
+ */
+export function extractTermOrder(equationContent: string): string[] {
+  const terms: string[] = []
+  const seen = new Set<string>()
+  const pattern = /\\mark\[([^\]]+)\]/g
+  let match
+  while ((match = pattern.exec(equationContent)) !== null) {
+    if (!seen.has(match[1])) {
+      terms.push(match[1])
+      seen.add(match[1])
+    }
+  }
+  return terms
+}
+
 export interface ParsedContent {
   title: string; // Title from # heading
   latex: string; // LaTeX equation with \htmlClass annotations

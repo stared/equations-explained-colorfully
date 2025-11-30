@@ -6,7 +6,7 @@
 import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import { CodeJar } from 'codejar'
 import Prism from 'prismjs'
-import { parseContent } from '../utils/parser'
+import { parseContent, extractTermOrder } from '../utils/parser'
 import type { ColorScheme } from '../export'
 
 // ============================================================================
@@ -98,27 +98,9 @@ Prism.languages.eqmd = {
 
 // Extract ONLY terms from equation section ($$...$$)
 function extractEquationTerms(markdown: string): string[] {
-  const terms: string[] = []
-  const seenTerms = new Set<string>()
-
-  // Extract equation block (everything between $$...$$)
   const equationMatch = markdown.match(/\$\$([\s\S]*?)\$\$/)
-  if (!equationMatch) return terms
-
-  const equationContent = equationMatch[1]
-
-  // Extract \mark[classname] in order of appearance
-  const markPattern = /\\mark\[([^\]]+)\]/g
-  let match
-  while ((match = markPattern.exec(equationContent)) !== null) {
-    const term = match[1]
-    if (!seenTerms.has(term)) {
-      terms.push(term)
-      seenTerms.add(term)
-    }
-  }
-
-  return terms
+  if (!equationMatch) return []
+  return extractTermOrder(equationMatch[1])
 }
 
 // Helper to mark tokens with errors based on a condition
