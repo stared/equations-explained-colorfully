@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Export UI', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('http://localhost:5174/equations-explained-colorfully/');
+    await page.goto('http://localhost:5173/equations-explained-colorfully/');
     await page.waitForSelector('#equation-container .katex', { timeout: 10000 });
   });
 

@@ -4,12 +4,13 @@
 
 <script setup lang="ts">
 import { ref, watch, nextTick, onMounted } from 'vue'
+import { applyTermColors, setupTermListeners, getTermElements } from '../../utils/termDom'
 
 const props = defineProps<{
   description: string
   termOrder: string[]
   activeTerm: string | null
-  getTermColor: (termClass: string) => string
+  getTermColor: (term: string) => string
 }>()
 
 const emit = defineEmits<{
@@ -19,72 +20,39 @@ const emit = defineEmits<{
 
 const descriptionRef = ref<HTMLElement | null>(null)
 
-function applyTermStyles() {
+function setupDescription() {
   if (!descriptionRef.value) return
-
-  descriptionRef.value.querySelectorAll('[class*="term-"]').forEach((el) => {
-    const termClass = Array.from(el.classList).find(c => c.startsWith('term-'))
-    if (!termClass) return
-
-    const term = termClass.replace('term-', '')
-    const htmlEl = el as HTMLElement
-    htmlEl.style.color = props.getTermColor(term)
-  })
+  applyTermColors(descriptionRef.value, props.getTermColor)
+  setupTermListeners(
+    descriptionRef.value,
+    (term) => emit('hover', term),
+    (term) => emit('click', term)
+  )
 }
 
-function setupTermListeners() {
+function updateActiveClass() {
   if (!descriptionRef.value) return
-
-  descriptionRef.value.querySelectorAll('[class*="term-"]').forEach((element) => {
-    const termClass = Array.from(element.classList).find(c => c.startsWith('term-'))
-    if (!termClass) return
-
-    const term = termClass.replace('term-', '')
-
-    element.addEventListener('mouseenter', () => {
-      emit('hover', term)
-    })
-
-    element.addEventListener('mouseleave', () => {
-      emit('hover', null)
-    })
-
-    element.addEventListener('click', (e) => {
-      e.stopPropagation()
-      emit('click', term)
-    })
-  })
+  for (const { el, term } of getTermElements(descriptionRef.value)) {
+    el.classList.toggle('active', term === props.activeTerm)
+  }
 }
-
-// Update active class when activeTerm changes
-watch(() => props.activeTerm, (term) => {
-  if (!descriptionRef.value) return
-
-  descriptionRef.value.querySelectorAll('span').forEach((el) => {
-    if (term && el.classList.contains(`term-${term}`)) {
-      el.classList.add('active')
-    } else {
-      el.classList.remove('active')
-    }
-  })
-}, { immediate: true })
 
 // Re-setup when description changes
 watch(() => props.description, async () => {
   await nextTick()
-  applyTermStyles()
-  setupTermListeners()
+  setupDescription()
+  updateActiveClass()
 }, { immediate: true })
 
 // Re-apply colors when color scheme changes
 watch(() => props.termOrder, () => {
-  applyTermStyles()
-}, { deep: true })
-
-onMounted(() => {
-  applyTermStyles()
-  setupTermListeners()
+  if (descriptionRef.value) applyTermColors(descriptionRef.value, props.getTermColor)
 })
+
+// Update active class when activeTerm changes
+watch(() => props.activeTerm, updateActiveClass, { immediate: true })
+
+onMounted(setupDescription)
 </script>
 
 <style scoped>

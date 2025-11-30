@@ -1,25 +1,33 @@
 <template>
-  <div id="equation-container" ref="containerRef" @click="handleContainerClick">
-    <SelectionOverlay
-      :elements="highlightedElements"
-      :color="activeColor || '#000'"
-      :container-ref="containerRef"
-    />
+  <div id="equation-container" ref="containerRef" @click="emit('click', '')">
+    <!-- Inline SVG overlay for highlighting -->
+    <svg class="selection-overlay">
+      <rect
+        v-for="(rect, index) in highlightRects"
+        :key="index"
+        :x="rect.x"
+        :y="rect.y"
+        :width="rect.width"
+        :height="rect.height"
+        rx="4"
+        ry="4"
+        :style="{ fill: `color-mix(in srgb, ${activeColor} 10%, transparent)` }"
+      />
+    </svg>
     <div ref="katexRef" class="katex-content"></div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, watch, nextTick, onMounted } from 'vue'
+import { ref, computed, watch, nextTick, onMounted, onUnmounted } from 'vue'
 import katex from 'katex'
-import SelectionOverlay from './SelectionOverlay.vue'
+import { applyTermColors, setupTermListeners, enableTermPointerEvents } from '../../utils/termDom'
 
 const props = defineProps<{
   latex: string
   termOrder: string[]
   activeTerm: string | null
-  activeColor: string | null
-  getTermColor: (termClass: string) => string
+  getTermColor: (term: string) => string
 }>()
 
 const emit = defineEmits<{
@@ -29,8 +37,73 @@ const emit = defineEmits<{
 
 const containerRef = ref<HTMLElement | null>(null)
 const katexRef = ref<HTMLElement | null>(null)
-const highlightedElements = ref<Element[]>([])
 
+// Compute active color from active term
+const activeColor = computed(() =>
+  props.activeTerm ? props.getTermColor(props.activeTerm) : '#000'
+)
+
+// --- Highlight overlay logic (inlined from SelectionOverlay) ---
+interface HighlightRect { x: number; y: number; width: number; height: number }
+const highlightRects = ref<HighlightRect[]>([])
+
+function getVisualBoundingRect(element: Element): DOMRect {
+  let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity
+  let found = false
+
+  const processRect = (r: DOMRect) => {
+    if (r.width > 0.1 && r.height > 0.1) {
+      minX = Math.min(minX, r.left)
+      minY = Math.min(minY, r.top)
+      maxX = Math.max(maxX, r.right)
+      maxY = Math.max(maxY, r.bottom)
+      found = true
+    }
+  }
+
+  const selfRects = element.getClientRects()
+  for (let i = 0; i < selfRects.length; i++) processRect(selfRects[i])
+
+  element.querySelectorAll('*').forEach((child) => {
+    const rects = child.getClientRects()
+    for (let i = 0; i < rects.length; i++) processRect(rects[i])
+  })
+
+  return found
+    ? new DOMRect(minX, minY, maxX - minX, maxY - minY)
+    : element.getBoundingClientRect()
+}
+
+function calculateHighlightRects() {
+  if (!containerRef.value || !katexRef.value || !props.activeTerm) {
+    highlightRects.value = []
+    return
+  }
+
+  const elements = katexRef.value.querySelectorAll(`.term-${props.activeTerm}`)
+  if (elements.length === 0) {
+    highlightRects.value = []
+    return
+  }
+
+  const containerRect = containerRef.value.getBoundingClientRect()
+  const style = window.getComputedStyle(containerRef.value)
+  const borderLeft = parseFloat(style.borderLeftWidth) || 0
+  const borderTop = parseFloat(style.borderTopWidth) || 0
+  const padding = 2
+
+  highlightRects.value = Array.from(elements).map((el) => {
+    const rect = getVisualBoundingRect(el)
+    return {
+      x: rect.left - containerRect.left - borderLeft - padding,
+      y: rect.top - containerRect.top - borderTop - padding,
+      width: rect.width + padding * 2,
+      height: rect.height + padding * 2,
+    }
+  })
+}
+
+// --- KaTeX rendering ---
 function renderKatex() {
   if (!katexRef.value || !props.latex) return
 
@@ -42,94 +115,41 @@ function renderKatex() {
       throwOnError: false,
     })
 
-    // Apply pointer-events and colors
     nextTick(() => {
-      applyTermStyles()
-      setupTermListeners()
+      if (!katexRef.value) return
+      enableTermPointerEvents(katexRef.value)
+      applyTermColors(katexRef.value, props.getTermColor)
+      setupTermListeners(
+        katexRef.value,
+        (term) => emit('hover', term),
+        (term) => emit('click', term)
+      )
     })
   } catch (error) {
     console.error('KaTeX render error:', error)
     if (katexRef.value) {
-      katexRef.value.innerHTML = `<span style="color: red;">Error rendering equation: ${error instanceof Error ? error.message : String(error)}</span>`
+      katexRef.value.innerHTML = `<span style="color: red;">Error: ${error instanceof Error ? error.message : String(error)}</span>`
     }
   }
 }
 
-function applyTermStyles() {
-  if (!katexRef.value) return
-
-  katexRef.value.querySelectorAll('.katex *').forEach((el) => {
-    const classList = el.classList
-    const hasTermClass = Array.from(classList).some(c => c.startsWith('term-'))
-    const htmlEl = el as HTMLElement
-
-    if (hasTermClass) {
-      htmlEl.style.pointerEvents = 'auto'
-      htmlEl.style.cursor = 'pointer'
-
-      // Apply color
-      const termClass = Array.from(classList).find(c => c.startsWith('term-'))
-      if (termClass) {
-        const term = termClass.replace('term-', '')
-        htmlEl.style.color = props.getTermColor(term)
-      }
-    } else {
-      htmlEl.style.pointerEvents = 'none'
-    }
-  })
-}
-
-function setupTermListeners() {
-  if (!katexRef.value) return
-
-  katexRef.value.querySelectorAll('[class*="term-"]').forEach((element) => {
-    const termClass = Array.from(element.classList).find(c => c.startsWith('term-'))
-    if (!termClass) return
-
-    const term = termClass.replace('term-', '')
-
-    element.addEventListener('mouseenter', () => {
-      emit('hover', term)
-    })
-
-    element.addEventListener('mouseleave', () => {
-      emit('hover', null)
-    })
-
-    element.addEventListener('click', (e) => {
-      e.stopPropagation()
-      emit('click', term)
-    })
-  })
-}
-
-function handleContainerClick() {
-  // Clear clicked state when clicking outside terms
-  emit('click', '')
-}
-
-// Update highlighted elements when activeTerm changes
-watch(() => props.activeTerm, (term) => {
-  if (!katexRef.value || !term) {
-    highlightedElements.value = []
-    return
-  }
-  highlightedElements.value = Array.from(katexRef.value.querySelectorAll(`.term-${term}`))
-}, { immediate: true })
-
-// Re-render when latex changes
-watch(() => props.latex, () => {
-  renderKatex()
-}, { immediate: true })
-
-// Re-apply colors when color scheme changes
+// Watches
+watch(() => props.latex, renderKatex, { immediate: true })
 watch(() => props.termOrder, () => {
-  applyTermStyles()
-}, { deep: true })
+  if (katexRef.value) applyTermColors(katexRef.value, props.getTermColor)
+})
+watch(() => props.activeTerm, calculateHighlightRects, { immediate: true })
 
+// Resize observer for highlight recalculation
+let resizeObserver: ResizeObserver | null = null
 onMounted(() => {
   renderKatex()
+  if (containerRef.value) {
+    resizeObserver = new ResizeObserver(calculateHighlightRects)
+    resizeObserver.observe(containerRef.value)
+  }
 })
+onUnmounted(() => resizeObserver?.disconnect())
 </script>
 
 <style scoped>
@@ -142,6 +162,21 @@ onMounted(() => {
   position: relative;
   z-index: 10;
   background: var(--bg-primary);
+}
+
+.selection-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.selection-overlay rect {
+  opacity: 1;
+  transition: opacity 0.15s ease-out;
 }
 
 #equation-container :deep(.katex) {

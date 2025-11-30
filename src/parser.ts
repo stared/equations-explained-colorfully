@@ -1,6 +1,6 @@
 // Parser for interactive math markdown format
 
-import { findMatchingBrace } from './latex-utils';
+import { findMatchingBrace } from './latexUtils';
 
 export interface ParsedContent {
   title?: string; // Optional title from # heading

@@ -1,4 +1,4 @@
-import { findMatchingBrace } from '../latex-utils';
+import { findMatchingBrace } from '../latexUtils';
 
 // Transform \htmlClass{term-X}{content} patterns
 export function transformHtmlClass(

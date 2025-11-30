@@ -5,10 +5,10 @@
 import type { ParsedContent } from '../parser';
 import type { ColorScheme } from './types';
 import { tex2typst } from 'tex2typst';
-import { transformHtmlClass } from '../utils/latex-parser';
-import { convertHtmlDescription } from '../utils/html-converter';
+import { transformHtmlClass } from '../utils/latexParser';
+import { convertHtmlDescription } from '../utils/htmlConverter';
 import { escapePreservingMath } from '../utils/escape';
-import { getTermColor } from '../utils/color-utils';
+import { getTermColor } from '../utils/colorUtils';
 
 /**
  * Escape Typst special characters

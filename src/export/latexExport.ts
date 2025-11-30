@@ -3,10 +3,10 @@
 
 import type { ParsedContent } from '../parser';
 import type { ColorScheme } from './types';
-import { transformHtmlClass } from '../utils/latex-parser';
-import { convertHtmlDescription } from '../utils/html-converter';
+import { transformHtmlClass } from '../utils/latexParser';
+import { convertHtmlDescription } from '../utils/htmlConverter';
 import { escapePreservingMath, escapeLaTeX } from '../utils/escape';
-import { getTermColor } from '../utils/color-utils';
+import { getTermColor } from '../utils/colorUtils';
 
 // Escape LaTeX text while preserving inline math ($...$)
 const escapeLatexPreservingMath = (text: string) => escapePreservingMath(text, escapeLaTeX);

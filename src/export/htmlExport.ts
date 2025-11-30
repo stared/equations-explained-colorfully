@@ -4,9 +4,9 @@
 import type { ParsedContent } from '../parser';
 import type { ColorScheme } from './types';
 import katex from 'katex';
-import { transformHtmlClass } from '../utils/latex-parser';
+import { transformHtmlClass } from '../utils/latexParser';
 import { escapePreservingMath, escapeHTML } from '../utils/escape';
-import { getTermColor } from '../utils/color-utils';
+import { getTermColor } from '../utils/colorUtils';
 
 // Inject colors into LaTeX while preserving \htmlClass for interactivity
 function injectColorsIntoLatex(latex: string, termOrder: string[], colorScheme: ColorScheme): string {

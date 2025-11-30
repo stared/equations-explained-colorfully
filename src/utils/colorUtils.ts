@@ -1,6 +1,6 @@
 // Shared color utilities for exports
 import type { ColorScheme } from '../export/types';
-import { transformHtmlClass } from './latex-parser';
+import { transformHtmlClass } from './latexParser';
 
 /**
  * Get color for a term by its class name

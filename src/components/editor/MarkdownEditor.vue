@@ -6,8 +6,8 @@
 import { ref, watch, onMounted, onUnmounted } from 'vue'
 import { CodeJar } from 'codejar'
 import Prism from 'prismjs'
-import '../../prism-custom'
-import { applyTermColors, markErrors } from '../../prism-custom'
+import '../../prismCustom'
+import { applyTermColors, markErrors } from '../../prismCustom'
 import type { ParsedContent } from '../../parser'
 
 const props = defineProps<{
