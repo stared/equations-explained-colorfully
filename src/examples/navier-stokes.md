@@ -3,51 +3,45 @@
 ## Equation
 
 $$
-\mark[density]{\rho}\left(\mark[timederiv]{\frac{\partial \vec{v}}{\partial t}} + \mark[convection]{\vec{v} \cdot \nabla \vec{v}}\right) = -\mark[pressure]{\nabla p} + \mark[viscosity]{\mu} \mark[laplacian]{\nabla^2 \vec{v}} + \mark[force]{\vec{f}}
+\mark[density]{\rho} \left( \mark[timederiv]{\frac{\partial \vec{v}}{\partial t}} + \mark[convection]{(\vec{v} \cdot \nabla) \vec{v}} \right) = \mark[pressure]{-\nabla p} + \mark[viscosity]{\mu \nabla^2 \vec{v}} + \mark[force]{\vec{f}}
 $$
 
 ## Description
 
-[Fluid density]{.density} times ([velocity change with time]{.timederiv} plus [convective acceleration]{.convection}) equals negative [pressure gradient]{.pressure} plus [viscosity]{.viscosity} times [Laplacian]{.laplacian} of velocity plus [external forces]{.force}.
+The [fluid mass]{.density} accelerates ([over time]{.timederiv} and [along paths]{.convection}) due to forces. These include [pressure]{.pressure}, [viscosity]{.viscosity}, and [external fields]{.force}.
 
 ## .density
 
-The fluid density $\rho$ represents mass per unit volume.
+Fluid density $\rho$ (mass per unit volume).
 
-For incompressible fluids like water, density is constant. For gases, it can vary significantly with pressure and temperature.
+It acts as the "mass" term in $F=ma$. Heavier fluids (like water) carry more momentum and are harder to accelerate than lighter fluids (like air).
 
 ## .timederiv
 
-The partial time derivative $\frac{\partial \vec{v}}{\partial t}$ captures how velocity changes at a fixed point in space.
+Unsteady acceleration (local change).
 
-This represents local acceleration - how fast the fluid speeds up or slows down at a specific location.
+Measures how the velocity changes at a fixed point in space over time. If the flow is "steady" (like a calm river), this term is zero, even if the water is moving fast.
 
 ## .convection
 
-The convective term $\vec{v} \cdot \nabla \vec{v}$ represents acceleration due to fluid being carried from one place to another.
+Convective acceleration (change due to movement).
 
-Even in steady flow, particles accelerate as they move from regions of low to high velocity.
+This non-linear term captures how fluid particles accelerate as they move to a region with different velocity (e.g., water speeding up as it enters a narrow pipe). It is responsible for turbulence and the complex behavior of fluids.
 
 ## .pressure
 
-The pressure gradient $\nabla p$ represents the force due to pressure differences.
+Pressure gradient force.
 
-Fluid flows from high pressure to low pressure regions, like air flowing out of a balloon.
+Fluids naturally flow from high pressure to low pressure (down the gradient). This term drives the flow, pushing fluid parcels toward lower pressure zones. The negative sign ensures the force points _against_ the increase in pressure.
 
 ## .viscosity
 
-The dynamic viscosity $\mu$ measures a fluid's resistance to flow.
+Viscous diffusion (internal friction).
 
-Honey has high viscosity (flows slowly), while water has low viscosity (flows easily). Units: Pa·s (Pascal-seconds).
-
-## .laplacian
-
-The Laplacian $\nabla^2 = \frac{\partial^2}{\partial x^2} + \frac{\partial^2}{\partial y^2} + \frac{\partial^2}{\partial z^2}$ measures the difference between a point's value and its neighbors' average.
-
-In the viscous term, it captures how velocity differences between neighboring fluid parcels create internal friction forces.
+Describes how the fluid resists flow due to internal friction. The term $\mu \nabla^2 \vec{v}$ acts like diffusion for momentum, smoothing out velocity differences between neighboring layers of fluid. High viscosity (honey) suppresses turbulence; low viscosity (water) allows it.
 
 ## .force
 
-External body forces $\vec{f}$ include gravity, electromagnetic forces, or any other forces acting throughout the fluid volume.
+External body forces.
 
-For example, gravity causes water to flow downhill.
+Forces that act on the bulk of the fluid, such as gravity ($\rho \vec{g}$), magnetic forces, or Coriolis forces in atmospheric flows.
