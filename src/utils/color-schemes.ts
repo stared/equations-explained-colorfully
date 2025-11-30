@@ -6,21 +6,41 @@ export const colorSchemes: Record<string, ColorScheme> = {
   vibrant: {
     name: 'Vibrant',
     colors: [
-      '#8b5cf6', '#10b981', '#ec4899', '#3b82f6', '#06b6d4', '#f59e0b', '#ef4444',
-      '#a855f7', '#14b8a6', '#84cc16', '#6366f1', '#f97316'
+      '#8b5cf6', // 0: Purple (Energy)
+      '#10b981', // 1: Green (Freq) - distinct from Purple
+      '#ec4899', // 2: Pink (Average) - distinct from Green
+      '#3b82f6', // 3: Blue (Signal) - distinct from Pink
+      '#ef4444', // 4: Red (Spin) - HIGH contrast to Blue (was Cyan)
+      '#06b6d4', // 5: Cyan (Circle) - contrast to Red (was Amber)
+      '#f59e0b', // 6: Amber - contrast to Cyan
+      '#a855f7', 
+      '#14b8a6', 
+      '#84cc16', 
+      '#6366f1', 
+      '#f97316'
     ],
   },
   accessible: {
     name: 'Accessible',
     colors: [
-      '#0072B2', '#E69F00', '#009E73', '#56B4E9', '#CC79A7', '#F0E442', '#D55E00',
-      '#000000', '#999999', '#4B0082', '#8B4513', '#2F4F4F'
+      '#0072B2', // 0: Blue
+      '#D55E00', // 1: Vermillion
+      '#009E73', // 2: Bluish Green
+      '#882255', // 3: Wine/Red-Purple (was Orange) - distinct from Green
+      '#E69F00', // 4: Orange (was Sky Blue) - distinct from Wine
+      '#56B4E9', // 5: Sky Blue (was Pink) - distinct from Orange
+      '#F0E442', // 6: Yellow
+      '#000000', 
+      '#999999', 
+      '#4B0082', 
+      '#8B4513', 
+      '#2F4F4F'
     ],
   },
   contrast: {
     name: 'High Contrast',
     colors: [
-      '#0066CC', '#FF6600', '#9933CC', '#00AA88', '#CC0066', '#CCAA00', '#CC3300',
+      '#0066CC', '#CC3300', '#00AA88', '#9933CC', '#CC0066', '#CCAA00', '#FF6600',
       '#006600', '#660099', '#996633', '#336699', '#663366'
     ],
   },
@@ -85,6 +105,8 @@ export function createColorSchemeSwitcher(
 ) {
   const switcherDiv = document.getElementById('color-scheme-switcher');
   if (!switcherDiv) return;
+
+  switcherDiv.innerHTML = ''; // Clear existing buttons first to prevent duplicates
 
   Object.keys(colorSchemes).forEach((schemeKey) => {
     const button = document.createElement('button');
