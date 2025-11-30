@@ -256,6 +256,13 @@ h1 {
   color: var(--text-primary);
 }
 
+.static-description span {
+  font-weight: 600;
+  padding: 0 2px;
+  border-radius: 3px;
+  transition: background-color 0.2s;
+}
+
 .static-description span.active {
   background-color: var(--accent-light);
   color: var(--accent-color);
