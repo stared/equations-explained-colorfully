@@ -2,13 +2,13 @@
 // Uses tex2typst library for LaTeX-to-Typst conversion
 // Defines colors as variables at the top, references them throughout
 
-import type { ParsedContent } from '../parser';
-import type { ColorScheme } from './types';
+import type { ParsedContent } from '../utils/parser';
+import type { ColorScheme } from '.';
 import { tex2typst } from 'tex2typst';
-import { transformHtmlClass } from '../utils/latex-parser';
-import { convertHtmlDescription } from '../utils/html-converter';
-import { escapePreservingMath } from '../utils/escape';
-import { getTermColor } from '../utils/color-utils';
+import { transformHtmlClass } from '../utils/latex';
+import { convertHtmlDescription } from './htmlConverter';
+import { escapePreservingMath } from './escape';
+import { getTermColor } from '../utils/colorSchemes';
 
 /**
  * Escape Typst special characters

@@ -1,8 +1,13 @@
 // Shared test utilities and fixtures
 import { writeFileSync } from 'fs';
+import { colorSchemes } from '../src/utils/colorSchemes';
+import type { ColorScheme } from '../src/export';
 
-// Re-export color schemes from central location
-export { vibrantScheme, vibrant10Scheme, viridisScheme, viridis10Scheme } from '../src/utils/color-schemes';
+// Test color schemes derived from existing ones
+export const vibrantScheme = colorSchemes.vibrant;
+export const vibrant10Scheme: ColorScheme = { ...colorSchemes.vibrant, colors: colorSchemes.vibrant.colors.slice(0, 10) };
+export const viridisScheme = colorSchemes.accessible; // Use accessible as "viridis" for tests
+export const viridis10Scheme: ColorScheme = { ...colorSchemes.accessible, colors: colorSchemes.accessible.colors.slice(0, 10) };
 
 // Test output directory
 export const TEST_OUTPUT_DIR = '/tmp';

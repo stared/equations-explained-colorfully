@@ -1,5 +1,5 @@
 // Consolidated Beamer export tests with multiple fixtures
-import { parseContent } from '../../src/parser';
+import { parseContent } from '../../src/utils/parser';
 import { exportToBeamer } from '../../src/export';
 import { vibrantScheme, vibrant10Scheme, runChecks, reportTestResults } from '../test-utils';
 import type { ColorScheme } from '../../src/export';

@@ -28,58 +28,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex.min.css" />
   </head>
   <body>
-    <div id="app">
-      <aside id="sidebar" class="sidebar">
-        <h2>Equations</h2>
-        <nav id="equation-selector" class="equation-selector"></nav>
-
-        <footer class="sidebar-footer">
-          <p>
-            Demo by <a href="https://p.migdal.pl" target="_blank" rel="noopener">Piotr Migdał</a>
-          </p>
-          <p>
-            Source: <a href="https://github.com/stared/equations-explained-colorfully" target="_blank" rel="noopener">github.com/stared/equations-explained-colorfully</a>
-          </p>
-          <p>
-            For more on interactive explanations, see:
-            <a href="https://p.migdal.pl/blog/2024/05/science-games-explorable-explanations/" target="_blank" rel="noopener">Science, games, and explorable explanations</a>
-          </p>
-        </footer>
-      </aside>
-
-      <main id="main-content" class="main-content">
-        <h1 id="equation-title">Interactive Equations</h1>
-        <p class="subtitle">Hover over colored terms to explore their meaning</p>
-
-        <div id="color-scheme-switcher" class="color-scheme-switcher"></div>
-
-        <div id="equation-container"></div>
-
-        <div id="static-description" class="static-description"></div>
-
-        <div id="hover-explanation" class="hover-explanation"></div>
-      </main>
-
-      <aside id="editor-sidebar" class="editor-sidebar">
-        <div class="editor-toolbar">
-          <button id="toggle-editor-btn" class="toolbar-btn" title="Show/hide editor">
-            <span class="icon">◀</span>
-          </button>
-          <div class="export-controls">
-            <select id="export-format" class="toolbar-select" title="Export as...">
-              <option value="" disabled selected>Export as...</option>
-              <option value="html">HTML</option>
-              <option value="latex">LaTeX</option>
-              <option value="beamer">Beamer</option>
-              <option value="typst">Typst</option>
-            </select>
-          </div>
-          <button id="copy-btn" class="toolbar-btn" title="Copy to clipboard">Copy</button>
-          <a href="https://github.com/stared/equations-explained-colorfully" class="toolbar-link" target="_blank" rel="noopener">Contribute</a>
-        </div>
-        <div id="editor-container" class="editor-container"></div>
-      </aside>
-    </div>
+    <div id="app"></div>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

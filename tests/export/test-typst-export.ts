@@ -1,5 +1,5 @@
 // Test Typst export with tex2typst
-import { parseContent } from '../../src/parser';
+import { parseContent } from '../../src/utils/parser';
 import { exportToTypst } from '../../src/export';
 import { vibrantScheme, runChecks, reportTestResults } from '../test-utils';
 import { readFileSync, writeFileSync, mkdirSync } from 'fs';

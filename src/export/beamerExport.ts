@@ -1,12 +1,12 @@
 // Beamer export module with TikZ arrows (presentation format)
 // Based on texample.net/tikz/examples/beamer-arrows/ pattern
 
-import type { ParsedContent } from '../parser';
-import type { ColorScheme } from './types';
-import { transformHtmlClass } from '../utils/latex-parser';
-import { convertHtmlDescription } from '../utils/html-converter';
-import { escapePreservingMath, escapeLaTeX } from '../utils/escape';
-import { getTermColor } from '../utils/color-utils';
+import type { ParsedContent } from '../utils/parser';
+import type { ColorScheme } from '.';
+import { transformHtmlClass } from '../utils/latex';
+import { convertDescriptionToLatex } from './htmlConverter';
+import { escapePreservingMath, escapeLaTeX } from './escape';
+import { getTermColor } from '../utils/colorSchemes';
 
 // Escape LaTeX text while preserving inline math ($...$)
 const escapeLatexPreservingMath = (text: string) => escapePreservingMath(text, escapeLaTeX);
@@ -19,15 +19,6 @@ function injectTikzNodesInLatex(latex: string): { latex: string; nodeCount: numb
     return `\\textcolor{term${className}}{${content}}\\tikz[baseline,remember picture,overlay] \\coordinate (n${index});`;
   });
   return { latex: result, nodeCount };
-}
-
-// Convert HTML description to LaTeX text
-function convertDescriptionToLatex(html: string): string {
-  return convertHtmlDescription(
-    html,
-    escapeLaTeX,
-    (className, content) => `\\textcolor{term${className}}{${escapeLaTeX(content)}}`
-  );
 }
 
 /**

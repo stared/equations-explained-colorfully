@@ -2,7 +2,7 @@
 // Test script for HTML export with validation
 
 import { readFileSync } from 'fs';
-import { parseContent } from '../../src/parser.js';
+import { parseContent } from '../../src/utils/parser.js';
 import { exportToHTML } from '../../src/export/index.js';
 import { vibrantScheme, writeTestFile, runChecks, reportTestResults } from '../test-utils.js';
 
