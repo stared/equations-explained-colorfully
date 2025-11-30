@@ -3,18 +3,18 @@
 ## Equation
 
 $$
-\mark[energy]{X}_{\mark[freq]{k}} = \mark[average]{\frac{1}{N}} \mark[average]{\sum_{n=0}^{N-1}} \mark[signal]{x_n} \mark[spin]{e}^{\mark[spin]{i} \mark[circle]{2\pi} \mark[freq]{k} \mark[average]{\frac{n}{N}}}
+\mark[amplitude]{X}_{\mark[freq]{k}} = \mark[average]{\frac{1}{N}} \mark[average]{\sum_{n=0}^{N-1}} \mark[signal]{x_n} \mark[spin]{e}^{\mark[spin]{i} \mark[circle]{2\pi} \mark[freq]{k} \mark[average]{\frac{n}{N}}}
 $$
 
 ## Description
 
-To find [the energy]{.energy} [at a particular frequency]{.freq}, [spin]{.spin} [your signal]{.signal} [around a circle]{.circle} [at that frequency]{.freq}, and [average a bunch of points along that path]{.average}.
+To find [the amplitude]{.amplitude} [at a particular frequency]{.freq}, [spin]{.spin} [your signal]{.signal} [around a circle]{.circle} [at that frequency]{.freq}, and [average a bunch of points along that path]{.average}.
 
-## .energy
+## .amplitude
 
 The transform output $X_k$.
 
-Represents the amount of energy or strength of the signal at a specific frequency.
+Represents the **complex amplitude** (magnitude and phase) of the signal at a specific frequency. Its magnitude tells you "how much" of that frequency is present.
 
 ## .freq
 
