@@ -1,51 +1,110 @@
-import { type ParsedContent } from '../parser';
-import { renderLatexInText } from './equation-renderer';
+import { type ParsedContent } from "../parser";
+import { renderLatexInText } from "./equation-renderer";
+import { SelectionOverlay } from "./selection-overlay";
 
 export function setupHoverEffects(parsedContent: ParsedContent) {
-  const hoverDiv = document.getElementById('hover-explanation');
-  if (!hoverDiv) return;
+  const hoverDiv = document.getElementById("hover-explanation");
+  const equationContainer = document.getElementById("equation-container");
 
-  let clicked: { element: HTMLElement; termClass: string; definition: string } | null = null;
+  if (!hoverDiv || !equationContainer) return;
 
-  const updateTerms = (termClass: string, classList: string, action: 'add' | 'remove') => {
-    document.querySelectorAll(`.${termClass}`).forEach((el) => el.classList[action](classList));
+  const selectionOverlay = new SelectionOverlay(equationContainer);
+
+  let clicked: {
+    element: HTMLElement;
+    termClass: string;
+    definition: string;
+  } | null = null;
+
+  const getTermElements = (termClass: string) => {
+    return Array.from(document.querySelectorAll(`.${termClass}`));
+  };
+
+  const updateOverlay = () => {
+    if (clicked) {
+      const elements = getTermElements(clicked.termClass);
+      selectionOverlay.highlight(elements);
+
+      // Highlight corresponding description terms
+      document.querySelectorAll(".static-description span").forEach((el) => {
+        if (el.classList.contains(clicked!.termClass)) {
+          el.classList.add("active");
+        } else {
+          el.classList.remove("active");
+        }
+      });
+    } else {
+      selectionOverlay.clear();
+      document
+        .querySelectorAll(".static-description span")
+        .forEach((el) => el.classList.remove("active"));
+    }
   };
 
   const showDefinition = (definition: string) => {
     hoverDiv.innerHTML = renderLatexInText(definition);
-    hoverDiv.classList.add('visible');
+    hoverDiv.classList.add("visible");
   };
 
   document.querySelectorAll('[class*="term-"]').forEach((element) => {
-    const termClass = Array.from(element.classList).find((c) => c.startsWith('term-'));
+    const termClass = Array.from(element.classList).find((c) =>
+      c.startsWith("term-")
+    );
     if (!termClass) return;
 
-    const definition = parsedContent.definitions.get(termClass.replace('term-', ''));
-    if (!definition) return;
+    const definition = parsedContent.definitions.get(
+      termClass.replace("term-", "")
+    );
+    // if (!definition) return; // Description might not have definition map if logic differs, but usually it matches
 
-    (element as HTMLElement).style.cursor = 'pointer';
+    (element as HTMLElement).style.cursor = "pointer";
 
-    element.addEventListener('click', () => {
-      if (clicked?.element === element) {
-        updateTerms(termClass, 'term-clicked', 'remove');
+    element.addEventListener("click", (e) => {
+      e.stopPropagation(); // Prevent clearing on container click
+      if (clicked?.termClass === termClass) {
         clicked = null;
-        hoverDiv.classList.remove('visible');
+        hoverDiv.classList.remove("visible");
       } else {
-        if (clicked) updateTerms(clicked.termClass, 'term-clicked', 'remove');
-        updateTerms(termClass, 'term-clicked', 'add');
-        clicked = { element: element as HTMLElement, termClass, definition };
-        showDefinition(definition);
+        // If clicked from description, we need to find a definition if possible or just highlight
+        if (definition) {
+          clicked = { element: element as HTMLElement, termClass, definition };
+          showDefinition(definition);
+        } else {
+          // Just highlight for visual feedback if no definition?
+          // Assuming definitions exist for all valid term classes
+          // Fallback if needed
+          clicked = {
+            element: element as HTMLElement,
+            termClass,
+            definition: "",
+          };
+        }
       }
+      updateOverlay();
     });
 
-    element.addEventListener('mouseenter', () => {
-      updateTerms(termClass, 'term-active', 'add');
-      showDefinition(definition);
+    element.addEventListener("mouseenter", () => {
+      const elements = getTermElements(termClass);
+      selectionOverlay.highlight(elements); // Highlight hovered temporarily
+
+      // Highlight description terms on hover too
+      document
+        .querySelectorAll(`.static-description .${termClass}`)
+        .forEach((el) => el.classList.add("active"));
+
+      if (definition) showDefinition(definition);
     });
 
-    element.addEventListener('mouseleave', () => {
-      updateTerms(termClass, 'term-active', 'remove');
-      clicked ? showDefinition(clicked.definition) : hoverDiv.classList.remove('visible');
+    element.addEventListener("mouseleave", () => {
+      // Remove temporary hover class from description
+      document
+        .querySelectorAll(`.static-description .${termClass}`)
+        .forEach((el) => el.classList.remove("active"));
+
+      updateOverlay(); // Restore clicked state or clear
+      clicked
+        ? showDefinition(clicked.definition)
+        : hoverDiv.classList.remove("visible");
     });
   });
 }

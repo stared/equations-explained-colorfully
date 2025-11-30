@@ -3,26 +3,30 @@
   --bg-primary: #ffffff;
   --bg-secondary: #f3f4f6; /* Light gray for sidebars/backgrounds */
   --bg-tertiary: #e5e7eb;
-  
+
   --text-primary: #111827;
   --text-secondary: #4b5563;
   --text-tertiary: #9ca3af;
-  
+
   --accent-color: #2563eb; /* Royal Blue */
   --accent-hover: #1d4ed8;
   --accent-light: #eff6ff;
-  
+
   --border-color: #e5e7eb;
   --border-hover: #d1d5db;
-  
+
   --success: #10b981;
   --danger: #ef4444;
-  
+
   /* Typography */
-  --font-ui: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-  --font-math: 'Crimson Pro', 'ETBembo', 'Palatino Linotype', 'Book Antiqua', Palatino, Georgia, serif;
-  --font-mono: 'Menlo', 'Monaco', 'Consolas', 'Liberation Mono', 'Courier New', monospace;
-  
+  --font-ui: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
+    "Segoe UI Symbol";
+  --font-math: "Crimson Pro", "ETBembo", "Palatino Linotype", "Book Antiqua",
+    Palatino, Georgia, serif;
+  --font-mono: "Menlo", "Monaco", "Consolas", "Liberation Mono", "Courier New",
+    monospace;
+
   /* Spacing */
   --sidebar-width: 280px;
   --editor-width: 500px;
@@ -213,13 +217,16 @@ h1 {
 #equation-container .katex {
   font-size: 2rem; /* Larger equation */
   line-height: 1.2;
+  position: relative;
+  z-index: 1;
 }
+
+/* Removed old .selection-rect style as it's now inline in SVG */
 
 /* Term Interaction */
 [class*="term-"] {
   transition: all 0.2s ease;
   border-radius: 4px;
-  padding: 2px 0; /* Slight padding for hover background */
   cursor: pointer;
   position: relative;
 }
@@ -227,24 +234,6 @@ h1 {
 /* Ensure child elements don't block hover events */
 [class*="term-"] * {
   pointer-events: none !important;
-}
-
-[class*="term-"]:hover,
-.term-active {
-  opacity: 1; /* Keep opacity full, use other indicators */
-  filter: brightness(0.95); /* Slight dim or brighten */
-}
-
-.term-active {
-  /* text-decoration: underline; */
-  /* text-decoration-thickness: 2px; */
-  /* text-underline-offset: 4px; */
-}
-
-.term-clicked {
-  filter: brightness(0.9);
-  box-shadow: 0 0 0 2px var(--accent-color);
-  z-index: 2;
 }
 
 /* Description Text */
@@ -267,11 +256,9 @@ h1 {
   color: var(--text-primary);
 }
 
-.static-description span {
-  font-weight: 500;
-  padding: 0 2px;
-  border-radius: 3px;
-  transition: background-color 0.2s;
+.static-description span.active {
+  background-color: var(--accent-light);
+  color: var(--accent-color);
 }
 
 /* Hover Explanation (Dynamic) */
@@ -327,7 +314,7 @@ h1 {
   flex-direction: column;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   overflow: hidden;
-  box-shadow: -4px 0 15px rgba(0,0,0,0.03);
+  box-shadow: -4px 0 15px rgba(0, 0, 0, 0.03);
   z-index: 20;
 }
 
@@ -369,7 +356,7 @@ h1 {
 }
 
 .toolbar-btn:hover {
-  background-color: rgba(0,0,0,0.05);
+  background-color: rgba(0, 0, 0, 0.05);
   color: var(--text-primary);
 }
 
@@ -428,6 +415,7 @@ h1 {
 
 .token.latex-mark {
   /* Base color handled by JS, but ensuring visibility */
+  color: inherit;
 }
 
 .token.keyword {
@@ -437,6 +425,7 @@ h1 {
 
 .token.md-ref {
   /* Base color handled by JS */
+  color: inherit;
 }
 
 /* Child tokens inside colored parents should inherit the color */
@@ -480,7 +469,7 @@ h1 {
 }
 
 .toolbar-select:hover {
-  background-color: rgba(0,0,0,0.05);
+  background-color: rgba(0, 0, 0, 0.05);
   color: var(--text-primary);
 }
 
@@ -500,11 +489,11 @@ h1 {
     max-width: 500px;
     transform: translateX(100%);
   }
-  
+
   .editor-sidebar:not(.collapsed) {
     transform: translateX(0);
   }
-  
+
   .editor-sidebar.collapsed {
     width: 48px;
     min-width: 48px;
@@ -513,7 +502,7 @@ h1 {
     border: none;
     box-shadow: none;
   }
-  
+
   .editor-sidebar.collapsed .editor-toolbar {
     background: transparent;
     border: none;
@@ -540,7 +529,7 @@ h1 {
     padding: 2rem 1rem;
     overflow: visible;
   }
-  
+
   .editor-sidebar {
     position: relative;
     width: 100%;
@@ -548,7 +537,7 @@ h1 {
     height: 500px;
     transform: none;
   }
-  
+
   .editor-sidebar.collapsed {
     height: 50px;
     width: 100%;
