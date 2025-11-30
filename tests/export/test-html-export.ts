@@ -1,5 +1,5 @@
 // Test HTML export with CSS custom properties
-import { parseContent } from '../../src/parser';
+import { parseContent } from '../../src/utils/parser';
 import { exportToHTML } from '../../src/export';
 import { vibrantScheme, writeTestFile, runChecks, reportTestResults } from '../test-utils';
 import { readFileSync } from 'fs';

@@ -1,5 +1,5 @@
 // Consolidated LaTeX export tests with multiple fixtures
-import { parseContent } from '../../src/parser';
+import { parseContent } from '../../src/utils/parser';
 import { exportToLaTeX } from '../../src/export';
 import { viridisScheme, viridis10Scheme, runChecks, reportTestResults } from '../test-utils';
 import type { ColorScheme } from '../../src/export';
