@@ -108,6 +108,23 @@ body {
   font-weight: 600;
 }
 
+.equation-selector button.new-equation {
+  margin-bottom: 0.5rem;
+  border: 1px dashed var(--border-color);
+  color: var(--text-secondary);
+}
+
+.equation-selector button.new-equation:hover {
+  border-color: var(--accent-color);
+  color: var(--accent-color);
+  background-color: var(--accent-light);
+}
+
+.equation-selector button.new-equation.active {
+  border-style: solid;
+  border-color: transparent;
+}
+
 /* Main Content */
 .main-content {
   flex: 1;

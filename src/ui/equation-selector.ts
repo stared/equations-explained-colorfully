@@ -35,10 +35,12 @@ export async function loadEquationsList(): Promise<EquationInfo[]> {
     });
   }
 
-  // Sort alphabetically or by some other metric?
-  // The filesystem order is not guaranteed.
-  // Let's sort by title for now.
-  return equations.sort((a, b) => a.title.localeCompare(b.title));
+  // Sort alphabetically, but put "new" (New Equation) first
+  return equations.sort((a, b) => {
+    if (a.id === 'new') return -1;
+    if (b.id === 'new') return 1;
+    return a.title.localeCompare(b.title);
+  });
 }
 
 // Load and render a specific equation
@@ -112,7 +114,15 @@ export function createEquationSelector(
     const button = document.createElement("button");
     button.textContent = equation.title;
     button.dataset.equationId = equation.id;
-    button.className = equation.id === currentEquationId ? "active" : "";
+    
+    let className = "";
+    if (equation.id === currentEquationId) {
+      className += "active ";
+    }
+    if (equation.id === 'new') {
+      className += "new-equation ";
+    }
+    button.className = className.trim();
 
     button.addEventListener("click", async () => {
       await onEquationSelected(equation.id);
