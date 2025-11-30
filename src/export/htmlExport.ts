@@ -1,7 +1,7 @@
 // HTML export module with server-side KaTeX rendering
 // Exports standalone HTML documents with internal CSS and interactive hover
 
-import type { ParsedContent } from '../parser';
+import type { ParsedContent } from '../utils/parser';
 import type { ColorScheme } from '.';
 import katex from 'katex';
 import { transformHtmlClass } from '../utils/latex';

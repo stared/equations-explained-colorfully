@@ -20,7 +20,7 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { parseContent } from '../../parser'
+import { parseContent } from '../../utils/parser'
 import type { ColorScheme, ExportFormat } from '../../export'
 
 const props = defineProps<{

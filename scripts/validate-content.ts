@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Build-time content validation script
 import { readFileSync, readdirSync } from 'fs';
-import { parseContent } from '../src/parser.js';
+import { parseContent } from '../src/utils/parser.js';
 
 console.log('Validating equation files...');
 

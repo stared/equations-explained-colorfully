@@ -2,7 +2,7 @@
 // Uses tex2typst library for LaTeX-to-Typst conversion
 // Defines colors as variables at the top, references them throughout
 
-import type { ParsedContent } from '../parser';
+import type { ParsedContent } from '../utils/parser';
 import type { ColorScheme } from '.';
 import { tex2typst } from 'tex2typst';
 import { transformHtmlClass } from '../utils/latex';

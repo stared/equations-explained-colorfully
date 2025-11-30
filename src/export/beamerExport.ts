@@ -1,7 +1,7 @@
 // Beamer export module with TikZ arrows (presentation format)
 // Based on texample.net/tikz/examples/beamer-arrows/ pattern
 
-import type { ParsedContent } from '../parser';
+import type { ParsedContent } from '../utils/parser';
 import type { ColorScheme } from '.';
 import { transformHtmlClass } from '../utils/latex';
 import { convertHtmlDescription } from './htmlConverter';

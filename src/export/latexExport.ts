@@ -1,7 +1,7 @@
 // LaTeX export module for complete documents with xcolor
 // Non-interactive: colors defined in preamble, applied with \textcolor
 
-import type { ParsedContent } from '../parser';
+import type { ParsedContent } from '../utils/parser';
 import type { ColorScheme } from '.';
 import { transformHtmlClass } from '../utils/latex';
 import { convertHtmlDescription } from './htmlConverter';

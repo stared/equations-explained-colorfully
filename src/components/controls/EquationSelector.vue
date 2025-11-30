@@ -16,7 +16,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { parseContent } from '../../parser'
+import { parseContent } from '../../utils/parser'
 
 interface EquationInfo {
   id: string

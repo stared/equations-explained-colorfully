@@ -37,7 +37,7 @@
 import { ref, computed } from 'vue'
 import type { ColorScheme } from './export'
 import { defaultScheme } from './utils/colorSchemes'
-import { parseContent } from './parser'
+import { parseContent } from './utils/parser'
 
 // Components
 import CentralPanel from './components/CentralPanel.vue'

@@ -1,6 +1,6 @@
 // Export module - types, dispatcher, and re-exports
 
-import type { ParsedContent } from '../parser';
+import type { ParsedContent } from '../utils/parser';
 import { exportToHTML } from './htmlExport';
 import { exportToLaTeX } from './latexExport';
 import { exportToBeamer } from './beamerExport';

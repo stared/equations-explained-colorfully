@@ -33,7 +33,7 @@
 
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
-import type { ParsedContent } from '../parser'
+import type { ParsedContent } from '../utils/parser'
 import type { ColorScheme } from '../export'
 import { getTermColor as getColor } from '../utils/colorSchemes'
 
