@@ -5,7 +5,12 @@ import { type ParsedContent } from '../parser';
 function renderLatexInText(text: string): string {
   return text.replace(/\$([^\$]+)\$/g, (_match, latex) => {
     try {
-      return katex.renderToString(latex, { displayMode: false, throwOnError: false, strict: false });
+      return katex.renderToString(latex, { 
+        displayMode: false, 
+        throwOnError: false, 
+        strict: false, // Disable strict mode to allow \htmlClass
+        trust: true // Enable \htmlClass even in inline mode if needed
+      });
     } catch (e) {
       return `$${latex}$`;
     }
@@ -16,11 +21,17 @@ export function renderEquation(parsedContent: ParsedContent) {
   const equationContainer = document.getElementById('equation-container');
   if (!equationContainer) return;
 
-  katex.render(parsedContent.latex, equationContainer, {
-    displayMode: true,
-    trust: true, // Enable \htmlClass
-    throwOnError: false,
-  });
+  try {
+    katex.render(parsedContent.latex, equationContainer, {
+      displayMode: true,
+      trust: true, // Enable \htmlClass
+      strict: false, // Disable strict mode to allow \htmlClass
+      throwOnError: false, // Don't throw on error, just render error message in red
+    });
+  } catch (error) {
+    console.error('KaTeX render error:', error);
+    equationContainer.innerHTML = `<span style="color: red;">Error rendering equation: ${error instanceof Error ? error.message : String(error)}</span>`;
+  }
 
   // Set pointer-events: none on KaTeX structural elements so they don't block term hover
   // But keep term elements interactive

@@ -107,33 +107,29 @@ async function handlePreviewUpdate(code: string) {
       doRefreshDisplay();
 
       // Update editor highlighting
-      if (editorState.editor) {
-          // Only update if the content hasn't changed since we started parsing
-          // This prevents reverting user typing that happened during the async parse
-          const currentCode = editorState.editor.toString();
-          if (currentCode === code) {
-               const pos = editorState.editor.save();
-               
-               // Manually update highlighting instead of calling updateCode
-               // This bypasses CodeJar's updateCode which seems to be failing with "error1"
-               const codeElement = document.querySelector('#editor-container code') as HTMLElement;
-               if (codeElement) {
-                   updateEditorHighlighting(
-                      codeElement,
-                      code,
-                      colorSchemes[currentScheme].colors,
-                      parsedContent
-                   );
-                   editorState.editor.restore(pos);
-               }
-          }
-      }
+      // We DON'T call updateCode here anymore because it causes crashes (error1) when recursive.
+      // Instead, we rely on CodeJar's natural input event to trigger highlighting.
+      //
+      // BUT, if we need to show *new* errors/colors immediately after parsing, we can
+      // manually trigger highlighting if we are sure it's safe.
+      // The safest way is to do NOTHING here and let the user keep typing.
+      // The colors will update on the NEXT keystroke.
+      //
+      // However, if we want immediate feedback, we can try to manually update the class names
+      // on the EXISTING DOM nodes without touching innerHTML or restore().
+      //
+      // Let's just update the parsedContent reference (done above).
+      // The highlightEditor callback inside editor.ts calls getParsedContent().
+      // So the NEXT time highlightEditor runs, it will see the new content.
+      //
+      // Can we trigger highlightEditor manually?
+      // editor.ts exports updateEditorHighlighting.
+      //
+      // Let's try to NOT update the editor at all here.
+      // This is the "Rewrite" strategy: stop fighting CodeJar.
+      
     } catch (e) {
       console.error('Error during UI update after parse:', e);
-      if (e instanceof Error) {
-        console.error('UI Update Stack Trace:', e.stack);
-      }
-      throw e; // Propagate to updatePreview catch block
     }
   });
 

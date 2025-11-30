@@ -85,132 +85,137 @@ function convertMarkToHtmlClass(line: string, equationTerms: Set<string>, termOr
  * - Definitions: ## .classname
  */
 export function parseContent(markdown: string): ParsedContent {
-  const lines = markdown.split('\n');
-  let title: string | undefined = undefined;
-  let latex = '';
-  let description = '';
-  const definitions = new Map<string, string>();
-  const termOrder: string[] = [];
-  const equationTerms = new Set<string>(); // Terms marked in equation with \mark
-  const descriptionTerms = new Set<string>(); // Terms used in description with [text]{.class}
-  const seenTerms = new Set<string>(); // All terms seen (for color ordering)
+  try {
+    const lines = markdown.split('\n');
+    let title: string | undefined = undefined;
+    let latex = '';
+    let description = '';
+    const definitions = new Map<string, string>();
+    const termOrder: string[] = [];
+    const equationTerms = new Set<string>(); // Terms marked in equation with \mark
+    const descriptionTerms = new Set<string>(); // Terms used in description with [text]{.class}
+    const seenTerms = new Set<string>(); // All terms seen (for color ordering)
 
-  let inEquation = false;
-  let inDescription = false;
-  let currentDefClass = '';
-  let currentDefContent: string[] = [];
+    let inEquation = false;
+    let inDescription = false;
+    let currentDefClass = '';
+    let currentDefContent: string[] = [];
 
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i];
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
 
-    // Parse title from # heading (only first one)
-    if (!title && line.match(/^#\s+[^#]/)) {
-      title = line.substring(2).trim(); // Remove "# "
-      continue;
-    }
-
-    // Detect equation block
-    if (line.trim() === '$$') {
-      if (!inEquation) {
-        inEquation = true;
+      // Parse title from # heading (only first one)
+      if (!title && line.match(/^#\s+[^#]/)) {
+        title = line.substring(2).trim(); // Remove "# "
         continue;
-      } else {
-        inEquation = false;
+      }
+
+      // Detect equation block
+      if (line.trim() === '$$') {
+        if (!inEquation) {
+          inEquation = true;
+          continue;
+        } else {
+          inEquation = false;
+          continue;
+        }
+      }
+
+      // Parse equation content
+      if (inEquation) {
+        // Convert \mark[class]{latex} to \htmlClass{term-class}{latex}
+        // Use helper function to handle nested braces correctly
+        const converted = convertMarkToHtmlClass(line, equationTerms, termOrder, seenTerms);
+        latex += converted + '\n';
         continue;
+      }
+
+      // Detect description section
+      if (line.trim() === '## Description') {
+        inDescription = true;
+        continue;
+      }
+
+      // Detect definition section
+      if (line.match(/^## \./)) {
+        // Save previous definition if any
+        if (currentDefClass) {
+          definitions.set(currentDefClass, currentDefContent.join('\n').trim());
+        }
+
+        currentDefClass = line.substring(4).trim(); // Remove "## ."
+        currentDefContent = [];
+        inDescription = false;
+        continue;
+      }
+
+      // Parse description content
+      if (inDescription && line.trim() && !line.startsWith('#')) {
+        // Convert [text]{.class} to <span class="term-class">text</span>
+        const converted = line.replace(/\[([^\]]+)\]\{\.([^\}]+)\}/g, (_match, text, className) => {
+          const termClass = `term-${className}`;
+          descriptionTerms.add(className); // Track description terms
+          // NOTE: Do NOT add to termOrder here - only equation marks define termOrder
+          return `<span class="${termClass}">${text}</span>`;
+        });
+        description += converted + ' ';
+        continue;
+      }
+
+      // Collect definition content
+      if (currentDefClass && line.trim() && !line.startsWith('#')) {
+        currentDefContent.push(line);
       }
     }
 
-    // Parse equation content
-    if (inEquation) {
-      // Convert \mark[class]{latex} to \htmlClass{term-class}{latex}
-      // Use helper function to handle nested braces correctly
-      const converted = convertMarkToHtmlClass(line, equationTerms, termOrder, seenTerms);
-      latex += converted + '\n';
-      continue;
+    // Save last definition
+    if (currentDefClass) {
+      definitions.set(currentDefClass, currentDefContent.join('\n').trim());
     }
 
-    // Detect description section
-    if (line.trim() === '## Description') {
-      inDescription = true;
-      continue;
-    }
+    // VALIDATION: Build-time checks
+    const errors: string[] = [];
+    const warnings: string[] = [];
 
-    // Detect definition section
-    if (line.match(/^## \./)) {
-      // Save previous definition if any
-      if (currentDefClass) {
-        definitions.set(currentDefClass, currentDefContent.join('\n').trim());
+    // Helper to validate term relationships
+    const validateTerms = (
+      sourceTerms: Iterable<string>,
+      targetTerms: Set<string> | Map<string, string>,
+      getMessage: (term: string) => string,
+      target: string[]
+    ) => {
+      for (const term of sourceTerms) {
+        if (!targetTerms.has(term)) target.push(getMessage(term));
       }
+    };
 
-      currentDefClass = line.substring(4).trim(); // Remove "## ."
-      currentDefContent = [];
-      inDescription = false;
-      continue;
-    }
+    // Run all validation checks
+    validateTerms(descriptionTerms, equationTerms,
+      term => `Term "${term}" is used in description [text]{.${term}} but not marked in equation with \\mark[${term}]{...}`, errors);
+    validateTerms(equationTerms, definitions,
+      term => `Term "${term}" is marked in equation with \\mark[${term}]{...} but has no definition (## .${term})`, errors);
+    validateTerms(equationTerms, descriptionTerms,
+      term => `Term "${term}" is marked in equation but not used in description`, warnings);
+    validateTerms(definitions.keys(), equationTerms,
+      term => `Definition "## .${term}" exists but term is never marked in equation`, warnings);
 
-    // Parse description content
-    if (inDescription && line.trim() && !line.startsWith('#')) {
-      // Convert [text]{.class} to <span class="term-class">text</span>
-      const converted = line.replace(/\[([^\]]+)\]\{\.([^\}]+)\}/g, (_match, text, className) => {
-        const termClass = `term-${className}`;
-        descriptionTerms.add(className); // Track description terms
-        // NOTE: Do NOT add to termOrder here - only equation marks define termOrder
-        return `<span class="${termClass}">${text}</span>`;
-      });
-      description += converted + ' ';
-      continue;
-    }
+    // Log validation results
+    if (errors.length > 0) console.error('Content validation errors:', errors);
+    if (warnings.length > 0) console.warn('Content validation warnings:', warnings);
 
-    // Collect definition content
-    if (currentDefClass && line.trim() && !line.startsWith('#')) {
-      currentDefContent.push(line);
-    }
+    return {
+      title,
+      latex: latex.trim(),
+      description: description.trim(),
+      definitions,
+      termOrder,
+      errors,
+      warnings,
+    };
+  } catch (e) {
+    console.error("Error in parseContent", e);
+    throw e;
   }
-
-  // Save last definition
-  if (currentDefClass) {
-    definitions.set(currentDefClass, currentDefContent.join('\n').trim());
-  }
-
-  // VALIDATION: Build-time checks
-  const errors: string[] = [];
-  const warnings: string[] = [];
-
-  // Helper to validate term relationships
-  const validateTerms = (
-    sourceTerms: Iterable<string>,
-    targetTerms: Set<string> | Map<string, string>,
-    getMessage: (term: string) => string,
-    target: string[]
-  ) => {
-    for (const term of sourceTerms) {
-      if (!targetTerms.has(term)) target.push(getMessage(term));
-    }
-  };
-
-  // Run all validation checks
-  validateTerms(descriptionTerms, equationTerms,
-    term => `Term "${term}" is used in description [text]{.${term}} but not marked in equation with \\mark[${term}]{...}`, errors);
-  validateTerms(equationTerms, definitions,
-    term => `Term "${term}" is marked in equation with \\mark[${term}]{...} but has no definition (## .${term})`, errors);
-  validateTerms(equationTerms, descriptionTerms,
-    term => `Term "${term}" is marked in equation but not used in description`, warnings);
-  validateTerms(definitions.keys(), equationTerms,
-    term => `Definition "## .${term}" exists but term is never marked in equation`, warnings);
-
-  // Log validation results
-  if (errors.length > 0) console.error('Content validation errors:', errors);
-  if (warnings.length > 0) console.warn('Content validation warnings:', warnings);
-
-  return {
-    title,
-    latex: latex.trim(),
-    description: description.trim(),
-    definitions,
-    termOrder,
-    errors,
-    warnings,
-  };
 }
 
 /**
