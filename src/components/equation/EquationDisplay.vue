@@ -23,11 +23,14 @@ import { ref, computed, watch, nextTick, onMounted, onUnmounted } from 'vue'
 import katex from 'katex'
 import { applyTermColors, setupTermListeners, enableTermPointerEvents } from '../../utils/termDom'
 
+import type { ColorScheme } from '../../export'
+
 const props = defineProps<{
   latex: string
   termOrder: string[]
   activeTerm: string | null
   getTermColor: (term: string) => string
+  colors: ColorScheme
 }>()
 
 const emit = defineEmits<{
@@ -135,7 +138,7 @@ function renderKatex() {
 
 // Watches
 watch(() => props.latex, renderKatex, { immediate: true })
-watch(() => props.termOrder, () => {
+watch(() => props.colors, () => {
   if (katexRef.value) applyTermColors(katexRef.value, props.getTermColor)
 })
 watch(() => props.activeTerm, calculateHighlightRects, { immediate: true })
@@ -187,7 +190,7 @@ onUnmounted(() => resizeObserver?.disconnect())
 }
 
 :deep([class*="term-"]) {
-  transition: all 0.2s ease;
+  transition: opacity 0.2s ease;
   border-radius: 4px;
   cursor: pointer;
   position: relative;

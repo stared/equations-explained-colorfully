@@ -5,12 +5,14 @@
 <script setup lang="ts">
 import { ref, watch, nextTick, onMounted } from 'vue'
 import { applyTermColors, setupTermListeners, getTermElements } from '../../utils/termDom'
+import type { ColorScheme } from '../../export'
 
 const props = defineProps<{
   description: string
   termOrder: string[]
   activeTerm: string | null
   getTermColor: (term: string) => string
+  colors: ColorScheme
 }>()
 
 const emit = defineEmits<{
@@ -45,7 +47,7 @@ watch(() => props.description, async () => {
 }, { immediate: true })
 
 // Re-apply colors when color scheme changes
-watch(() => props.termOrder, () => {
+watch(() => props.colors, () => {
   if (descriptionRef.value) applyTermColors(descriptionRef.value, props.getTermColor)
 })
 

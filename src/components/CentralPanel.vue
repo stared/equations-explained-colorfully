@@ -8,6 +8,7 @@
       :term-order="termOrder"
       :active-term="activeTerm"
       :get-term-color="getTermColor"
+      :colors="colors"
       @hover="setHover"
       @click="handleTermClick"
     />
@@ -17,6 +18,7 @@
       :term-order="termOrder"
       :active-term="activeTerm"
       :get-term-color="getTermColor"
+      :colors="colors"
       @hover="setHover"
       @click="handleTermClick"
     />
