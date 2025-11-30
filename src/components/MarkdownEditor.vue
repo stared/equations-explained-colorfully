@@ -283,10 +283,11 @@ watch(colorArray, () => {
   }
 }, { deep: true })
 
-// Re-highlight when parsed content changes (for error marking)
+// Update error markings when parsed content changes (without re-highlighting to preserve cursor)
 watch(parsedContent, () => {
-  if (codeRef.value) {
-    highlight(codeRef.value)
+  if (codeRef.value && parsedContent.value) {
+    const code = codeRef.value.textContent || ''
+    markErrors(codeRef.value, code, parsedContent.value.errors)
   }
 })
 
