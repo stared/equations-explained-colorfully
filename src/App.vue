@@ -20,11 +20,17 @@
     <!-- Editor Sidebar -->
     <aside class="editor-sidebar" :class="{ collapsed: editorCollapsed }">
       <div class="editor-toolbar">
-        <button class="toolbar-btn" title="Show/hide editor" @click="editorCollapsed = !editorCollapsed">
-          <span class="icon">{{ editorCollapsed ? '▶' : '◀' }}</span>
+        <button class="toolbar-btn toggle-btn" title="Show/hide editor" @click="editorCollapsed = !editorCollapsed">
+          <span class="icon">{{ editorCollapsed ? '◀' : '▶' }}</span>
+          <template v-if="editorCollapsed">
+            <span class="edit-label">EDIT</span>
+            <span class="edit-label">CODE</span>
+          </template>
         </button>
-        <ExportControls :parsed-content="parsedContent" :colors="colorScheme" />
-        <a href="https://github.com/stared/equations-explained-colorfully" class="toolbar-link" target="_blank" rel="noopener">Contribute</a>
+        <template v-if="!editorCollapsed">
+          <ExportControls :parsed-content="parsedContent" :colors="colorScheme" />
+          <a href="https://github.com/stared/equations-explained-colorfully" class="toolbar-link" target="_blank" rel="noopener">Contribute</a>
+        </template>
       </div>
       <div class="editor-container">
         <MarkdownEditor v-model="markdown" :colors="colorScheme" />
@@ -220,6 +226,20 @@ body {
 
 .toolbar-btn .icon { font-size: 0.75rem; }
 
+.toggle-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+}
+
+.edit-label {
+  font-size: 0.6875rem;
+  line-height: 1.2;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
 .toolbar-link {
   font-family: var(--font-ui);
   font-size: 0.8125rem;
@@ -228,9 +248,7 @@ body {
   padding: 0.25rem 0.5rem;
 }
 
-.editor-sidebar.collapsed .toolbar-btn span:not(.icon),
-.editor-sidebar.collapsed .toolbar-link,
-.editor-sidebar.collapsed .export-controls { display: none; }
+.editor-sidebar.collapsed .editor-container { display: none; }
 
 .editor-container {
   flex: 1;
