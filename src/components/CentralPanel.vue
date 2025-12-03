@@ -32,61 +32,66 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
-import type { ParsedContent } from '../utils/parser'
-import type { ColorScheme } from '../export'
-import { buildTermColorMap } from '../utils/colorSchemes'
+import { ref, computed, watch } from "vue";
+import type { ParsedContent } from "../utils/parser";
+import type { ColorScheme } from "../export";
+import { buildTermColorMap } from "../utils/colorSchemes";
 
-import EquationDisplay from './equation/EquationDisplay.vue'
-import DescriptionPanel from './equation/DescriptionPanel.vue'
-import DefinitionPopup from './equation/DefinitionPopup.vue'
+import EquationDisplay from "./equation/EquationDisplay.vue";
+import DescriptionPanel from "./equation/DescriptionPanel.vue";
+import DefinitionPopup from "./equation/DefinitionPopup.vue";
 
 const props = defineProps<{
-  content: ParsedContent
-  colors: ColorScheme
-}>()
+  content: ParsedContent;
+  colors: ColorScheme;
+}>();
 
-const termOrder = computed(() => props.content.termOrder)
+const termOrder = computed(() => props.content.termOrder);
 
 // Build color map once (O(1) lookups instead of O(n) indexOf)
-const termColorMap = computed(() => buildTermColorMap(termOrder.value, props.colors))
+const termColorMap = computed(() =>
+  buildTermColorMap(termOrder.value, props.colors)
+);
 
 function getTermColor(term: string): string {
-  return termColorMap.value.get(term) ?? '#000000'
+  return termColorMap.value.get(term) ?? "#000000";
 }
 
 // Hover/click state (owned internally)
-const hoveredTerm = ref<string | null>(null)
-const clickedTerm = ref<string | null>(null)
-const activeTerm = computed(() => clickedTerm.value ?? hoveredTerm.value)
+const hoveredTerm = ref<string | null>(null);
+const clickedTerm = ref<string | null>(null);
+const activeTerm = computed(() => clickedTerm.value ?? hoveredTerm.value);
 
 const activeDefinition = computed(() => {
-  if (!activeTerm.value) return null
-  return props.content.definitions.get(activeTerm.value) ?? null
-})
+  if (!activeTerm.value) return null;
+  return props.content.definitions.get(activeTerm.value) ?? null;
+});
 
 const activeColor = computed(() =>
   activeTerm.value ? getTermColor(activeTerm.value) : null
-)
+);
 
 function setHover(term: string | null) {
-  hoveredTerm.value = term
+  hoveredTerm.value = term;
 }
 
 function handleTermClick(term: string) {
-  if (term === '') {
-    clickedTerm.value = null
+  if (term === "") {
+    clickedTerm.value = null;
   } else if (clickedTerm.value === term) {
-    clickedTerm.value = null
+    clickedTerm.value = null;
   } else {
-    clickedTerm.value = term
+    clickedTerm.value = term;
   }
 }
 
 // Clear click when content changes
-watch(() => props.content, () => {
-  clickedTerm.value = null
-})
+watch(
+  () => props.content,
+  () => {
+    clickedTerm.value = null;
+  }
+);
 </script>
 
 <style scoped>
@@ -114,5 +119,16 @@ h1 {
   margin-bottom: 2.5rem;
   text-align: center;
   opacity: 0.8;
+}
+
+@media (max-width: 768px) {
+  h1 {
+    font-size: 1.75rem;
+  }
+
+  .subtitle {
+    font-size: 0.875rem;
+    margin-bottom: 1.5rem;
+  }
 }
 </style>

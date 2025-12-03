@@ -1,9 +1,30 @@
 <template>
   <div id="app">
+    <!-- Mobile Header -->
+    <header class="mobile-header">
+      <button class="mobile-menu-btn" @click="mobileMenuOpen = !mobileMenuOpen">
+        <span class="icon">☰</span> Equations
+      </button>
+      <button
+        class="mobile-menu-btn"
+        @click="mobileEditorOpen = !mobileEditorOpen"
+      >
+        <span class="icon">✎</span> Code
+      </button>
+    </header>
+
     <!-- Left Sidebar -->
-    <aside class="sidebar">
-      <h2>Equations</h2>
-      <EquationSelector @change="markdown = $event" />
+    <aside class="sidebar" :class="{ 'mobile-open': mobileMenuOpen }">
+      <div class="mobile-close-header">
+        <h2>Equations</h2>
+        <button class="close-btn" @click="mobileMenuOpen = false">✕</button>
+      </div>
+      <EquationSelector
+        @change="
+          markdown = $event;
+          mobileMenuOpen = false;
+        "
+      />
       <footer class="sidebar-footer">
         <p>
           Demo by
@@ -43,10 +64,17 @@
     </main>
 
     <!-- Editor Sidebar -->
-    <aside class="editor-sidebar" :class="{ collapsed: editorCollapsed }">
+    <aside
+      class="editor-sidebar"
+      :class="{ collapsed: editorCollapsed, 'mobile-open': mobileEditorOpen }"
+    >
+      <div class="mobile-close-header">
+        <span class="edit-label">EDITOR</span>
+        <button class="close-btn" @click="mobileEditorOpen = false">✕</button>
+      </div>
       <div class="editor-toolbar">
         <button
-          class="toolbar-btn toggle-btn"
+          class="toolbar-btn toggle-btn desktop-only"
           title="Show/hide editor"
           @click="editorCollapsed = !editorCollapsed"
         >
@@ -101,6 +129,8 @@ import MarkdownEditor from "./components/MarkdownEditor.vue";
 const markdown = ref("");
 const colorScheme = ref<ColorScheme>(defaultScheme);
 const editorCollapsed = ref(false);
+const mobileMenuOpen = ref(false);
+const mobileEditorOpen = ref(false);
 
 // Parsed content derived from markdown
 const parsedContent = computed(() => {
@@ -324,36 +354,131 @@ body {
   background-color: var(--bg-primary);
 }
 
+/* Mobile Header */
+.mobile-header {
+  display: none;
+  height: 50px;
+  background-color: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+  padding: 0 1rem;
+  align-items: center;
+  justify-content: space-between;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 40;
+}
+
+.mobile-menu-btn {
+  background: transparent;
+  border: 1px solid var(--border-color);
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  color: var(--text-primary);
+  font-family: var(--font-ui);
+  font-size: 0.875rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.mobile-close-header {
+  display: none;
+  padding: 1rem;
+  border-bottom: 1px solid var(--border-color);
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.close-btn {
+  background: transparent;
+  border: none;
+  font-size: 1.25rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 0.25rem;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   #app {
     flex-direction: column;
     height: auto;
     overflow-y: auto;
+    padding-top: 50px; /* Space for mobile header */
   }
+
+  .mobile-header {
+    display: flex;
+  }
+
+  .mobile-close-header {
+    display: flex;
+  }
+
+  .desktop-only {
+    display: none;
+  }
+
   .sidebar {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
     width: 100%;
-    min-width: 100%;
+    max-width: 100%;
+    height: 100%;
+    max-height: 100vh;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
     border-right: none;
-    border-bottom: 1px solid var(--border-color);
-    height: auto;
-    max-height: 200px;
   }
+
+  .sidebar.mobile-open {
+    transform: translateX(0);
+  }
+
+  .sidebar h2 {
+    display: none; /* Hidden in favor of mobile-close-header */
+  }
+
+  .sidebar .mobile-close-header h2 {
+    display: block;
+    margin: 0;
+    padding: 0;
+  }
+
   .main-content {
     padding: 2rem 1rem;
     overflow: visible;
   }
+
   .editor-sidebar {
-    position: relative;
+    position: fixed;
+    inset: 0;
+    z-index: 100;
     width: 100%;
     max-width: 100%;
-    height: 500px;
-    transform: none;
+    height: 100%;
+    transform: translateY(100%);
+    transition: transform 0.3s ease;
+    border-left: none;
   }
+
+  .editor-sidebar.mobile-open {
+    transform: translateY(0);
+  }
+
   .editor-sidebar.collapsed {
-    height: 50px;
+    height: 100%;
     width: 100%;
     min-width: 100%;
+  }
+
+  .editor-sidebar .editor-toolbar {
+    padding: 0 1rem; /* Adjust padding for mobile */
   }
 }
 </style>
