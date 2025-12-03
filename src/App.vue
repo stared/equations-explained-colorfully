@@ -5,31 +5,76 @@
       <h2>Equations</h2>
       <EquationSelector @change="markdown = $event" />
       <footer class="sidebar-footer">
-        <p>Demo by <a href="https://p.migdal.pl" target="_blank" rel="noopener">Piotr Migdał</a></p>
-        <p>Source: <a href="https://github.com/stared/equations-explained-colorfully" target="_blank" rel="noopener">github.com/stared/equations-explained-colorfully</a></p>
-        <p>For more: <a href="https://p.migdal.pl/blog/2024/05/science-games-explorable-explanations/" target="_blank" rel="noopener">Science, games, and explorable explanations</a></p>
+        <p>
+          Demo by
+          <a href="https://p.migdal.pl" target="_blank" rel="noopener"
+            >Piotr Migdał</a
+          >
+        </p>
+        <p>
+          Source:
+          <a
+            href="https://github.com/stared/equations-explained-colorfully"
+            target="_blank"
+            rel="noopener"
+            >github.com/stared/equations-explained-colorfully</a
+          >
+        </p>
+        <p>
+          For more:
+          <a
+            href="https://p.migdal.pl/blog/2024/05/science-games-explorable-explanations/"
+            target="_blank"
+            rel="noopener"
+            >Science, games, and explorable explanations</a
+          >
+        </p>
       </footer>
     </aside>
 
     <!-- Main Content -->
     <main class="main-content">
       <ColorSchemeSwitcher @change="colorScheme = $event" />
-      <CentralPanel v-if="parsedContent" :content="parsedContent" :colors="colorScheme" />
+      <CentralPanel
+        v-if="parsedContent"
+        :content="parsedContent"
+        :colors="colorScheme"
+      />
     </main>
 
     <!-- Editor Sidebar -->
     <aside class="editor-sidebar" :class="{ collapsed: editorCollapsed }">
       <div class="editor-toolbar">
-        <button class="toolbar-btn toggle-btn" title="Show/hide editor" @click="editorCollapsed = !editorCollapsed">
-          <span class="icon">{{ editorCollapsed ? '◀' : '▶' }}</span>
+        <button
+          class="toolbar-btn toggle-btn"
+          title="Show/hide editor"
+          @click="editorCollapsed = !editorCollapsed"
+        >
+          <span class="icon">{{ editorCollapsed ? "◀" : "▶" }}</span>
           <template v-if="editorCollapsed">
             <span class="edit-label">EDIT</span>
             <span class="edit-label">CODE</span>
           </template>
         </button>
         <template v-if="!editorCollapsed">
-          <ExportControls :parsed-content="parsedContent" :colors="colorScheme" />
-          <a href="https://github.com/stared/equations-explained-colorfully" class="toolbar-link" target="_blank" rel="noopener">Contribute</a>
+          <ExportControls
+            :parsed-content="parsedContent"
+            :colors="colorScheme"
+          />
+          <a
+            href="https://github.com/stared/equations-explained-colorfully/blob/main/README.md#content-format"
+            class="toolbar-link"
+            target="_blank"
+            rel="noopener"
+            >Syntax help</a
+          >
+          <a
+            href="https://github.com/stared/equations-explained-colorfully/blob/main/CONTRIBUTE.md"
+            class="toolbar-link"
+            target="_blank"
+            rel="noopener"
+            >Contribute</a
+          >
         </template>
       </div>
       <div class="editor-container">
@@ -40,43 +85,43 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import type { ColorScheme } from './export'
-import { defaultScheme } from './utils/colorSchemes'
-import { parseContent } from './utils/parser'
+import { ref, computed } from "vue";
+import type { ColorScheme } from "./export";
+import { defaultScheme } from "./utils/colorSchemes";
+import { parseContent } from "./utils/parser";
 
 // Components
-import CentralPanel from './components/CentralPanel.vue'
-import EquationSelector from './components/controls/EquationSelector.vue'
-import ColorSchemeSwitcher from './components/controls/ColorSchemeSwitcher.vue'
-import ExportControls from './components/controls/ExportControls.vue'
-import MarkdownEditor from './components/MarkdownEditor.vue'
+import CentralPanel from "./components/CentralPanel.vue";
+import EquationSelector from "./components/controls/EquationSelector.vue";
+import ColorSchemeSwitcher from "./components/controls/ColorSchemeSwitcher.vue";
+import ExportControls from "./components/controls/ExportControls.vue";
+import MarkdownEditor from "./components/MarkdownEditor.vue";
 
 // Core state
-const markdown = ref('')
-const colorScheme = ref<ColorScheme>(defaultScheme)
-const editorCollapsed = ref(false)
+const markdown = ref("");
+const colorScheme = ref<ColorScheme>(defaultScheme);
+const editorCollapsed = ref(false);
 
 // Parsed content derived from markdown
 const parsedContent = computed(() => {
-  if (!markdown.value.trim()) return null
+  if (!markdown.value.trim()) return null;
   try {
-    return parseContent(markdown.value)
+    return parseContent(markdown.value);
   } catch {
-    return null
+    return null;
   }
-})
+});
 
 // Test helpers for Playwright
-if (typeof window !== 'undefined') {
+if (typeof window !== "undefined") {
   (window as any).__testHelpers = {
     parsedContent: () => parsedContent.value,
     generateExport: async (format: any) => {
-      const { exportContent } = await import('./export')
-      if (!parsedContent.value) return ''
-      return exportContent(format, parsedContent.value, colorScheme.value)
+      const { exportContent } = await import("./export");
+      if (!parsedContent.value) return "";
+      return exportContent(format, parsedContent.value, colorScheme.value);
     },
-  }
+  };
 }
 </script>
 
@@ -96,14 +141,21 @@ if (typeof window !== 'undefined') {
   --border-hover: #d1d5db;
   --success: #10b981;
   --danger: #ef4444;
-  --font-ui: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  --font-math: "Crimson Pro", "ETBembo", "Palatino Linotype", "Book Antiqua", Palatino, Georgia, serif;
-  --font-mono: "Menlo", "Monaco", "Consolas", "Liberation Mono", "Courier New", monospace;
+  --font-ui: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Helvetica, Arial, sans-serif;
+  --font-math: "Crimson Pro", "ETBembo", "Palatino Linotype", "Book Antiqua",
+    Palatino, Georgia, serif;
+  --font-mono: "Menlo", "Monaco", "Consolas", "Liberation Mono", "Courier New",
+    monospace;
   --sidebar-width: 280px;
   --editor-width: 500px;
 }
 
-* { margin: 0; padding: 0; box-sizing: border-box; }
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
 body {
   font-family: var(--font-math);
@@ -153,9 +205,17 @@ body {
   color: var(--text-secondary);
 }
 
-.sidebar-footer p { margin: 0.5rem 0; line-height: 1.5; }
-.sidebar-footer a { color: var(--accent-color); text-decoration: none; }
-.sidebar-footer a:hover { text-decoration: underline; }
+.sidebar-footer p {
+  margin: 0.5rem 0;
+  line-height: 1.5;
+}
+.sidebar-footer a {
+  color: var(--accent-color);
+  text-decoration: none;
+}
+.sidebar-footer a:hover {
+  text-decoration: underline;
+}
 
 /* Main Content */
 .main-content {
@@ -224,7 +284,9 @@ body {
   color: var(--text-primary);
 }
 
-.toolbar-btn .icon { font-size: 0.75rem; }
+.toolbar-btn .icon {
+  font-size: 0.75rem;
+}
 
 .toggle-btn {
   display: flex;
@@ -248,7 +310,9 @@ body {
   padding: 0.25rem 0.5rem;
 }
 
-.editor-sidebar.collapsed .editor-container { display: none; }
+.editor-sidebar.collapsed .editor-container {
+  display: none;
+}
 
 .editor-container {
   flex: 1;
@@ -262,10 +326,34 @@ body {
 
 /* Responsive */
 @media (max-width: 768px) {
-  #app { flex-direction: column; height: auto; overflow-y: auto; }
-  .sidebar { width: 100%; min-width: 100%; border-right: none; border-bottom: 1px solid var(--border-color); height: auto; max-height: 200px; }
-  .main-content { padding: 2rem 1rem; overflow: visible; }
-  .editor-sidebar { position: relative; width: 100%; max-width: 100%; height: 500px; transform: none; }
-  .editor-sidebar.collapsed { height: 50px; width: 100%; min-width: 100%; }
+  #app {
+    flex-direction: column;
+    height: auto;
+    overflow-y: auto;
+  }
+  .sidebar {
+    width: 100%;
+    min-width: 100%;
+    border-right: none;
+    border-bottom: 1px solid var(--border-color);
+    height: auto;
+    max-height: 200px;
+  }
+  .main-content {
+    padding: 2rem 1rem;
+    overflow: visible;
+  }
+  .editor-sidebar {
+    position: relative;
+    width: 100%;
+    max-width: 100%;
+    height: 500px;
+    transform: none;
+  }
+  .editor-sidebar.collapsed {
+    height: 50px;
+    width: 100%;
+    min-width: 100%;
+  }
 }
 </style>
