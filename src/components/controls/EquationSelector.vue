@@ -5,7 +5,7 @@
       :key="equation.id"
       :class="{
         active: equation.id === currentId,
-        'new-equation': equation.id === 'new'
+        'new-equation': equation.id === 'new',
       }"
       @click="selectEquation(equation.id)"
     >
@@ -15,77 +15,81 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import { parseContent } from '../../utils/parser'
+import { ref, onMounted } from "vue";
+import { parseContent } from "../../utils/parser";
 
 interface EquationInfo {
-  id: string
-  title: string
-  content: string
+  id: string;
+  title: string;
+  content: string;
 }
 
 const emit = defineEmits<{
-  change: [markdown: string]
-}>()
+  change: [markdown: string];
+}>();
 
-const equations = ref<EquationInfo[]>([])
-const currentId = ref('')
+const equations = ref<EquationInfo[]>([]);
+const currentId = ref("");
 
 // Vite glob import for markdown files
-const equationFiles = import.meta.glob('../../examples/*.md', { query: '?raw', import: 'default', eager: true })
+const equationFiles = import.meta.glob("../../examples/*.md", {
+  query: "?raw",
+  import: "default",
+  eager: true,
+});
 
 async function loadEquations(): Promise<EquationInfo[]> {
-  const result: EquationInfo[] = []
+  const result: EquationInfo[] = [];
 
   for (const path in equationFiles) {
-    const content = equationFiles[path] as string
-    const filename = path.split('/').pop() || ''
-    const id = filename.replace('.md', '')
-    const parsed = parseContent(content)
+    const content = equationFiles[path] as string;
+    const filename = path.split("/").pop() || "";
+    const id = filename.replace(".md", "");
+    const parsed = parseContent(content);
 
-    result.push({ id, title: parsed.title, content })
+    result.push({ id, title: parsed.title, content });
   }
 
   return result.sort((a, b) => {
-    if (a.id === 'new') return -1
-    if (b.id === 'new') return 1
-    return a.title.localeCompare(b.title)
-  })
+    if (a.id === "new") return -1;
+    if (b.id === "new") return 1;
+    return a.title.localeCompare(b.title);
+  });
 }
 
 function selectEquation(id: string) {
-  const equation = equations.value.find(eq => eq.id === id)
-  if (!equation) return
+  const equation = equations.value.find((eq) => eq.id === id);
+  if (!equation) return;
 
-  currentId.value = id
-  window.location.hash = id
-  emit('change', equation.content)
+  currentId.value = id;
+  window.location.hash = id;
+  emit("change", equation.content);
 }
 
 function getIdFromHash(): string {
-  return window.location.hash.slice(1) || ''
+  return window.location.hash.slice(1) || "";
 }
 
 onMounted(async () => {
-  equations.value = await loadEquations()
+  equations.value = await loadEquations();
 
   // Get initial equation from URL hash or default
-  const hashId = getIdFromHash()
-  const exists = equations.value.some(eq => eq.id === hashId)
-  const initialId = exists ? hashId : (equations.value[0]?.id ?? '')
+  const hashId = getIdFromHash();
+  const exists = equations.value.some((eq) => eq.id === hashId);
+  const initialId = exists ? hashId : "schrodinger";
 
   if (initialId) {
-    selectEquation(initialId)
+    selectEquation(initialId);
   }
 
   // Listen for hash changes
-  window.addEventListener('hashchange', () => {
-    const newId = getIdFromHash()
+  window.addEventListener("hashchange", () => {
+    const newId = getIdFromHash();
     if (newId && newId !== currentId.value) {
-      selectEquation(newId)
+      selectEquation(newId);
     }
-  })
-})
+  });
+});
 </script>
 
 <style scoped>
