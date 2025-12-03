@@ -35,7 +35,7 @@ jobs:
           echo "Typst file generated successfully"
 
       - name: Install Typst
-        uses: typst-community/setup-typst@v3
+        uses: typst-community/setup-typst@v4
         with:
           typst-version: latest
 
