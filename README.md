@@ -5,6 +5,7 @@ A minimal framework for creating interactive mathematical explanations with colo
 **Demo:** [https://p.migdal.pl/equations-explained-colorfully/](https://p.migdal.pl/equations-explained-colorfully/)
 
 **Inspired by:**
+
 - [Explorable explanations and science-based games](https://p.migdal.pl/blog/2024/05/science-games-explorable-explanations/)
 - [BetterExplained's colorized equations](https://betterexplained.com/articles/colorized-math-equations/)
 - [Stuart Riffle's color-coded Fourier transform](https://web.archive.org/web/20130318211259/http://www.altdevblogaday.com/2011/05/17/understanding-the-fourier-transform) (2011)
@@ -73,7 +74,8 @@ Fundamental constant connecting energy and frequency.
 
 ## Examples
 
-See `public/examples/` for complete examples:
+See `src/examples/` for complete examples:
+
 - `new.md` - Simple starter template (E = mc²)
 - `schrodinger.md` - Schrödinger equation
 - `maxwell.md` - Maxwell's equations
@@ -95,23 +97,13 @@ pnpm build
 
 ## Creating New Equations
 
-1. Create a markdown file in `public/examples/` (e.g., `my-equation.md`)
-2. Add entry to `public/examples/equations.json`:
-   ```json
-   {
-     "id": "my-equation",
-     "title": "My Equation",
-     "category": "Physics",
-     "file": "my-equation.md"
-   }
-   ```
-3. Use the in-browser editor to refine your equation interactively
+1. Create a markdown file in `src/examples/` (e.g., `my-equation.md`)
+2. Use the in-browser editor to refine your equation interactively
 
 ## Key Files
 
 ```
-public/examples/          # Equation markdown files
-  ├── equations.json      # List of available equations
+src/examples/            # Equation markdown files
   └── *.md               # Individual equation files
 src/
   ├── main.ts            # Vue app entry point
