@@ -116,7 +116,7 @@ h1 {
   font-family: var(--font-ui);
   font-size: 1rem;
   color: var(--text-secondary);
-  margin-bottom: 2.5rem;
+  margin-bottom: 1.5rem;
   text-align: center;
   opacity: 0.8;
 }
@@ -128,7 +128,7 @@ h1 {
 
   .subtitle {
     font-size: 0.875rem;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem;
   }
 }
 </style>

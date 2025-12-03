@@ -174,14 +174,19 @@ onUnmounted(() => resizeObserver?.disconnect());
 
 <style scoped>
 #equation-container {
-  padding: 3rem 2rem;
-  margin-bottom: 2.5rem;
+  padding: 0.25rem 1rem;
+  min-height: 150px; /* Ensure smaller formulas have some breathing room */
+  margin-bottom: 1.5rem;
   display: flex;
   justify-content: center;
   align-items: center;
   position: relative;
   z-index: 10;
   background: var(--bg-primary);
+}
+
+#equation-container :deep(.katex-display) {
+  margin: 0;
 }
 
 .selection-overlay {
@@ -219,7 +224,7 @@ onUnmounted(() => resizeObserver?.disconnect());
 
 @media (max-width: 768px) {
   #equation-container {
-    padding: 1.5rem 1rem;
+    padding: 0.5rem 1rem;
     overflow-x: auto;
     justify-content: flex-start;
     /* Ensure container can scroll */
