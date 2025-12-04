@@ -44,11 +44,11 @@ const renderedDefinition = computed(() => {
   min-height: 3rem;
   opacity: 0;
   transition: opacity 0.3s ease;
-  font-size: 1rem;
-  line-height: 1.6;
+  font-size: 1.125rem;
+  line-height: 1.7;
   color: var(--text-secondary);
   text-align: left;
-  font-family: var(--font-ui);
+  font-family: var(--font-math);
   margin: 1rem auto 0 auto;
   border: 1px solid var(--accent-color);
   background-color: #fff;
@@ -60,5 +60,15 @@ const renderedDefinition = computed(() => {
 
 .hover-explanation.visible {
   opacity: 1;
+}
+
+@media (max-width: 768px) {
+  .hover-explanation {
+    font-size: 1rem;
+    line-height: 1.5;
+    padding: 0.75rem;
+    margin-top: 0.5rem;
+    min-height: 2rem;
+  }
 }
 </style>

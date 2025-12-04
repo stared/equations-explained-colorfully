@@ -69,4 +69,10 @@ onMounted(() => {
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
   font-weight: 600;
 }
+
+@media (max-width: 768px) {
+  .color-scheme-switcher {
+    display: none;
+  }
+}
 </style>

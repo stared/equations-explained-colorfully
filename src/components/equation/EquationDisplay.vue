@@ -224,15 +224,16 @@ onUnmounted(() => resizeObserver?.disconnect());
 
 @media (max-width: 768px) {
   #equation-container {
-    padding: 0.5rem 1rem;
+    padding: 0.5rem;
     overflow-x: auto;
-    justify-content: flex-start;
-    /* Ensure container can scroll */
+    justify-content: center;
     width: 100%;
+    min-height: 60px;
+    margin: 0.25rem 0 0.5rem 0;
   }
 
   #equation-container :deep(.katex) {
-    font-size: 1.5rem;
+    font-size: 1.25rem;
   }
 }
 </style>

@@ -5,6 +5,7 @@
       <button class="mobile-menu-btn" @click="mobileMenuOpen = !mobileMenuOpen">
         <span class="icon">☰</span> Equations
       </button>
+      <MobileColorPicker @change="colorScheme = $event" />
       <button
         class="mobile-menu-btn"
         @click="mobileEditorOpen = !mobileEditorOpen"
@@ -55,7 +56,7 @@
 
     <!-- Main Content -->
     <main class="main-content">
-      <ColorSchemeSwitcher @change="colorScheme = $event" />
+      <ColorSchemeSwitcher class="desktop-color-switcher" @change="colorScheme = $event" />
       <CentralPanel
         v-if="parsedContent"
         :content="parsedContent"
@@ -122,6 +123,7 @@ import { parseContent } from "./utils/parser";
 import CentralPanel from "./components/CentralPanel.vue";
 import EquationSelector from "./components/controls/EquationSelector.vue";
 import ColorSchemeSwitcher from "./components/controls/ColorSchemeSwitcher.vue";
+import MobileColorPicker from "./components/controls/MobileColorPicker.vue";
 import ExportControls from "./components/controls/ExportControls.vue";
 import MarkdownEditor from "./components/MarkdownEditor.vue";
 
@@ -357,10 +359,9 @@ body {
 /* Mobile Header */
 .mobile-header {
   display: none;
-  height: 50px;
-  background-color: var(--bg-secondary);
-  border-bottom: 1px solid var(--border-color);
-  padding: 0 1rem;
+  height: 32px;
+  background-color: var(--bg-primary);
+  padding: 0.125rem 0.5rem;
   align-items: center;
   justify-content: space-between;
   position: fixed;
@@ -368,20 +369,26 @@ body {
   left: 0;
   right: 0;
   z-index: 40;
+  gap: 0.5rem;
 }
 
 .mobile-menu-btn {
   background: transparent;
   border: 1px solid var(--border-color);
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
+  padding: 0.25rem 0.5rem;
+  border-radius: 3px;
   color: var(--text-primary);
   font-family: var(--font-ui);
-  font-size: 0.875rem;
+  font-size: 0.75rem;
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.25rem;
+  flex-shrink: 0;
+}
+
+.mobile-menu-btn .icon {
+  font-size: 0.875rem;
 }
 
 .mobile-close-header {
@@ -408,11 +415,15 @@ body {
     flex-direction: column;
     height: auto;
     overflow-y: auto;
-    padding-top: 50px; /* Space for mobile header */
+    padding-top: 34px; /* Space for mobile header */
   }
 
   .mobile-header {
     display: flex;
+  }
+
+  .desktop-color-switcher {
+    display: none;
   }
 
   .mobile-close-header {
@@ -429,6 +440,7 @@ body {
     z-index: 100;
     width: 100%;
     max-width: 100%;
+    min-width: 100%;
     height: 100%;
     max-height: 100vh;
     transform: translateX(-100%);
@@ -451,8 +463,9 @@ body {
   }
 
   .main-content {
-    padding: 2rem 1rem;
+    padding: 0 0.75rem;
     overflow: visible;
+    justify-content: flex-start;
   }
 
   .editor-sidebar {
@@ -461,6 +474,7 @@ body {
     z-index: 100;
     width: 100%;
     max-width: 100%;
+    min-width: 100%;
     height: 100%;
     transform: translateY(100%);
     transition: transform 0.3s ease;
@@ -478,7 +492,7 @@ body {
   }
 
   .editor-sidebar .editor-toolbar {
-    padding: 0 1rem; /* Adjust padding for mobile */
+    padding: 0 1rem;
   }
 }
 </style>

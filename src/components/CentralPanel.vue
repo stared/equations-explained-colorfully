@@ -107,6 +107,7 @@ h1 {
   font-size: 2.5rem;
   font-weight: 400;
   color: var(--text-primary);
+  margin-top: 0;
   margin-bottom: 0.5rem;
   text-align: center;
   letter-spacing: -0.02em;
@@ -122,13 +123,20 @@ h1 {
 }
 
 @media (max-width: 768px) {
+  .central-panel {
+    padding-top: 0;
+  }
+
   h1 {
-    font-size: 1.75rem;
+    font-size: 1.4rem;
+    margin-top: 0;
+    margin-bottom: 0;
+    line-height: 1.2;
   }
 
   .subtitle {
-    font-size: 0.875rem;
-    margin-bottom: 1rem;
+    font-size: 0.75rem;
+    margin-bottom: 0.125rem;
   }
 }
 </style>

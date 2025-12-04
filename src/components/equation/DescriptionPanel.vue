@@ -88,4 +88,13 @@ onMounted(setupDescription)
 .static-description :deep(span.active) {
   background-color: var(--accent-light);
 }
+
+@media (max-width: 768px) {
+  .static-description {
+    padding-top: 0.5rem;
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+}
 </style>
