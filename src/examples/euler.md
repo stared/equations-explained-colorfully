@@ -8,34 +8,24 @@ $$
 
 ## Description
 
-[Euler's number]{.exponential} raised to [the imaginary unit]{.imaginary} times [pi]{.pi}, plus [one]{.one}, equals [zero]{.zero}.
+[Rotating]{.exponential} by [half a turn]{.pi} in the [complex plane]{.imaginary} lands at [-1]{.one}. Adding [1]{.one} brings us back to [0]{.zero}.
 
 ## .exponential
 
-Euler's number $e \approx 2.71828$ is the base of natural logarithms.
-
-It appears everywhere in mathematics: compound interest, population growth, radioactive decay, and probability distributions. It's defined as the limit of $(1 + 1/n)^n$ as $n$ approaches infinity.
+Euler's number $e \approx 2.71828$. The base of continuous growth that drives rotation around the unit circle.
 
 ## .imaginary
 
-The imaginary unit $i = \sqrt{-1}$ extends the real numbers to complex numbers.
-
-When combined with exponentials, $i$ creates rotation in the complex plane. The expression $e^{i\theta}$ traces out a unit circle as $\theta$ varies.
+The imaginary unit $i = \sqrt{-1}$. Turns exponential growth sideways, converting it into rotation in the complex plane.
 
 ## .pi
 
-The mathematical constant $\pi \approx 3.14159$ is the ratio of a circle's circumference to its diameter.
-
-In this formula, $\pi$ represents a half-rotation around the unit circle in the complex plane.
+The constant $\pi \approx 3.14159$. The angle of rotation in radians: 180°, a half-turn.
 
 ## .one
 
-The number 1 is the multiplicative identity.
-
-Adding 1 to $e^{i\pi} = -1$ brings us to zero, completing this remarkable relationship.
+The number 1. Offsets the result of the rotation $e^{i\pi} = -1$, cancelling it out.
 
 ## .zero
 
-Zero is the additive identity and represents nothingness.
-
-This identity connects five of mathematics' most important numbers in a single, elegant equation that Richard Feynman called "the most remarkable formula in mathematics."
+Zero. The origin of the complex plane, where the rotation and offset balance perfectly.

@@ -12,25 +12,17 @@ $$
 
 ## .entropy
 
-Shannon Entropy ($H$).
-
-Quantifies the uncertainty in a system. It represents the theoretical minimum average number of bits needed to encode a message from this source. High entropy = pure randomness (maximum surprise). Low entropy = predictability.
+Shannon Entropy $H$. Average surprise per message. High entropy = randomness, low entropy = predictability.
 
 ## .average
 
-Expected Value ($-\sum$).
-
-We calculate the weighted average over all possible outcomes. The negative sign is necessary because $\log(p)$ is negative for probabilities $p < 1$; it ensures the resulting entropy is positive.
+Expected Value $-\sum$. Weighted average over all outcomes. The negative sign ensures positive entropy.
 
 ## .prob
 
-Probability ($p(x_i)$).
-
-The likelihood of a specific event occurring. Common events have high probability (and low information). Rare events have low probability (and high information).
+Probability $p(x_i)$. How likely each outcome is. Common events carry little information; rare events carry a lot.
 
 ## .bits
 
-Log-probability ($\log_2 p$).
-
-Measures the "length" or information content of a specific event in bits. An event with $p=1/2$ provides 1 bit of information ($-\log_2 0.5 = 1$). An event with $p=1/8$ provides 3 bits. We learn more when a rare event happens.
+Log-probability $\log_2 p$. Information content in bits. Probability $1/2$ = 1 bit, $1/8$ = 3 bits. Rarer events are more informative.
 

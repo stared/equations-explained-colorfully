@@ -36,9 +36,7 @@ The mechanical energy of the specific configuration (e.g., kinetic + potential).
 
 ## .chempot
 
-Chemical Potential ($\mu$).
-
-The change in energy when adding a particle. It acts like a "voltage" for matter—particles flow from high $\mu$ to low $\mu$.
+Chemical Potential $\mu$. The energy cost of adding one particle. Particles flow from high $\mu$ to low $\mu$ until equilibrium.
 
 ## .particles
 

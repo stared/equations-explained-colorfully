@@ -8,34 +8,24 @@ $$
 
 ## Description
 
-The [Ricci curvature]{.ricci} and [scalar curvature]{.scalar} combined with [dark energy]{.dark-energy} are determined by the [matter distribution]{.matter} scaled by the [gravitational constant]{.coupling}.
+[Mass and energy]{.matter} warp [spacetime]{.ricci}, creating the curves that objects follow as gravity. The [coupling constant]{.coupling} sets how stiff spacetime is, while [dark energy]{.dark-energy} pushes it apart.
 
 ## .ricci
 
-Ricci Curvature Tensor ($R_{\mu\nu}$).
-
-This describes how the volume of a shape changes as it moves through spacetime. It represents the part of curvature that causes matter to converge or diverge, directly corresponding to the presence of mass and energy.
+Ricci Curvature Tensor $R_{\mu\nu}$. Measures how volumes shrink as gravity pulls matter inward.
 
 ## .scalar
 
-Scalar Curvature Term ($-\frac{1}{2}R g_{\mu\nu}$).
-
-This geometric correction involves the Ricci scalar $R$ and metric tensor $g_{\mu\nu}$. It ensures that the geometry side of the equation mathematically conserves energy and momentum, matching the physics of the matter side.
+Scalar Curvature Term $-\frac{1}{2}R g_{\mu\nu}$. A geometric correction that ensures energy and momentum are conserved.
 
 ## .dark-energy
 
-The Cosmological Constant ($\Lambda$).
-
-An intrinsic energy of empty space that pushes the universe apart. It opposes gravity and is responsible for the accelerating expansion of the universe.
+The Cosmological Constant $\Lambda$. Intrinsic pressure of empty space that pushes the universe apart, opposing gravity.
 
 ## .coupling
 
-Gravitational Coupling.
-
-This tiny factor ($\approx 2 \times 10^{-43}$) describes how "stiff" spacetime is. It explains why gravity is so weak: it takes a massive amount of matter (like the Earth) to produce even a modest curvature.
+Gravitational Coupling $\frac{8\pi G}{c^4}$. The "stiffness" of spacetime. It's tiny, which is why gravity is so weak.
 
 ## .matter
 
-Stress-Energy Tensor ($T_{\mu\nu}$).
-
-The source of gravity. It tells space how to curve using mass density ($\rho$), pressure ($p$), and momentum flux. In General Relativity, all energy gravitates, not just mass.
+Stress-Energy Tensor $T_{\mu\nu}$. The source of curvature: all mass, energy, pressure, and momentum.

@@ -12,36 +12,24 @@ To find [the amplitude]{.amplitude} [at a particular frequency]{.freq}, [spin]{.
 
 ## .amplitude
 
-The transform output $X_k$.
-
-Represents the **complex amplitude** (magnitude and phase) of the signal at a specific frequency. Its magnitude tells you "how much" of that frequency is present.
+The transform output $X_k$. How strong frequency $k$ is in your signal, including magnitude and phase.
 
 ## .freq
 
-The frequency index $k$.
-
-Determines which frequency we are analyzing. It appears both in the output index (which bin?) and in the rotation term (how fast do we spin?).
+The frequency index $k$. How fast to spin: one full rotation per $k$ cycles in the data.
 
 ## .average
 
-The averaging operation.
-
-Combines the summation ($\sum$) and the division by $N$ (and the time index term $\frac{n}{N}$). It turns the sum into an average value over the signal's duration.
+The averaging operation $\frac{1}{N}\sum$. Center of mass of all the rotated signal points.
 
 ## .signal
 
-The input signal $x_n$.
-
-Your raw data points (audio, image, stock prices) sampled over time.
+The input signal $x_n$. Your data samples over time: audio, image, stock prices.
 
 ## .spin
 
-The exponential term $e^i$.
-
-This is the rotation operator basis.
+The rotation operator $e^{i\theta}$. Uses complex numbers to rotate each sample, tracking both position and angle on a circle.
 
 ## .circle
 
-The full circle constant $2\pi$.
-
-Represents one full rotation in radians.
+The full circle constant $2\pi$. One full rotation in radians.
