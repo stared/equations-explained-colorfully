@@ -8,7 +8,7 @@ $$
 
 ## Description
 
-[Mass and energy]{.matter} warp [spacetime]{.ricci}, shaping the paths of freely falling objects. The [coupling constant]{.coupling} sets the response, while [dark energy]{.dark-energy} can accelerate cosmic expansion.
+[Mass and energy]{.matter} warp [spacetime]{.ricci}, shaping the paths of freely falling objects. The [coupling constant]{.coupling} sets how strongly, while [dark energy]{.dark-energy} can speed up the universe’s expansion.
 
 ## .ricci
 

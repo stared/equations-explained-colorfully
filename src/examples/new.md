@@ -8,7 +8,7 @@ $$
 
 ## Description
 
-[Rest energy]{.energy} equals [mass]{.mass} times the [speed of light squared]{.light}.
+[Mass]{.mass} is a form of [energy]{.energy}. The [speed of light squared]{.light} tells how much: even a little mass corresponds to enormous energy.
 
 ## .energy
 

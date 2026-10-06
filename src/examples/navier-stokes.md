@@ -8,7 +8,7 @@ $$
 
 ## Description
 
-The [fluid density]{.density} times its acceleration ([over time]{.timederiv} and [along paths]{.convection}) balances [pressure pushes]{.pressure}, [viscous smoothing]{.viscosity}, and [body forces]{.force}.
+[Pressure]{.pressure} pushes fluid, [viscosity]{.viscosity} smooths differences in motion, and [gravity]{.force} pulls on it. [Denser fluid]{.density} needs a stronger push for the same acceleration.
 
 ## .density
 
@@ -20,13 +20,13 @@ It acts as the "mass" term in $F=ma$. Under the same force per unit volume, dens
 
 Unsteady acceleration (local change).
 
-Measures how the velocity changes at a fixed point in space over time. If the flow is steady, this term is zero, even if the water is moving fast.
+Watch one spot in a river: does the velocity there change with time? In steady flow, this term is zero, even if the water is moving fast.
 
 ## .convection
 
 Convective acceleration (change due to movement).
 
-This non-linear term captures how fluid particles accelerate as they move to a region with different velocity (e.g., water speeding up as it enters a narrow pipe). It occurs even in steady, smooth flow and plays a central role in turbulence.
+Follow the fluid: it can speed up as it enters a narrower pipe, even if the flow at each spot stays steady. This term captures that change in velocity along its path.
 
 ## .pressure
 
