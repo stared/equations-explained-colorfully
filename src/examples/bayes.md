@@ -8,7 +8,7 @@ $$
 
 ## Description
 
-Your [updated belief]{.posterior} combines [what you knew before]{.prior} with [how well your hypothesis predicted the evidence]{.likelihood}. Better predictions earn more weight.
+Your [updated belief]{.posterior} is your [prior view]{.prior} re-weighted by its [predictive power]{.likelihood} and normalized by the [total probability of the evidence]{.evidence}.
 
 ## .posterior
 

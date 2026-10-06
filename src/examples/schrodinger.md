@@ -8,7 +8,7 @@ $$
 
 ## Description
 
-How a [quantum wave]{.wavefunction} [changes over time]{.timederiv} depends on [how it bends]{.kinetic} and [the energy landscape]{.potential}. [i]{.imaginary} makes the evolution oscillatory; [ℏ]{.planck} sets its pace.
+The [time evolution]{.timederiv} of the [quantum state]{.wavefunction} is determined by its total energy: the [kinetic energy]{.kinetic} (derived from spatial curvature) plus the [potential energy]{.potential}. The [imaginary unit]{.imaginary} drives the wave's oscillation, while [the reduced Planck constant]{.planck} sets the scale of quantum action.
 
 ## .imaginary
 
@@ -20,14 +20,14 @@ It causes the wavefunction to rotate in the complex plane rather than just grow 
 
 The reduced Planck constant $\hbar = h/2\pi$.
 
-It represents the characteristic scale of quantum action, setting the scale at which quantum effects become significant. It connects energy to frequency ($E = \hbar\omega$) and momentum to wavenumber ($p = \hbar k$).
+It represents the fundamental quantum of action, setting the scale at which quantum effects become significant. It connects energy to frequency ($E = \hbar\omega$) and momentum to wavenumber ($p = \hbar k$).
 **Value:** $\approx 1.055 \times 10^{-34}$ J·s.
 
 ## .timederiv
 
 The rate of change of the wavefunction over time.
 
-This derivative describes how the state evolves. The $i\hbar$ factor turns this rate of change into the action of the total-energy operator on the wavefunction, linking time evolution directly to the system's total energy.
+This derivative describes how the state evolves. The $i\hbar$ factor turns this rate of change into an energy term (the Hamiltonian acting on the state), linking time evolution directly to the system's total energy.
 
 ## .kinetic
 
