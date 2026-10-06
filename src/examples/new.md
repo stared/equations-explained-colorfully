@@ -8,7 +8,7 @@ $$
 
 ## Description
 
-[Energy]{.energy} equals [mass]{.mass} times the [speed of light squared]{.light}.
+[Rest energy]{.energy} equals [mass]{.mass} times the [speed of light squared]{.light}.
 
 ## .energy
 
@@ -22,6 +22,6 @@ Rest mass of the object.
 
 ## .light
 
-The speed of light squared (c²).
+The speed of light in vacuum, squared ($c^2$).
 
 Reference terms in descriptions using `[text]{.label}` where `label` matches the one used in `\mark[label]{...}`.

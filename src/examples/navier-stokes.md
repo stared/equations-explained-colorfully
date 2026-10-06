@@ -8,40 +8,42 @@ $$
 
 ## Description
 
-The [fluid mass]{.density} accelerates ([over time]{.timederiv} and [along paths]{.convection}) due to forces. These include [pressure]{.pressure}, [viscosity]{.viscosity}, and [external fields]{.force}.
+A fluid parcel accelerates under [pressure forces]{.pressure}, [viscous forces]{.viscosity}, and [body forces]{.force} such as gravity. Its acceleration combines [changes over time at a fixed location]{.timederiv} with [changes experienced as it moves through the flow]{.convection}. Multiplying this acceleration by the [mass density]{.density} gives the net force per unit volume.
+
+This form describes an incompressible Newtonian fluid with constant dynamic viscosity. The velocity field must also have zero divergence.
 
 ## .density
 
-Fluid density $\rho$ (mass per unit volume).
+Fluid density $\rho$ (mass per unit volume). Incompressible flow satisfies $\nabla \cdot \vec{v}=0$, so a moving fluid parcel keeps its volume.
 
-It acts as the "mass" term in $F=ma$. Heavier fluids (like water) carry more momentum and are harder to accelerate than lighter fluids (like air).
+It plays the role of mass in Newton's second law per unit volume. Under the same net force per unit volume, a denser fluid accelerates less. Gravity alone gives the same acceleration regardless of density, because its force per unit volume is $\rho \vec{g}$.
 
 ## .timederiv
 
 Unsteady acceleration (local change).
 
-Measures how the velocity changes at a fixed point in space over time. If the flow is "steady" (like a calm river), this term is zero, even if the water is moving fast.
+Measures how the velocity changes at a fixed point in space over time. In steady flow, this term is zero, even if the fluid is moving fast or accelerating as it moves between locations.
 
 ## .convection
 
 Convective acceleration (change due to movement).
 
-This non-linear term captures how fluid particles accelerate as they move to a region with different velocity (e.g., water speeding up as it enters a narrow pipe). It is responsible for turbulence and the complex behavior of fluids.
+This nonlinear term captures changes in a fluid parcel's speed or direction as it moves through a spatially varying velocity field (e.g., water speeding up as it enters a narrower pipe). It occurs even in steady, laminar flow and plays a central role in turbulence.
 
 ## .pressure
 
-Pressure gradient force.
+Pressure force per unit volume $-\nabla p$.
 
-Fluids naturally flow from high pressure to low pressure (down the gradient). This term drives the flow, pushing fluid parcels toward lower pressure zones. The negative sign ensures the force points _against_ the increase in pressure.
+Pressure differences push fluid toward lower pressure. The negative sign makes this force point against the pressure increase. This does not determine the direction of motion: fluid can move toward higher pressure while slowing down, or remain at rest when other forces balance the pressure force.
 
 ## .viscosity
 
 Viscous diffusion (internal friction).
 
-Describes how the fluid resists flow due to internal friction. The term $\mu \nabla^2 \vec{v}$ acts like diffusion for momentum, smoothing out velocity differences between neighboring layers of fluid. High viscosity (honey) suppresses turbulence; low viscosity (water) allows it.
+The dynamic viscosity $\mu$ measures resistance to deformation, rather than to uniform motion. The term $\mu \nabla^2 \vec{v}$ is a force per unit volume that diffuses momentum, smoothing velocity differences. Turbulence depends on inertia relative to viscosity, as well as flow geometry and disturbances; viscosity alone does not determine whether a flow is turbulent.
 
 ## .force
 
-External body forces.
+Body force per unit volume $\vec{f}$.
 
-Forces that act on the bulk of the fluid, such as gravity ($\rho \vec{g}$), magnetic forces, or Coriolis forces in atmospheric flows.
+Forces distributed through the fluid, such as gravity ($\rho \vec{g}$) or magnetic forces in a conducting fluid. In a rotating reference frame, this term can also include apparent forces such as the Coriolis force.

@@ -13,7 +13,9 @@ $$
 
 ## Description
 
-[Electric fields]{.electric} [flow out]{.divergence} from [charges]{.charge}; [magnetic fields]{.magnetic} form [closed loops]{.zero}. [Changing]{.timederiv} fields create each other, the basis of light and all electromagnetic waves.
+[Charges]{.charge} act as [sources or sinks]{.divergence} of the [electric field]{.electric}, while the [magnetic field]{.magnetic} has [no sources or sinks]{.zero}. [Changes over time]{.timederiv} in one field are linked to [circulation]{.curl} of the other; [electric currents]{.current} also produce magnetic circulation. The constants [permittivity]{.permittivity} and [permeability]{.permeability} set the strength of these relationships and the speed of electromagnetic waves.
+
+These equations use SI units, with total charge and current densities as the sources.
 
 ## .divergence
 
@@ -25,32 +27,32 @@ The curl operator $\nabla \times$. Measures how much a field swirls or rotates a
 
 ## .electric
 
-The electric field $\vec{E}$. Force per unit charge. Pushes charges; emanates from positive, terminates on negative.
+The electric field $\vec{E}$. Electric force per unit charge. Charges produce electric fields with sources and sinks; a changing magnetic field can also produce a circulating electric field.
 
 ## .magnetic
 
-The magnetic field $\vec{B}$. Deflects moving charges. Always forms closed loops, no magnetic monopoles.
+The magnetic field $\vec{B}$. Exerts a force $q\vec{v}\times\vec{B}$ on a charge $q$ moving with velocity $\vec{v}$. Its field lines have no beginnings or endings; they need not form closed loops.
 
 ## .charge
 
-Charge density $\rho$. Amount of electric charge per volume. The source of electric fields.
+Charge density $\rho$. Electric charge per unit volume. Positive and negative charge act as sources and sinks of the electric field.
 
 ## .permittivity
 
-Permittivity of free space $\varepsilon_0$. How easily space allows electric fields to form.
+Vacuum permittivity $\varepsilon_0$. Relates charge density to electric-field divergence and appears in the displacement-current term.
 
 ## .zero
 
-Zero divergence. Magnetic field lines always form closed loops, no isolated magnetic charges exist.
+Zero divergence $\nabla \cdot \vec{B}=0$. The net magnetic flux through any closed surface is zero. These equations contain no magnetic charges (monopoles).
 
 ## .timederiv
 
-Time derivative $\frac{\partial}{\partial t}$. Rate of change. Changing fields induce each other, electromagnetic induction.
+Time derivative $\frac{\partial}{\partial t}$. Measures change at a fixed location. A changing magnetic field is linked to electric-field curl; a changing electric field contributes to magnetic-field curl.
 
 ## .permeability
 
-Permeability of free space $\mu_0$. How easily space allows magnetic fields to form. With $\varepsilon_0$, sets the speed of light.
+Vacuum permeability $\mu_0$. Sets the coupling of current to magnetic-field curl. Together with $\varepsilon_0$, it determines the speed of light in vacuum: $c=1/\sqrt{\mu_0\varepsilon_0}$.
 
 ## .current
 
-Current density $\vec{J}$. Flow of electric charge. Creates magnetic fields that swirl around it.
+Current density $\vec{J}$. Electric current per unit area, pointing in the direction of positive-charge flow. It contributes to the curl of the magnetic field.
