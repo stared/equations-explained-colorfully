@@ -8,24 +8,24 @@ $$
 
 ## Description
 
-[Energy, momentum, and stress]{.matter} are linked to spacetime geometry: [Ricci curvature]{.ricci} combines with a [scalar-curvature term]{.scalar} and a [cosmological-constant term]{.dark-energy}. The [gravitational coupling]{.coupling} sets the strength of this relationship. Freely falling objects follow the resulting spacetime geometry.
+[Mass and energy]{.matter} warp [spacetime]{.ricci}, shaping the paths of freely falling objects. The [coupling constant]{.coupling} sets the response, while [dark energy]{.dark-energy} can accelerate cosmic expansion.
 
 ## .ricci
 
-Ricci curvature tensor $R_{\mu\nu}$. A contraction of the full spacetime curvature tensor, related to changes in the volume of small bundles of freely falling trajectories. It does not capture all curvature: tidal effects can exist even where the Ricci tensor vanishes.
+Ricci Curvature Tensor $R_{\mu\nu}$. Describes part of spacetime curvature, related to how a small cloud of freely falling particles changes volume.
 
 ## .scalar
 
-Scalar-curvature term $-\frac{1}{2}R g_{\mu\nu}$. Here $R$ is scalar curvature and $g_{\mu\nu}$ is the metric describing spacetime intervals. Together with the Ricci tensor, this forms the Einstein tensor, whose vanishing covariant divergence makes the equation consistent with local energy-momentum conservation.
+Scalar Curvature Term $-\frac{1}{2}R g_{\mu\nu}$. Combines with Ricci curvature to keep the equation consistent with local conservation of energy and momentum.
 
 ## .dark-energy
 
-Cosmological-constant term $\Lambda g_{\mu\nu}$. A positive $\Lambda$ can be interpreted as positive vacuum energy with negative pressure, and can drive accelerated cosmic expansion. This is a gravitational effect and provides one model of dark energy.
+The Cosmological Constant $\Lambda$. A positive $\Lambda$ acts like energy in empty space with negative pressure, which can accelerate cosmic expansion.
 
 ## .coupling
 
-Gravitational coupling $\frac{8\pi G}{c^4}$. Converts stress-energy into curvature, using Newton's gravitational constant $G$ and the speed of light $c$. A larger coupling would mean a greater curvature response to the same stress-energy.
+Gravitational Coupling $\frac{8\pi G}{c^4}$. Sets how strongly spacetime curves in response to energy and stress.
 
 ## .matter
 
-Stress-energy tensor $T_{\mu\nu}$. Describes local energy density, including rest-mass energy, as well as momentum density, energy flow, pressure, and shear stress.
+Stress-Energy Tensor $T_{\mu\nu}$. The source of curvature: all mass, energy, pressure, and momentum.

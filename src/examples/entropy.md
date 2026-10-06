@@ -12,11 +12,11 @@ $$
 
 ## .entropy
 
-Shannon entropy $H$. Average information per outcome, measured in bits. It is nonnegative: zero for a certain outcome, and larger when outcomes are less predictable.
+Shannon Entropy $H$. Average surprise per message. High entropy = randomness, low entropy = predictability.
 
 ## .average
 
-Summation $\sum_i$. Adds the information contributions from all outcomes. Together with the probabilities $p(x_i)$, it forms a weighted average.
+Summation $\sum_i$. Adds up the contributions from all outcomes; the probabilities turn this into a weighted average.
 
 ## .prob
 
@@ -24,4 +24,4 @@ Probability $p(x_i)$. How likely each outcome is. Common events carry little inf
 
 ## .bits
 
-Information content $-\log_2 p(x_i)$, also called surprisal. An outcome with probability $1/2$ carries 1 bit; one with probability $1/8$ carries 3 bits. Rarer outcomes carry more information. Outcomes with zero probability contribute zero to entropy, using the limit $p\log_2 p \to 0$ as $p \to 0$.
+Surprise $-\log_2 p$. Information content in bits. Probability $1/2$ = 1 bit, $1/8$ = 3 bits. Rarer events are more informative.

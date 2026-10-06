@@ -26,10 +26,10 @@ How well the hypothesis explains the data. It asks: "If my theory were true, how
 
 Prior Probability $P(H)$.
 
-The probability assigned to a hypothesis *before* seeing the new data, based on base rates or previous knowledge. Evidence updates this probability according to how well the hypothesis predicts the observation compared with alternatives.
+Your starting assumption *before* seeing new data. It represents base rates or previous knowledge. Evidence favors hypotheses that predicted it better than the alternatives.
 
 ## .evidence
 
 Marginal Likelihood $P(E)$.
 
-The prior-weighted probability of the evidence across an exhaustive set of mutually exclusive hypotheses. It normalizes the posterior probabilities to sum to 1. Rare evidence need not cause a large update: if it is equally likely under every hypothesis, the probabilities remain unchanged. This formula requires $P(E)>0$.
+The probability of the evidence, averaged over possible hypotheses using their prior probabilities. Dividing by it makes the updated probabilities sum to one.

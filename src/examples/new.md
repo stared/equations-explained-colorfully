@@ -22,6 +22,6 @@ Rest mass of the object.
 
 ## .light
 
-The speed of light in vacuum, squared ($c^2$).
+The speed of light in vacuum, squared (c²).
 
 Reference terms in descriptions using `[text]{.label}` where `label` matches the one used in `\mark[label]{...}`.

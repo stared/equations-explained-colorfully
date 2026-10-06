@@ -8,9 +8,7 @@ $$
 
 ## Description
 
-To find [the complex amplitude]{.amplitude} [at a particular frequency index]{.freq}, [rotate]{.spin} each [signal sample]{.signal} through an angle based on its position in the data, with [a full turn]{.circle} equal to 2π radians. Then [average the rotated samples]{.average}.
-
-This convention uses a positive exponent and a 1/N normalization. Many software libraries use this convention for the inverse DFT and a negative exponent for the forward DFT.
+To find [the amplitude]{.amplitude} [at a particular frequency]{.freq}, [spin]{.spin} [your signal]{.signal} [around a circle]{.circle} [at that frequency]{.freq}, and [average a bunch of points along that path]{.average}.
 
 ## .amplitude
 
@@ -18,7 +16,7 @@ The transform output $X_k$. How strong frequency $k$ is in your signal, includin
 
 ## .freq
 
-The frequency index $k$. The rotation factor makes $k$ full turns across the $N$ equally spaced samples: sample $n$ is rotated by $2\pi kn/N$ radians. The index labels a frequency bin, not a frequency in hertz.
+The frequency index $k$. How fast to spin: $k$ full rotations over the $N$ samples.
 
 ## .average
 
@@ -26,11 +24,11 @@ The averaging operation $\frac{1}{N}\sum$. Center of mass of all the rotated sig
 
 ## .signal
 
-The input signal $x_n$. A sequence of $N$ equally spaced samples, such as audio samples over time or image values along a row.
+The input signal $x_n$. Your data samples over time: audio, image, stock prices.
 
 ## .spin
 
-The rotation factor $e^{i\theta}$. Multiplication by this complex number rotates a sample through angle $\theta$ without changing its magnitude. Different sample magnitudes give different distances from the origin.
+The rotation operator $e^{i\theta}$. Rotates each sample without changing its magnitude.
 
 ## .circle
 

@@ -8,15 +8,13 @@ $$
 
 ## Description
 
-Each microstate's [probability]{.prob} is set by its [Boltzmann weight]{.weight}: at positive temperature, states with a smaller value of [energy]{.energy} minus [chemical potential]{.chempot} times [particle number]{.particles} receive greater weight. The [thermal energy scale]{.temp} sets how strongly these differences matter, and the [partition function]{.partition} normalizes the probabilities.
-
-This ensemble describes equilibrium with a reservoir that exchanges energy and particles with the system, setting its temperature and chemical potential at fixed volume.
+The [probability]{.prob} is determined by the [Boltzmann weight]{.weight}: lower [energy]{.energy} favors a state, while a higher [chemical potential]{.chempot} favors more [particles]{.particles}. The [temperature]{.temp} scales these effects, and the [partition function]{.partition} normalizes the result.
 
 ## .prob
 
 Probability ($P_i$).
 
-The equilibrium probability of this specific microstate. It can also be interpreted as a long-run fraction of time when the dynamics sample the equilibrium ensemble.
+The equilibrium probability of this specific microstate.
 
 ## .partition
 
@@ -28,7 +26,7 @@ The sum of weights over all possible states. It ensures that all probabilities a
 
 Boltzmann Factor.
 
-The full exponential $e^{-(E_i-\mu N_i)/(k_B T)}$ gives the state's unnormalized weight. At positive temperature, higher $E_i-\mu N_i$ means exponentially smaller weight. For states with equal particle number, lower energy means higher probability.
+The relative likelihood of the state. At positive temperature, a higher effective energy $E_i-\mu N_i$ makes a state exponentially less probable.
 
 ## .energy
 
@@ -38,7 +36,7 @@ The mechanical energy of the specific configuration (e.g., kinetic + potential).
 
 ## .chempot
 
-Chemical potential $\mu$. The change in Helmholtz free energy per added particle at fixed temperature and volume. Increasing the reservoir's chemical potential favors states with more particles. At thermal equilibrium, exchange of particles tends to equalize chemical potentials.
+Chemical Potential $\mu$. The free-energy cost of adding one particle at fixed temperature and volume. Particles flow from high $\mu$ to low $\mu$ until equilibrium.
 
 ## .particles
 
@@ -50,4 +48,4 @@ The number of atoms or molecules in the current state. In this ensemble, this nu
 
 Thermal Energy ($k_B T$).
 
-The characteristic thermal energy scale, with Boltzmann constant $k_B$ and absolute temperature $T$. It is not generally the average kinetic energy. At fixed chemical potential and microstate energies, a larger positive temperature makes the relative weights less sensitive to differences in $E_i-\mu N_i$.
+The characteristic energy scale of thermal motion. It acts as the denominator, meaning high temperatures "wash out" the differences between energy states.

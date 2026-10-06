@@ -8,15 +8,15 @@ $$
 
 ## Description
 
-Starting at 1, the [exponential]{.exponential} with an [imaginary exponent]{.imaginary} describes a rotation by [half a turn]{.pi}, landing at −1. Adding [1]{.one} brings us to [0]{.zero}.
+Starting at 1, [rotating]{.exponential} by [half a turn]{.pi} in the [complex plane]{.imaginary} lands at −1. Adding [1]{.one} brings us to [0]{.zero}.
 
 ## .exponential
 
-Euler's number $e \approx 2.71828$, the base of the natural exponential. The expression $e^{i\theta}$ traces the unit circle as the real angle $\theta$ varies, starting at 1 when $\theta=0$.
+Euler's number $e \approx 2.71828$. The base of continuous growth. With an imaginary exponent, $e^{i\theta}$ traces the unit circle.
 
 ## .imaginary
 
-The imaginary unit $i$, defined by $i^2=-1$. For real $\theta$, the imaginary exponent in $e^{i\theta}$ produces rotation in the complex plane while keeping the magnitude equal to 1.
+The imaginary unit $i = \sqrt{-1}$. Turns exponential growth sideways, converting it into rotation in the complex plane.
 
 ## .pi
 
