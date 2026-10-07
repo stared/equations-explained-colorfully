@@ -8,13 +8,13 @@ $$
 
 ## Description
 
-The [time evolution]{.timederiv} of the [quantum state]{.wavefunction} is determined by its total energy: the [kinetic energy]{.kinetic} (from the wave’s curvature) plus the [potential energy]{.potential}. The [imaginary unit]{.imaginary} drives the wave's oscillation, while [the reduced Planck constant]{.planck} links energy to the rate of oscillation.
+A [quantum wave]{.wavefunction} [rotates in phase]{.imaginary} [over time]{.timederiv}, with [the reduced Planck constant]{.planck} linking its rotation rate to energy: [kinetic energy from the wave’s curvature]{.kinetic}, plus [potential energy at each position]{.potential}.
 
 ## .imaginary
 
-The imaginary unit $i = \sqrt{-1}$ is essential to quantum mechanics.
+The imaginary unit $i = \sqrt{-1}$.
 
-It causes the wavefunction to rotate in the complex plane rather than just grow or shrink. Relative phases produce interference; with a self-adjoint Hamiltonian, this evolution conserves total probability.
+It makes each energy component of the wavefunction rotate in the complex plane. Components with different energies rotate at different rates, changing how they reinforce or cancel over time.
 
 ## .planck
 
@@ -33,13 +33,13 @@ This derivative describes how the state evolves. The $i\hbar$ factor turns this 
 
 The kinetic energy operator.
 
-In classical mechanics, $E_k = p^2 / 2m$. In quantum mechanics, momentum is an operator $\hat{p} = -i\hbar \frac{\partial}{\partial x}$. Squaring this and dividing by $2m$ gives the term $-\frac{\hbar^2}{2m} \frac{\partial^2}{\partial x^2}$. It measures the wave’s curvature: shorter-wavelength components have larger momentum magnitude and higher kinetic energy.
+It measures the wave’s curvature: shorter-wavelength components have larger momentum magnitude and higher kinetic energy.
 
 ## .potential
 
 The potential energy function $V(x)$.
 
-This represents the environment the particle moves in, such as an electron in an electric field or a particle in a box. It acts as a simple multiplicative factor at each point in space.
+This represents the environment the particle moves in, such as an electron in an electric field or a particle in a box.
 
 ## .wavefunction
 

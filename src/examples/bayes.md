@@ -14,7 +14,7 @@ Your [updated belief]{.posterior} is your [prior view]{.prior} re-weighted by it
 
 Posterior Probability $P(H|E)$.
 
-What you believe *after* seeing the data. It is the probability of the Hypothesis ($H$) being true given the Evidence ($E$). This is the output of the learning process.
+What you believe *after* seeing the data. It is the probability of the Hypothesis ($H$) being true given the Evidence ($E$).
 
 ## .likelihood
 
@@ -26,7 +26,7 @@ How well the hypothesis explains the data. It asks: "If my theory were true, how
 
 Prior Probability $P(H)$.
 
-Your starting assumption *before* seeing new data. It represents base rates or previous knowledge. Evidence favors hypotheses that predicted it better than the alternatives.
+Your starting assumption *before* seeing new data. It represents base rates or previous knowledge.
 
 ## .evidence
 
