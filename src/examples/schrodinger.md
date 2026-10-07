@@ -8,7 +8,7 @@ $$
 
 ## Description
 
-The [time evolution]{.timederiv} of the [quantum state]{.wavefunction} is determined by its total energy: the [kinetic energy]{.kinetic} (derived from spatial curvature) plus the [potential energy]{.potential}. The [imaginary unit]{.imaginary} drives the wave's oscillation, while [the reduced Planck constant]{.planck} sets the scale of quantum action.
+The [time evolution]{.timederiv} of the [quantum state]{.wavefunction} is determined by its total energy: the [kinetic energy]{.kinetic} (from the wave’s curvature) plus the [potential energy]{.potential}. The [imaginary unit]{.imaginary} drives the wave's oscillation, while [the reduced Planck constant]{.planck} links energy to the rate of oscillation.
 
 ## .imaginary
 

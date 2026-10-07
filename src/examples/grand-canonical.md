@@ -8,7 +8,7 @@ $$
 
 ## Description
 
-The [probability]{.prob} is determined by the [Boltzmann weight]{.weight}: lower [energy]{.energy} favors a state, while a higher [chemical potential]{.chempot} favors more [particles]{.particles}. The [temperature]{.temp} scales these effects, and the [partition function]{.partition} normalizes the result.
+The [probability]{.prob} is determined by the [Boltzmann weight]{.weight}: lower [energy]{.energy} favors a state, while a higher [chemical potential]{.chempot} favors more [particles]{.particles}. Higher [temperature]{.temp} weakens these preferences, and the [partition function]{.partition} normalizes the result.
 
 ## .prob
 
