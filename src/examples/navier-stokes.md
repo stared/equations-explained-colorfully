@@ -8,7 +8,7 @@ $$
 
 ## Description
 
-Fluid accelerates ([over time]{.timederiv} and [along paths]{.convection}) due to [pressure]{.pressure}, [viscosity]{.viscosity}, and [external forces]{.force}. Its [density]{.density} sets how readily it accelerates.
+A fluid of [a given density]{.density} accelerates [over time]{.timederiv} and [along its path]{.convection}, driven by [pressure differences]{.pressure}, [viscous friction]{.viscosity}, and [external forces]{.force}.
 
 ## .density
 
