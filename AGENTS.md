@@ -4,7 +4,9 @@ Use pnpm for JavaScript/TypeScript package management.
 
 ## Equation descriptions
 
-Write short, natural explanations of what happens, with colored phrases following the equation’s structure. Use words, not math symbols or recited operations. Assume prerequisites; keep technical detail in hover definitions. Preserve existing intuition and wording.
+- **Main description:** A compact, natural-language reading of the equation. Colored phrases follow its structure, faithfully explaining what its parts do together. Use words, not formula symbols or recited algebra. Assume prerequisites. Stop when the equation is explained, without an appended lesson or invented imagery.
+- **Hover definitions:** Add useful intuition about the individual term. Include examples or consequences when they help understanding. Omit notation trivia and qualifications added merely for technical completeness.
+- **Editing:** Preserve good existing wording. Apply feedback to the whole example, then review every phrase against these principles instead of patching isolated words.
 
 Good examples (follow the links for color annotations):
 
