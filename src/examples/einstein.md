@@ -8,7 +8,7 @@ $$
 
 ## Description
 
-[Mass and energy]{.matter} warp [spacetime]{.ricci}, shaping the paths of freely falling objects. The [coupling constant]{.coupling} sets how strongly it bends, while [dark energy]{.dark-energy} can accelerate cosmic expansion.
+Spacetime’s [Ricci curvature]{.ricci}, adjusted by [a scalar-curvature correction]{.scalar} and [a cosmological-constant term]{.dark-energy}, responds to [energy, momentum, and stress]{.matter}, with [gravitational coupling]{.coupling} setting the strength of that response.
 
 ## .ricci
 
