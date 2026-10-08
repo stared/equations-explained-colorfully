@@ -13,7 +13,7 @@ $$
 
 ## Description
 
-[Electric fields]{.electric} [flow out]{.divergence} from [positive charges]{.charge} and into negative ones; [magnetic field lines]{.magnetic} have [no endpoints]{.zero}. [Changing]{.timederiv} fields create each other, the basis of light and all electromagnetic waves.
+[Electric fields]{.electric} [flow out]{.divergence} from [positive charges]{.charge} and into negative ones; [magnetic field lines]{.magnetic} have [no endpoints]{.zero}. [Changing]{.timederiv} [magnetic fields]{.magnetic} make [electric fields]{.electric} [circulate]{.curl}; [electric currents]{.current} and [changing]{.timederiv} [electric fields]{.electric} make [magnetic fields]{.magnetic} [circulate]{.curl}.
 
 ## .divergence
 
