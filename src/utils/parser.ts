@@ -1,6 +1,7 @@
 // Parser for interactive math markdown format
 
 import { findMatchingBrace } from './latex';
+import { escapeHTML } from '../export/escape';
 
 /**
  * Extract term names from \mark[term] patterns in equation content (for color ordering)
@@ -167,6 +168,10 @@ export function parseContent(markdown: string): ParsedContent {
       }
 
       // Parse description content
+      if (inDescription && !line.trim()) {
+        description = description.trimEnd() + '\n\n';
+        continue;
+      }
       if (inDescription && line.trim() && !line.startsWith('#')) {
         // Convert [text]{.class} to <span class="term-class">text</span>
         const converted = line.replace(/\[([^\]]+)\]\{\.([^\}]+)\}/g, (_match, text, className) => {
@@ -174,7 +179,8 @@ export function parseContent(markdown: string): ParsedContent {
           descriptionTerms.add(className); // Track description terms
           // NOTE: Do NOT add to termOrder here - only equation marks define termOrder
           return `<span class="${termClass}">${text}</span>`;
-        });
+        }).replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,
+          (_match, text, url) => `<a href="${escapeHTML(url)}">${escapeHTML(text)}</a>`);
         description += converted + ' ';
         continue;
       }
@@ -220,10 +226,14 @@ export function parseContent(markdown: string): ParsedContent {
     if (errors.length > 0) console.error('Content validation errors:', errors);
     if (warnings.length > 0) console.warn('Content validation warnings:', warnings);
 
+    const paragraphs = description.trim().split(/\n\n+/).map(text => text.trim());
+
     return {
       title,
       latex: latex.trim(),
-      description: description.trim(),
+      description: paragraphs.length > 1
+        ? paragraphs.map(text => `<p>${text}</p>`).join('\n')
+        : paragraphs[0],
       definitions,
       termOrder,
       errors,

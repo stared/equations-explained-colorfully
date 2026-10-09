@@ -43,6 +43,15 @@ export function convertHtmlDescription(
       result += coloredSpanFormatter(className, content);
 
       i = closeIndex + closeTag.length;
+    } else if (html.substring(i, i + 3) === '<a ') {
+      const link = html.slice(i).match(/^<a href="([^"]+)">([^<]*)<\/a>/);
+      if (link) {
+        result += escaper(`${link[2]} (${link[1]})`);
+        i += link[0].length;
+      } else {
+        result += escaper(html[i]);
+        i++;
+      }
     } else if (html.substring(i, i + 3) === '<p>') {
       i += 3;
     } else if (html.substring(i, i + 4) === '</p>') {

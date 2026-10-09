@@ -77,6 +77,21 @@ onMounted(setupDescription)
   color: var(--text-primary);
 }
 
+.static-description :deep(p + p) {
+  margin-top: 1.25rem;
+}
+
+.static-description :deep(a) {
+  color: var(--text-secondary);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+}
+
+.static-description :deep(a:hover),
+.static-description :deep(a:focus-visible) {
+  color: var(--accent-color);
+}
+
 .static-description :deep(span) {
   font-weight: 600;
   padding: 0 2px;

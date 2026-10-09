@@ -166,6 +166,21 @@ export function exportToHTML(
       line-height: 1.6;
     }
 
+    .description p + p {
+      margin-top: 1.25rem;
+    }
+
+    .description a {
+      color: #4b5563;
+      text-decoration-thickness: 1px;
+      text-underline-offset: 0.18em;
+    }
+
+    .description a:hover,
+    .description a:focus-visible {
+      color: #2563eb;
+    }
+
     .description span {
       font-weight: 600;
     }
@@ -235,7 +250,7 @@ export function exportToHTML(
   </div>
 
   <div class="description">
-    <p>${descriptionHTML}</p>
+    ${descriptionHTML}
   </div>
 
   <div id="hover-explanation" class="hover-explanation"></div>

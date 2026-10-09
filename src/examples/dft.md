@@ -10,6 +10,8 @@ $$
 
 To find [the amplitude]{.amplitude} [at a particular frequency]{.freq}, [spin]{.spin} [your signal]{.signal} [around a circle]{.circle} [at that frequency]{.freq}, and [average a bunch of points along that path]{.average}.
 
+Adapted from Stuart Riffle’s [Understanding the Fourier Transform](https://web.archive.org/web/20130318211259/http://www.altdevblogaday.com/2011/05/17/understanding-the-fourier-transform).
+
 ## .amplitude
 
 The transform output $X_k$. How strong frequency $k$ is in your signal, including magnitude and phase.
