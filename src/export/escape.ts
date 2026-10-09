@@ -27,8 +27,9 @@ export function escapeLaTeX(text: string): string {
     '_': '\\_',
     '~': '\\textasciitilde{}',
     '^': '\\textasciicircum{}',
+    '−': '\\ensuremath{-}',
   };
-  return text.replace(/[\\{}$&%#_~^]/g, (char) => map[char]);
+  return text.replace(/[\\{}$&%#_~^−]/g, (char) => map[char]);
 }
 
 // Escape text while processing $...$ inline math

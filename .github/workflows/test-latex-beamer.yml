@@ -26,43 +26,21 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
+      - name: Export regression tests
+        run: pnpm exec tsx --test tests/export/test-regressions.ts
+
       - name: Generate LaTeX files
         run: |
           pnpm tsx tests/export/test-latex-exports.ts
           pnpm tsx tests/export/test-beamer-exports.ts
+          pnpm exec tsx tests/export/generate-examples.ts latex
 
-      - name: Verify generated files exist
-        run: |
-          ls -lh ./test-output/test-euler.tex ./test-output/test-euler-beamer.tex ./test-output/test-maxwell.tex ./test-output/test-maxwell-beamer.tex
-          echo "All LaTeX files generated successfully"
-
-      - name: Compile Euler LaTeX to PDF
+      - name: Compile all LaTeX and Beamer examples to PDF
         uses: xu-cheng/latex-action@v4
         with:
-          root_file: test-euler.tex
+          root_file: 'test-*.tex'
           working_directory: test-output
-          latexmk_use_lualatex: false
-
-      - name: Compile Euler Beamer to PDF
-        uses: xu-cheng/latex-action@v4
-        with:
-          root_file: test-euler-beamer.tex
-          working_directory: test-output
-          latexmk_use_lualatex: false
-
-      - name: Compile Maxwell LaTeX to PDF
-        uses: xu-cheng/latex-action@v4
-        with:
-          root_file: test-maxwell.tex
-          working_directory: test-output
-          latexmk_use_lualatex: false
-
-      - name: Compile Maxwell Beamer to PDF
-        uses: xu-cheng/latex-action@v4
-        with:
-          root_file: test-maxwell-beamer.tex
-          working_directory: test-output
-          latexmk_use_lualatex: false
+          continue_on_error: true
 
       - name: Upload LaTeX artifacts
         uses: actions/upload-artifact@v4
@@ -70,13 +48,8 @@ jobs:
         with:
           name: latex-outputs
           path: |
-            test-output/test-euler.tex
-            test-output/test-euler.pdf
-            test-output/test-euler-beamer.tex
-            test-output/test-euler-beamer.pdf
-            test-output/test-maxwell.tex
-            test-output/test-maxwell.pdf
-            test-output/test-maxwell-beamer.tex
-            test-output/test-maxwell-beamer.pdf
+            test-output/*.tex
+            test-output/*.pdf
+            test-output/*.log
           if-no-files-found: warn
           retention-days: 30

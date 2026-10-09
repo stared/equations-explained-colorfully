@@ -27,7 +27,9 @@ jobs:
         run: pnpm install
 
       - name: Generate Typst file
-        run: pnpm tsx tests/export/test-typst-export.ts
+        run: |
+          pnpm tsx tests/export/test-typst-export.ts
+          pnpm exec tsx tests/export/generate-examples.ts typst
 
       - name: Verify generated file exists
         run: |
@@ -39,13 +41,13 @@ jobs:
         with:
           typst-version: latest
 
-      - name: Compile Euler Typst to PDF
-        run: typst compile ./test-output/test-euler.typ ./test-output/test-euler.pdf
-
-      - name: Verify PDF was created
+      - name: Compile all Typst examples to PDF
         run: |
-          ls -lh ./test-output/test-euler.pdf
-          echo "PDF created successfully"
+          status=0
+          for source in ./test-output/*.typ; do
+            typst compile "$source" "${source%.typ}.pdf" || status=1
+          done
+          exit "$status"
 
       - name: Upload Typst artifacts
         uses: actions/upload-artifact@v4
@@ -53,7 +55,7 @@ jobs:
         with:
           name: typst-outputs
           path: |
-            test-output/test-euler.typ
-            test-output/test-euler.pdf
+            test-output/*.typ
+            test-output/*.pdf
           if-no-files-found: warn
           retention-days: 30

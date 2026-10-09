@@ -4,11 +4,17 @@
 
 import type { ParsedContent } from '../utils/parser';
 import type { ColorScheme } from '.';
-import { tex2typst } from 'tex2typst';
+import { tex2typst, symbolMap } from 'tex2typst';
 import { transformHtmlClass } from '../utils/latex';
 import { convertHtmlDescription } from './htmlConverter';
 import { escapePreservingMath } from './escape';
 import { getTermColor } from '../utils/colorSchemes';
+
+// tex2typst 0.4 uses names removed from recent Typst versions.
+// Unicode math symbols preserve their meaning across compiler versions.
+symbolMap.set('partial', '∂');
+symbolMap.set('hbar', 'ℏ');
+symbolMap.set('hslash', 'ℏ');
 
 /**
  * Escape Typst special characters
@@ -71,7 +77,9 @@ function convertLatexToTypst(latex: string, termOrder: string[], colorScheme: Co
       return content; // Keep content without wrapper if term not found
     }
   });
-  return tex2typst(withColors);
+  // Separate a colored content block from a following math parenthesis;
+  // otherwise Typst interprets it as a code-mode function call.
+  return tex2typst(withColors).replace(/\]\(/g, '] (');
 }
 
 /**
