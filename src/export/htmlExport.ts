@@ -185,6 +185,14 @@ export function exportToHTML(
       font-weight: 600;
     }
 
+    /* KaTeX overlays that would swallow hovers on marked terms:
+       the radical is a 400em-wide SVG drawn over the radicand, and the empty
+       depth row of a vertical list (fractions, sums, aligned) covers the lower half */
+    .katex .hide-tail,
+    .katex .vlist-t2 > .vlist-r:last-child {
+      pointer-events: none;
+    }
+
     /* Interactive term effects */
     [class*="term-"] {
       transition: opacity 0.2s ease;

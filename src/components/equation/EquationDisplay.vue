@@ -189,6 +189,14 @@ onUnmounted(() => resizeObserver?.disconnect());
   margin: 0;
 }
 
+/* KaTeX overlays that would swallow hovers on marked terms:
+   the radical is a 400em-wide SVG drawn over the radicand, and the empty
+   depth row of a vertical list (fractions, sums, aligned) covers the lower half */
+#equation-container :deep(.hide-tail),
+#equation-container :deep(.vlist-t2 > .vlist-r:last-child) {
+  pointer-events: none;
+}
+
 .selection-overlay {
   position: absolute;
   top: 0;
